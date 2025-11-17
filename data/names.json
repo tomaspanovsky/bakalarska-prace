@@ -1,0 +1,23 @@
+{
+    "names_male": [
+        "Jiří", "Jan", "Petr", "Josef", "Pavel", "Martin", "Tomáš",
+        "Jaroslav", "Miroslav", "Zdeněk", "Václav", "Michal", "František",
+        "Jakub", "Milan", "Karel", "Lukáš", "David", "Vladimír", "Ondřej",
+        "Ladislav", "Roman", "Marek", "Stanislav", "Daniel", "Radek",
+        "Antonín", "Vojtěch", "Filip", "Adam", "Matěj", "Dominik",
+        "Aleš", "Miloslav", "Jaromír", "Patrik", "Libor", "Jindřich",
+        "Vlastimil", "Miloš", "Lubomír", "Štěpán", "Oldřich", "Rudolf",
+        "Matyáš", "Ivan", "Robert", "Šimon", "Luboš", "Vít", "Radim"
+    ],
+    
+    "names_female": [
+        "Jana", "Marie", "Eva", "Hana", "Anna", "Lenka", "Kateřina", "Lucie",
+        "Věra", "Alena", "Petra", "Veronika", "Jaroslava", "Tereza", "Martina",
+        "Michaela", "Jitka", "Helena", "Ludmila", "Zdenka", "Ivana", "Monika",
+        "Eliška", "Zuzana", "Markéta", "Jarmila", "Barbora", "Jiřina", "Marcela",
+        "Kristýna", "Dana", "Dagmar", "Adéla", "Pavla", "Vlasta", "Andrea",
+        "Božena", "Klára", "Marta", "Šárka", "Nikola", "Karolína", "Pavlína",
+        "Iveta", "Natálie", "Gabriela", "Renata", "Aneta", "Simona", "Radka",
+        "Daniela", "Denisa"
+    ]
+}

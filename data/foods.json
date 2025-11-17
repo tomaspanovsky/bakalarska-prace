@@ -1,0 +1,46 @@
+{
+  "foods": {
+    "pizza": {"price": 250, "preparation_time": [90, 150], "satiety": 90},
+    "trojuhelnicek pizzy": {"price": 100, "preparation_time": [60, 100], "satiety": 30},
+
+    "hamburger": {"price": 200, "preparation_time": [90, 150], "satiety": 80},
+    "cheeseburger": {"price": 220, "preparation_time": [100, 160], "satiety": 80},
+    "chickenburger": {"price": 210, "preparation_time": [100, 160], "satiety": 80},
+    "hotdog": {"price": 150, "preparation_time": [40, 70], "satiety": 55},
+    "párek v rohlíku": {"price": 80, "preparation_time": [20, 50], "satiety": 35},
+
+    "gyros v tortile": {"price": 220, "preparation_time": [120, 180], "satiety": 90},
+    "nudle se zeleninou": {"price": 160, "preparation_time": [100, 160], "satiety": 70},
+    "nudle s gyrosem": {"price": 200, "preparation_time": [120, 180], "satiety": 85},
+    "tacos": {"price": 180, "preparation_time": [80, 140], "satiety": 65},
+    "burrito": {"price": 220, "preparation_time": [100, 160], "satiety": 85},
+
+    "klobása s chlebem": {"price": 140, "preparation_time": [80, 120], "satiety": 65},
+    "vepřový steak s chlebem": {"price": 190, "preparation_time": [180, 240], "satiety": 85},
+    "kuřecí steak s chlebem": {"price": 170, "preparation_time": [150, 200], "satiety": 85},
+    "kukuřice": {"price": 100, "preparation_time": [60, 120], "satiety": 40},
+    "grilovaný hermelín s chlebem": {"price": 150, "preparation_time": [120, 180], "satiety": 55},
+
+    "belgické hranolky": {"price": 160, "preparation_time": [60, 90], "satiety": 50},
+
+    "langoš": {"price": 150, "preparation_time": [60, 100], "satiety": 80},
+    "bramborák": {"price": 130, "preparation_time": [80, 120], "satiety": 70},
+    "halušky": {"price": 160, "preparation_time": [120, 180], "satiety": 85},
+    "masová směs se zeleninou": {"price": 150, "preparation_time": [120, 180], "satiety": 80},
+
+    "palačinky": {"price": 100, "preparation_time": [90, 150], "satiety": 50},
+    "trdelník": {"price": 120, "preparation_time": [120, 180], "satiety": 55},
+    "wafle": {"price": 110, "preparation_time": [80, 130], "satiety": 45},
+    "donuty": {"price": 120, "preparation_time": [80, 130], "satiety": 50}
+  },
+  
+  "stalls": {
+    "gyros_stall": ["gyros v tortile", "nudle se zeleninou", "nudle s gyrosem", "tacos", "burrito"],
+    "grill_stall": ["klobása s chlebem", "vepřový steak s chlebem", "kuřecí steak s chlebem", "kukuřice", "grilovaný hermelín s chlebem"],
+    "pizza_stall": ["pizza", "trojuhelnicek pizzy"],
+    "burger_stall": ["hamburger", "cheeseburger","chickenburger", "hotdog", "párek v rohlíku"],
+    "langos_stall": ["langoš", "bramborák", "halušky", "masová směs se zeleninou"],
+    "sweet_stall": ["palačinky", "trdelník", "wafle", "donuty"],
+    "belgian_fries_stall": ["belgické hranolky"] 
+  }
+}

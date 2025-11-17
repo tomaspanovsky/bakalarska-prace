@@ -1,0 +1,11 @@
+{
+    "ACTIONS_BY_LOCATIONS": {
+        "FESTIVAL_AREA": {
+            "wc": "GO_TO_TOILET"
+        },
+        "TENT_AREA": {
+            "wc": "GO_TO_TOILET",
+            "hygiene": "GO_TO_SCHOWER"
+        }
+    }
+}

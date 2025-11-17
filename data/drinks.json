@@ -1,0 +1,25 @@
+{
+  "alcohol": [
+    "pivo Radegast",
+    "pivo Plzeň",
+    "pivo Gambrinus",
+    "jablečný cider",
+    "zelená",
+    "rum",
+    "slivovice",
+    "pinacolada",
+    "cubalibre",
+    "fernet",
+    "vodka"
+  ],
+  
+  "soft_drinks": [
+    "kofola",
+    "malinovka",
+    "jablečný džus",
+    "pomerančový džus",
+    "birel",
+    "Ovocný birell",
+    "Capri-sun"
+  ]
+}
