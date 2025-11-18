@@ -130,6 +130,10 @@ def get_user_settings():
         nonlocal canvas
         
         print(history)
+        print()
+        print()
+        print()
+
         if not history:
             print("Žádná akce k vrácení")
             return
@@ -150,11 +154,8 @@ def get_user_settings():
             print(f"Vrácen objekt '{obj_data.get('object')}' ze zóny '{zone_type}'")
 
         elif action_type == "zone":
-            
             zone, zone_type, instance = last_action
 
-            print("Smazat rect_id:", instance["rect_id"])
-            print("Smazat label_id:", instance["label_id"])
             canvas.delete(instance["rect_id"])
             canvas.delete(instance["label_id"])
 
@@ -187,7 +188,7 @@ def get_user_settings():
     undo_button = tk.Button(buttons_frame, text="Vrátit akci", command=undo, font=("Arial", 20), bg="red", fg="white", padx=20, pady=10, width=10, height=1)
     undo_button.pack(side="left", padx=10)
 
-    save_button = tk.Button(buttons_frame, text="Uložit do JSONu", command=save, font=("Arial", 20), bg="blue", fg="white", padx=20, pady=10, width=10, height=1)
+    save_button = tk.Button(buttons_frame, text="Uložit", command=save, font=("Arial", 20), bg="blue", fg="white", padx=20, pady=10, width=10, height=1)
     save_button.pack(side="left", padx=10)
 
     # Výčet objektů podle zóny

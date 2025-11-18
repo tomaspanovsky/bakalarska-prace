@@ -411,6 +411,7 @@ class Visitor:
 
     def go_for_food(self, stall, food):
         # funkce která simuluje návštěvníkovo koupení jídla ve stánku
+        
         price = source.foods[food]["price"]
         time_min, time_max = source.foods[food]["preparation_time"]
         satiety = source.foods[food]["satiety"]
@@ -432,6 +433,7 @@ class Visitor:
             self.state["money"] -= price
             self.state["hunger"] += satiety
             print(f"{self.name} {self.surname} snědl {food}, aktuální stav hladu je: {min(100,self.state["hunger"])}")
+
 
 def spawn_groups(env, groups_list):
     i = 0

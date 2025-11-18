@@ -1,0 +1,14 @@
+{
+    "ACTIONS_BY_LOCATIONS": {
+        "ENTRANCE_ZONE": {
+            "hunger": "GO_FOR_FOOD"
+        }
+    },
+    "STALLS_BY_LOCATIONS": {
+        "ENTRANCE_ZONE": [
+            "langos_stall",
+            "langos_stall",
+            "langos_stall"
+        ]
+    }
+}
