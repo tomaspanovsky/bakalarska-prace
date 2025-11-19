@@ -15,3 +15,21 @@ Simulační modely reálných systémů bývají často rozsáhlé a vyžadují 
 Základním prvkem simulace je objekt \texttt{Environment}, který reprezentuje simulační prostředí. Tento objekt řídí běh celé simulace, spravuje plán událostí a posouvá simulační čas. Kdykoliv proces použije příkaz \texttt{yield}, předává řízení zpět prostředí \texttt{Environment}, které vyhodnotí, jaká událost má nastat jako další. Po uplynutí naplánovaného času nebo splnění podmínky je proces znovu spuštěn od místa, kde byl pozastaven.
 
 SimPy poskytuje také třídy \texttt{Resource}, \texttt{Container} a \texttt{Store}, které slouží k modelování omezených zdrojů, jako jsou fronty, zásoby nebo datové toky. Tyto objekty umožňují řídit interakce mezi procesy a simulovat situace, kdy více entit soutěží o stejný prostředek – například fronty návštěvníků čekajících u stánku s jídlem.  
+
+
+
+\\CALLBACKY
+Každá událost má také seznam callback funkcí, které se spustí, když je událost vyvolána a zpracována smyčkou událostí. V SimPy se každý proces, který vrací \texttt{yield} událost, interně přidává do seznamu callbacků této události. Callbacky jsou funkce, které se spustí, když je událost dokončena. Díky tomu aktivita pokračuje přesně tam, kde byla pozastavena. Tento mechanismus umožňuje přirozené střídání aktivit a souběžné chování více entit, aniž bychom museli ručně řídit, kdo právě běží. Callback tedy reaguje na dokončení události. Aktivity, které čekají na událost, jsou jedním typem callbacků. Můžeme si ale callbacky definovat i explicitně, například pokud chceme, aby se po dokončení Timeout události spustila nějaká další funkce. To si ukážeme v následujícím příkladu:
+
+ \begin{verbatim} 
+def my_callback(event):
+    print(f"Událost dokončena v čase {event.env.now}, hodnota: {event.value}")
+
+env = simpy.Environment()
+event = env.timeout(3, value=42)
+event.callbacks.append(my_callback)
+
+env.run()
+\end{verbatim}
+
+Vytvořili jsme timeout událost na 3 časové jednotky. Přidali jsme callback \texttt{my\_callback}, který se automaticky spustí, když timeout skončí. Když SimPy zpracuje událost, zavolá callback a vypíše zprávu \texttt{Událost dokončena v čase 3, hodnota: 42}. Tento příklad demonstruje, že callback je funkce spouštěná po dokončení události. V SimPy ale callbacky vznikají automaticky, když aktivita vrací \texttt{yield} událost, to je hlavní mechanismus, díky kterému simulace běží sama.

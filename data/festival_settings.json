@@ -1,14 +1,23 @@
 {
     "ACTIONS_BY_LOCATIONS": {
         "ENTRANCE_ZONE": {
+            "thirst": "GO_FOR_DRINK",
+            "hunger": "GO_FOR_FOOD"
+        },
+        "FESTIVAL_AREA": {
+            "band_playing": "GO_TO_CONCERT",
             "hunger": "GO_FOR_FOOD"
         }
     },
     "STALLS_BY_LOCATIONS": {
         "ENTRANCE_ZONE": [
-            "langos_stall",
-            "langos_stall",
-            "langos_stall"
+            "beer_stall",
+            "beer_stall",
+            "sweet_stall"
+        ],
+        "FESTIVAL_AREA": [
+            "pizza_stall",
+            "grill_stall"
         ]
     }
 }

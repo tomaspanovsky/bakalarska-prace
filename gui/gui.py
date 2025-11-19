@@ -126,52 +126,58 @@ def get_user_settings():
     canvas.pack_propagate(False)
 
     def undo():
-        global history, zones_data
+        global zones_data, history
         nonlocal canvas
-        
+
+        print()
+        print("Začíná undo")
+        print()
+        print("zones_data")
+        print(zones_data)
+        print()
+        print("history")
         print(history)
-        print()
-        print()
-        print()
 
         if not history:
-            print("Žádná akce k vrácení")
+            print("Nic k vrácení")
             return
 
         last_action = history.pop()
         action_type = last_action[0]
 
-        if action_type == "object":
+        if action_type == "zone":
+            zone_instance = last_action[1]
+            # Odstranit z canvasu
+            if "rect_id" in zone_instance:
+                canvas.delete(zone_instance["rect_id"])
+            if "label_id" in zone_instance:
+                canvas.delete(zone_instance["label_id"])
+            # Odstranit z data
+            zone_type = zone_instance["type"]
+            zones_data[zone_type]["instances"] = [
+                inst for inst in zones_data[zone_type]["instances"]
+                if inst["rect_id"] != zone_instance.get("rect_id")
+            ]
+            print(f"Undo: odstraněna zóna {zone_type}")
 
-            zone, zone_type, instance, obj_data = last_action
+        elif action_type == "object":
 
-            for cid in obj_data.get("canvas_ids", []):
+            zone_instance = last_action[1]
+            obj_data = last_action[2]
+
+            for cid in obj_data["canvas_ids"]:
                 canvas.delete(cid)
-
-            if instance and "objects" in instance and obj_data in instance["objects"]:
-                instance["objects"].remove(obj_data)
-                
-            print(f"Vrácen objekt '{obj_data.get('object')}' ze zóny '{zone_type}'")
-
-        elif action_type == "zone":
-            zone, zone_type, instance = last_action
-
-            canvas.delete(instance["rect_id"])
-            canvas.delete(instance["label_id"])
-
-            if instance in zones_data[zone_type]["instances"]:
-                zones_data[zone_type]["instances"].remove(instance)
-
-            print(f"Vrácena zóna {zone_type}")
-
-        elif action_type == "line":
-            obj1, obj2, line_id = last_action
-            canvas.delete(line_id)
-            print(f"Vrácena čára mezi {obj1['object']} a {obj2['object']}")
+            
+            for extra in obj_data.get("extra", []):
+                for cid in extra["canvas_ids"]:
+                    canvas.delete(cid)
+        
+            zone_instance["objects"].remove(obj_data)
+            print(f"Undo: odstraněn objekt {obj_data['object']}")
 
     def save():
         saving.save(zones_data)
-        print("Rozložení úspěšně uloženo do festival_layout.json")
+        print("Rozložení úspěšně uloženo do festival_settings.json")
 
     # Pravý sloupec
     frame_right = tk.Frame(content_frame, width=200, height=800, bg="white")
@@ -195,7 +201,7 @@ def get_user_settings():
     objects_for_zone = {
         "Spawn bod": ["Spawn bod"],
         "Vstupní zóna": ["Pokladna", "Jídelní prostor", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Vstup"],
-        "Festivalový areál": ["Podium", "Stání u podia", "Jídelní prostor", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Vstup"],
+        "Festivalový areál": ["Podium", "Jídelní prostor", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Vstup"],
         "Stanové městečko": ["Nealko stánek","Jídelní prostor", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Sprchy", "Vstup"],
         "Chill zóna": ["Jídelní prostor"],
         "Zábavní zóna": ["Vstup", "Bungee-jumping", "Horská dráha", "Lavice", "Kladivo", "Nealko stánek", "Pivní stánek"]
@@ -225,10 +231,11 @@ def get_user_settings():
     # Funkce pro výběr zóny (typ)
     def select_zone(zone_name):
 
-        global current_zone, object_buttons
+        global current_zone, object_buttons, current_object
         current_zone = zone_name
         print(f"Vybrána zóna: {current_zone}")
 
+        current_object = None
         for name, btn in zone_buttons.items():
             btn.config(bg="SystemButtonFace", fg="black")
 
@@ -237,6 +244,7 @@ def get_user_settings():
         # Vyčistit pravý panel a naplnit objekty pro tento typ zóny
         for widget in frame_right.winfo_children():
             widget.destroy()
+
         tk.Label(frame_right, text="Objekty", font=("Arial", 25, "bold"), bg="white", fg="black").pack(pady=10)
 
         object_buttons.clear()
@@ -251,17 +259,37 @@ def get_user_settings():
         btn.pack(pady=5)
         zone_buttons[zone_name] = btn
 
-    # Pomocná funkce: najde instanci (slovník) zóny, do které patří bod x,y
+    # Pomocná funkce: najde instanci zóny, do které patří bod x,y
     def find_zone_instance_for_point(zone_type, x, y):
         insts = zones_data[zone_type]["instances"]
         for inst in insts:
+            # nejdřív zkontrolujeme hlavní oblast zóny
             if inst["left"] <= x <= inst["right"] and inst["top"] <= y <= inst["bottom"]:
                 return inst
+        
+            # teď zkontrolujeme objekty v této zóně
+            for obj in inst.get("objects", []):
+                # hlavní geometrie objektu
+                coords_list = []
+                main_id = obj["canvas_ids"][1]  # geometrie objektu
+                coords_list.append(canvas.coords(main_id))
+
+                # extra objekty (např. stání u podia)
+                for extra in obj.get("extra", []):
+                    extra_id = extra["canvas_ids"][1]
+                    coords_list.append(canvas.coords(extra_id))
+
+                # projdeme všechny souřadnice
+                for coords in coords_list:
+                    left, top, right, bottom = coords[0], coords[1], coords[2], coords[3]
+                    if left <= x <= right and top <= y <= bottom:
+                        return inst
+
         return None
 
     # Funkce pro vkládání objektů
     def place_object(event):
-        global current_object, current_zone, history, zones_data
+        global current_object, current_zone, zones_data
 
         foods = ["Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek"]
         drinks = ["Nealko stánek", "Pivní stánek", "Red Bull stánek"]
@@ -272,7 +300,29 @@ def get_user_settings():
 
         x, y = event.x, event.y
         r = 13
-        text_id = canvas.create_text(x, y-20, text=current_object, fill="black", font=("Arial", 8), anchor="center")
+
+        if current_zone != "Spawn bod":
+            instance = find_zone_instance_for_point(current_zone, x, y)
+            if instance is None:
+                print("chyba: objekt musí být uvnitř existující zóny")
+                return
+        else:
+            # speciál pro Spawn body 
+            instance = {"type": "Global", "objects": []}
+            zones_data.setdefault("Global", {"multiple": True, "instances": []})
+            zones_data["Global"]["instances"].append(instance)
+
+        EDGE_TOLERANCE = 15 
+
+        if current_object == "Vstup":
+            left, top, right, bottom = instance["left"], instance["top"], instance["right"], instance["bottom"]
+            on_edge = (abs(x - left) <= EDGE_TOLERANCE or abs(x - right) <= EDGE_TOLERANCE or abs(y - top) <= EDGE_TOLERANCE or abs(y - bottom) <= EDGE_TOLERANCE)
+
+            if not on_edge:
+                print("Objekt 'Vstup' musí být umístěn na okraji zóny!")
+                return
+    
+        text_id = canvas.create_text(x, y-20, text=current_object, fill="black", font=("Arial", 8, "bold"), anchor="center")
 
         if current_object in foods:
             obj_id = canvas.create_oval(x-r, y-r, x+r, y+r, fill="red", outline="black")
@@ -287,51 +337,42 @@ def get_user_settings():
             obj_id = canvas.create_rectangle(x-50, y, x+50, y+50, fill="black")
 
         elif current_object == "Podium":
+
+            # Podium
             obj_id = canvas.create_rectangle(x-80, y, x+80, y+50, fill="black")
 
-        elif current_object == "Stání u podia":
-            obj_id = canvas.create_rectangle(x-80, y, x+80, y+150, fill="grey")
+            # Stání u podia
+            stand_top = y + 55
+            stand_bottom = y + 50 + 150
+            stand_left = x - 110
+            stand_right = x + 110
 
+            stand_id = canvas.create_rectangle(stand_left, stand_top, stand_right, stand_bottom, fill="grey", outline="black")
+    
+            # Popis stání u podia
+            stand_text_id = canvas.create_text((stand_left + stand_right)/2,(stand_top + stand_bottom)/2,text="Stání u podia",fill="black", font=("Arial", 8, "bold"), anchor="center")
+
+            # Přidání do obj_data obojího
+            obj_data = {"object": current_object,"x": x,"y": y,"canvas_ids": [text_id, obj_id],"extra": [{"object": "Stání u podia", "canvas_ids": [stand_text_id, stand_id]}]}
+            instance.setdefault("objects", []).append(obj_data)
+            history.append(("object", instance, obj_data))
+            return
+        
         else:
             obj_id = canvas.create_oval(x-r, y-r, x+r, y+r, fill="gray", outline="black")
 
         obj_data = {"object": current_object, "x": x, "y": y, "canvas_ids": [text_id, obj_id]}
 
-        EDGE_TOLERANCE = 15 
-
-        if current_zone != "Spawn bod":
-            instance = find_zone_instance_for_point(current_zone, x, y)
-
-            if instance is None:
-                print("chyba: objekt musí být uvnitř existující zóny")
-                canvas.delete(text_id)
-                canvas.delete(obj_id)
-                return
-
-        else:
-            instance = {"type": "Global", "objects": []}
-            zones_data.setdefault("Global", {"multiple": True, "instances": []})
-            zones_data["Global"]["instances"].append(instance)
-
-        if current_object == "Vstup":
-            left, top, right, bottom = instance["left"], instance["top"], instance["right"], instance["bottom"]
-            on_edge = (abs(x - left) <= EDGE_TOLERANCE or abs(x - right) <= EDGE_TOLERANCE or abs(y - top) <= EDGE_TOLERANCE or abs(y - bottom) <= EDGE_TOLERANCE)
-
-            if not on_edge:
-                print("Objekt 'Vstup' musí být umístěn na okraji zóny!")
-                canvas.delete(text_id)
-                canvas.delete(obj_id)
-                return
-
         instance.setdefault("objects", []).append(obj_data)
-        history.append(("object", current_zone, instance, obj_data))
-
+        history.append(("object", instance, obj_data))
+        print(history)
     
     def select_object_for_line(event):
-        global selected_object_for_line
+        global selected_object_for_line, selected_instance_for_line
     
         x, y = event.x, event.y
         clicked_obj = None
+        clicked_instance = None
 
         for zone_type, zone_info in zones_data.items():
             for instance in zone_info["instances"]:
@@ -347,8 +388,10 @@ def get_user_settings():
                         ox, oy = coords  
                 
                     r = max((coords[2]-coords[0])/2, (coords[3]-coords[1])/2) + 3
+
                     if (ox - r) <= x <= (ox + r) and (oy - r) <= y <= (oy + r):
                         clicked_obj = obj
+                        clicked_instance = instance
                         break
                 if clicked_obj:
                     break
@@ -370,10 +413,17 @@ def get_user_settings():
             x2, y2 = (canvas.coords(id2)[0] + canvas.coords(id2)[2]) / 2, (canvas.coords(id2)[1] + canvas.coords(id2)[3]) / 2
         
             line_id = canvas.create_line(x1, y1, x2, y2, fill="black", width=2)
-            history.append(("line", selected_object_for_line, clicked_obj, line_id))
-        
+            
+            line_data = {"type": "line", "from": selected_object_for_line, "to": clicked_obj, "canvas_id": line_id}
+
+            clicked_instance.setdefault("lines", []).append(line_data)
+
+            history.append(("line", clicked_instance, line_data))
+
             print(f"Propojeno: {selected_object_for_line['object']} → {clicked_obj['object']}")
+
             selected_object_for_line = None
+            
 
     def on_click(event):
         """Začátek kreslení zóny (pokud není vybraný objekt)."""
@@ -446,11 +496,10 @@ def get_user_settings():
             text_y = top - 12
             permanent_label = canvas.create_text(text_x, text_y, text=current_zone or "", fill="black", font=("Arial", 12, "bold"), anchor="s")
 
-            zone_instance = { "type": current_zone, "left": left, "top": top, "right": right, "bottom": bottom, "label_id": permanent_label, "rect_id": permanent_rect, "objects": []}
+            zone_instance = { "type": current_zone, "left": left, "top": top, "right": right, "bottom": bottom, "label_id": permanent_label, "rect_id": permanent_rect, "objects": [], "lines": []}
 
             zones_data[current_zone]["instances"].append(zone_instance)
-            history.append(("zone", current_zone, zone_instance))
-
+            history.append(("zone", zone_instance))
             print(f"Uložená zóna {current_zone}: {left, top, right, bottom}")
 
         zone_rect = None
