@@ -1,5 +1,13 @@
 import enum
 import json
+import os
+
+here = os.path.dirname(__file__)
+file_path_foods = os.path.join(here, "data", "foods.json")
+file_path_drinks = os.path.join(here, "data", "drinks.json")
+file_path_names = os.path.join(here, "data", "names.json")
+file_path_surnames = os.path.join(here, "data", "surnames.json")
+file_path_bands = os.path.join(here, "data", "bands.json")
 
 class Groups(enum.Enum):
     GROUP = "skupina"
@@ -64,13 +72,13 @@ ACTIONS_BY_LOCATIONS = {
     }
 }
 
-with open("data/foods.json", "r", encoding="utf-8") as f:
+with open(file_path_foods, "r", encoding="utf-8") as f:
     foods_data = json.load(f)
 
 foods = foods_data["foods"]
 stalls = foods_data["stalls"]
 
-with open("data/drinks.json", "r", encoding="utf-8") as f:
+with open(file_path_drinks, "r", encoding="utf-8") as f:
     drinks_data = json.load(f)
 
 soft_drinks = drinks_data["soft_drinks"]
@@ -106,18 +114,18 @@ class Parents(enum.Enum):
     FATHER = "otec"
     MOTHER = "matka"
 
-with open("data/names.json", "r", encoding="utf-8") as f:
+with open(file_path_names, "r", encoding="utf-8") as f:
     names_data = json.load(f)
 
 names_male = names_data["names_male"]
 names_female = names_data["names_female"]
 
-with open("data/surnames.json", "r", encoding="utf-8") as f:
+with open(file_path_surnames, "r", encoding="utf-8") as f:
     surnames_data = json.load(f)
 
 surnames_male = surnames_data["surnames_male"]
 surnames_female = surnames_data["surnames_female"]
 surname_map = surnames_data["surname_map"]
 
-with open("data/bands.json", "r", encoding="utf-8") as f:
+with open(file_path_bands, "r", encoding="utf-8") as f:
     BANDS = json.load(f)
