@@ -17,6 +17,7 @@ def save(zones_data):
             location_key = location_map.get(zone_name, zone_name.upper().replace(" ", "_"))
             actions = {}
             stalls = []
+            traces = []
 
             food_stalls = ["Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek"]
             drink_stalls = ["Nealko stánek", "Pivní stánek", "Red Bull stánek"]
@@ -74,8 +75,9 @@ def save(zones_data):
                 elif any(atraction.lower() in obj_name for atraction in atractions):
                     actions["atraction_desire"] = "GO_TO_ATRACTION"
 
-            result["ACTIONS_BY_LOCATIONS"][location_key] = actions
-            result["STALLS_BY_LOCATIONS"][location_key] = stalls
+#            for lines in instance["lines"]:
+#               traces.append[lines["other_zone"]["type"]]
+#           print(traces)
 
     with open("data/festival_settings.json", "w", encoding="utf-8") as f:
         json.dump(result, f, indent=4, ensure_ascii=False)

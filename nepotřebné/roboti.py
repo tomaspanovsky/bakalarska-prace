@@ -12,7 +12,7 @@ def robot(env, name, event):
             break
 
         else:
-            print(f"{env.now}: {name} je na pozici {position[name]} jde směrem {direction[name]}")
+            print(f"{env.now}: {name} je na pozici {position[name]} se začal pohybovat směrem {direction[name]}")
 
         if direction[name] == "vpravo":
             position[name] += 1
@@ -23,11 +23,11 @@ def robot(env, name, event):
         print(f"{env.now}: {name} se zastavil a rozhlíží se")
 
 def meeting_callback(event):
-    print("Roboti se potkali!" , position, direction)
+    print(f"Roboti se potkali!" , position, direction)
    
     for robot in direction:
         direction[robot] = "vlevo" if direction[robot] == "vpravo" else "vpravo"
-        print(f"{robot} se otočil a od teď bude chodit {direction[robot]}")
+        print(f"{robot} se otočil a odteď bude chodit {direction[robot]}")
 
 env = simpy.Environment()
 meeting_event = env.event()

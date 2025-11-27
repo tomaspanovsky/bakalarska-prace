@@ -840,6 +840,7 @@ def get_user_settings():
                 return True
         return False
 
+
     canvas.bind("<Button-1>", on_click)
     canvas.bind("<B1-Motion>", on_drag)
     canvas.bind("<ButtonRelease-1>", on_release)
@@ -847,3 +848,5 @@ def get_user_settings():
 
     root.mainloop()
     return settings
+            
+                    
