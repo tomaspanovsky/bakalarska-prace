@@ -368,7 +368,21 @@ def get_user_settings():
         obj_data = {"object": current_object, "x": x, "y": y, "canvas_ids": [text_id, obj_id], "extra": []}
 
         instance.setdefault("objects", []).append(obj_data)
-            
+
+    def get_clicked_object(event):
+        for zone_type, zone_info in zones_data.items():
+            for inst in zone_info["instances"]:
+                for obj in inst.get("objects", []):
+                    geom_id = obj["canvas_ids"][1]
+                    x1, y1, x2, y2 = canvas.coords(geom_id)
+                    if x1 <= event.x <= x2 and y1 <= event.y <= y2:
+                        return obj
+        return None
+    
+    def get_object_center(obj):
+        coords = canvas.coords(obj["canvas_ids"][1])
+        return (coords[0] + coords[2]) / 2, (coords[1] + coords[3]) / 2
+
     def on_click(event):
         """Začátek kreslení zóny (pokud není vybraný objekt)."""
         global drawing, last_x, last_y, zone_rect, zone_label, current_object, current_zone, current_mode, selected_zone_instance, selected_object, is_dragging_object, is_dragging_zone, connect_start_zone
@@ -440,6 +454,7 @@ def get_user_settings():
                 selected_object = clicked_obj
                 selected_zone_instance = None
                 canvas.itemconfig(clicked_obj["canvas_ids"][1], outline="red", width=3)
+
                 print(f"[SELECT]Označený objekt: {clicked_obj['object']}")
                 is_dragging_object = True
                 print("[SELECT] Dragging aktivován")
@@ -781,7 +796,8 @@ def get_user_settings():
     RESIZE_TOLERANCE = 20 
 
     def get_resize_direction(zone, x, y):
-        """Vrátí tuple (dx, dy), který říká, které hrany/rohy se mají měnit"""
+        """Vrátí (dx, dy) který říká, které hrany/rohy se mají měnit"""
+
         left, top, right, bottom = zone["left"], zone["top"], zone["right"], zone["bottom"]
 
         resize_dir = {"left": False, "right": False, "top": False, "bottom": False}
@@ -834,7 +850,7 @@ def get_user_settings():
         for other in other_zones:
             if other == zone:
                 continue
-            # jednoduchá AABB kolize
+            
             if (zone["left"] < other["right"] and zone["right"] > other["left"] and
                 zone["top"] < other["bottom"] and zone["bottom"] > other["top"]):
                 return True

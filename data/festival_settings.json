@@ -1,4 +1,8 @@
 {
     "ACTIONS_BY_LOCATIONS": {},
-    "STALLS_BY_LOCATIONS": {}
+    "STALLS_BY_LOCATIONS": {},
+    "ACTIONS_MOVING": {
+        "FESTIVAL_AREA": "GO_TO_TENT_AREA",
+        "TENT_AREA": "GO_TO_FESTIVAL_AREA"
+    }
 }

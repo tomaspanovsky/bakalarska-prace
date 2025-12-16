@@ -2,7 +2,8 @@ import json
 
 def save(zones_data):
     result = {"ACTIONS_BY_LOCATIONS": {},
-              "STALLS_BY_LOCATIONS": {}}
+              "STALLS_BY_LOCATIONS": {},
+              "ACTIONS_MOVING": {}}
 
     location_map = {
         "Vstupní zóna": "ENTRANCE_ZONE",
@@ -13,11 +14,15 @@ def save(zones_data):
     }
 
     for zone_name, zone_info in zones_data.items():
+        print(zone_name, zone_info)
+
         for instance in zone_info["instances"]:
             location_key = location_map.get(zone_name, zone_name.upper().replace(" ", "_"))
-            actions = {}
+            action = {}
             stalls = []
             traces = []
+            
+            print("aktuální instance:", instance)
 
             food_stalls = ["Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek"]
             drink_stalls = ["Nealko stánek", "Pivní stánek", "Red Bull stánek"]
@@ -29,18 +34,18 @@ def save(zones_data):
 
                 if "toitoiky" in obj_name:
                     stalls.append("toitoi")
-                    actions["wc"] = "GO_TO_TOILET"
+                    action["wc"] = "GO_TO_TOILET"
 
                 elif "sprchy" in obj_name:
                     stalls.append("showers")
-                    actions["hygiene"] = "GO_TO_SCHOWER"
+                    action["hygiene"] = "GO_TO_SCHOWER"
 
                 elif "pokladna" in obj_name:
                     stalls.append("ticket_booth")
-                    actions["bracelet_exchange"] = "BRACELET_EXCHANGE"
+                    action["bracelet_exchange"] = "BRACELET_EXCHANGE"
                     
                 elif "podium" in obj_name: 
-                    actions["band_playing"] = "GO_TO_CONCERT"
+                    action["band_playing"] = "GO_TO_CONCERT"
 
                 elif any(food_stall.lower() in obj_name for food_stall in food_stalls):
                     
@@ -54,12 +59,12 @@ def save(zones_data):
                         stalls.append("grill_stall")
                     elif "bel" in obj_name:
                         stalls.append("belgian_fries_stall")
-                    elif "langoš" in obj_name or "langos" in obj_name:
+                    elif "langoš" in obj_name:
                         stalls.append("langos_stall")
                     elif "sladký" in obj_name:
                         stalls.append("sweet_stall")
 
-                    actions["hunger"] = "GO_FOR_FOOD"
+                    action["hunger"] = "GO_FOR_FOOD"
 
                 elif any(drink_stall.lower() in obj_name for drink_stall in drink_stalls):
                     
@@ -70,14 +75,22 @@ def save(zones_data):
                     if "red bull" in obj_name:
                         stalls.append("redbull_stall")
 
-                    actions["thirst"] = "GO_FOR_DRINK"
+                    action["thirst"] = "GO_FOR_DRINK"
 
-                elif any(atraction.lower() in obj_name for atraction in atractions):
-                    actions["atraction_desire"] = "GO_TO_ATRACTION"
+                if any(atraction.lower() in obj_name for atraction in atractions):
+                    action["atraction_desire"] = "GO_TO_ATRACTION"
 
-#            for lines in instance["lines"]:
-#               traces.append[lines["other_zone"]["type"]]
-#           print(traces)
+                result["ACTIONS_BY_LOCATIONS"][location_key] = action
+                result["STALLS_BY_LOCATIONS"][location_key] = stalls
+
+            line = instance.get("lines", [])
+
+            if line != []:
+                destination = line[0]
+                destination = destination["other_zone"]["type"]
+                destination = location_map.get(destination, [])
+                destination = "GO_TO_" + destination
+                result["ACTIONS_MOVING"][location_key] = destination
 
     with open("data/festival_settings.json", "w", encoding="utf-8") as f:
         json.dump(result, f, indent=4, ensure_ascii=False)
