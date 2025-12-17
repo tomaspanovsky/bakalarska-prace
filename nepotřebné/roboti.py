@@ -2,7 +2,6 @@ import random
 import simpy
 
 position = {"Robot A": 0, "Robot B": 5}
-direction = {"Robot A": "vpravo", "Robot B": "vlevo"}
 
 def robot(env, name, event):
     while True:
@@ -12,22 +11,19 @@ def robot(env, name, event):
             break
 
         else:
-            print(f"{env.now}: {name} je na pozici {position[name]} se začal pohybovat směrem {direction[name]}")
+            print(f"{env.now}: {name} je na pozici {position[name]} a začal se pohybovat")
 
-        if direction[name] == "vpravo":
+        if name == "Robot A":
             position[name] += 1
         else:
             position[name] -= 1
 
         yield env.timeout(random.randint(1, 3))
         print(f"{env.now}: {name} se zastavil a rozhlíží se")
+        yield env.timeout(1)
 
 def meeting_callback(event):
-    print(f"Roboti se potkali!" , position, direction)
-   
-    for robot in direction:
-        direction[robot] = "vlevo" if direction[robot] == "vpravo" else "vpravo"
-        print(f"{robot} se otočil a odteď bude chodit {direction[robot]}")
+    print(f"Roboti se potkali na pozici ", position)
 
 env = simpy.Environment()
 meeting_event = env.event()

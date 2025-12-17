@@ -1,6 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-from . import saving 
+from . import saving
+from . import loading 
 import os
 
 # Stav aplikace
@@ -140,6 +141,9 @@ def get_user_settings():
     def print_zones_data():
         global zones_data
         print(zones_data)
+    
+    def load():
+        loading.load()
 
     # Pravý sloupec
     frame_right = tk.Frame(content_frame, width=200, height=800, bg="white")
@@ -156,12 +160,15 @@ def get_user_settings():
     save_button = tk.Button(buttons_frame, text="Uložit", command=save, font=("Arial", 20), bg="blue", fg="white", padx=20, pady=10, width=10, height=1)
     save_button.pack(side="left", padx=10)
 
+    save_button = tk.Button(buttons_frame, text="Načíst", command=load, font=("Arial", 20), bg="blue", fg="white", padx=20, pady=10, width=10, height=1)
+    save_button.pack(side="left", padx=10)
+
     print_button = tk.Button(buttons_frame, text="Print Zones data", command=print_zones_data, font=("Arial", 20), bg="blue", fg="white", padx=20, pady=10, width=10, height=1)
     print_button.pack(side="left", padx=10)
 
     # Výčet objektů podle zóny
     objects_for_zone = {
-        "Spawn bod": ["Spawn bod"],
+        "Spawn bod": [],
         "Vstupní zóna": ["Pokladna", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky"],
         "Festivalový areál": ["Podium", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky"],
         "Stanové městečko": ["Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Sprchy"],
@@ -305,16 +312,11 @@ def get_user_settings():
         x, y = event.x, event.y
         r = 13
 
-        if current_zone != "Spawn bod":
-            instance = find_zone_instance_for_point(current_zone, x, y)
-            if instance is None:
-                print("chyba: objekt musí být uvnitř existující zóny")
-                return
-        else:
-            # speciál pro Spawn body 
-            instance = {"type": "Global", "objects": []}
-            zones_data.setdefault("Global", {"multiple": True, "instances": []})
-            zones_data["Global"]["instances"].append(instance)
+        instance = find_zone_instance_for_point(current_zone, x, y)
+
+        if instance is None:
+            print("chyba: objekt musí být uvnitř existující zóny")
+            return
 
         EDGE_TOLERANCE = 15 
 
@@ -333,9 +335,6 @@ def get_user_settings():
 
         elif current_object in drinks:
             obj_id = canvas.create_oval(x-r, y-r, x+r, y+r, fill="blue", outline="black")
-
-        elif current_object == "Spawn bod":
-            obj_id = canvas.create_rectangle(x-50, y, x+50, y+50, fill="black")
 
         elif current_object == "Toitoiky":
             obj_id = canvas.create_rectangle(x-50, y, x+50, y+50, fill="black")
@@ -368,21 +367,7 @@ def get_user_settings():
         obj_data = {"object": current_object, "x": x, "y": y, "canvas_ids": [text_id, obj_id], "extra": []}
 
         instance.setdefault("objects", []).append(obj_data)
-
-    def get_clicked_object(event):
-        for zone_type, zone_info in zones_data.items():
-            for inst in zone_info["instances"]:
-                for obj in inst.get("objects", []):
-                    geom_id = obj["canvas_ids"][1]
-                    x1, y1, x2, y2 = canvas.coords(geom_id)
-                    if x1 <= event.x <= x2 and y1 <= event.y <= y2:
-                        return obj
-        return None
-    
-    def get_object_center(obj):
-        coords = canvas.coords(obj["canvas_ids"][1])
-        return (coords[0] + coords[2]) / 2, (coords[1] + coords[3]) / 2
-
+            
     def on_click(event):
         """Začátek kreslení zóny (pokud není vybraný objekt)."""
         global drawing, last_x, last_y, zone_rect, zone_label, current_object, current_zone, current_mode, selected_zone_instance, selected_object, is_dragging_object, is_dragging_zone, connect_start_zone
@@ -695,7 +680,7 @@ def get_user_settings():
                 last_x, last_y = event.x, event.y
 
         # pokud kreslíme novou zónu
-        if not drawing or current_object is not None or current_zone == "Spawn bod":
+        if not drawing or current_object is not None:
             return
 
         if zone_rect is not None:

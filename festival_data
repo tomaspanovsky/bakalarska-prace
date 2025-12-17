@@ -1,0 +1,97 @@
+"Chill z\xF3na":
+  instances: []
+  multiple: true
+"Festivalov\xFD are\xE1l":
+  instances:
+  - &id001
+    bottom: 386.0
+    canvas_ids:
+    - 187
+    - 188
+    label_id: 188
+    left: 104.0
+    lines:
+    - id: 847
+      other_zone: &id002
+        bottom: 432.0
+        canvas_ids:
+        - 541
+        - 542
+        label_id: 542
+        left: 566.0
+        lines:
+        - id: 847
+          other_zone: *id001
+        - id: 848
+          other_zone: &id003
+            bottom: 718.0
+            canvas_ids:
+            - 845
+            - 846
+            label_id: 846
+            left: 318.0
+            lines:
+            - id: 848
+              other_zone: *id002
+            - id: 849
+              other_zone: *id001
+            objects: []
+            rect_id: 845
+            right: 642.0
+            top: 475.0
+            type: "Z\xE1bavn\xED z\xF3na"
+        objects:
+        - canvas_ids:
+          - 856
+          - 857
+          extra: []
+          object: Toitoiky
+          x: 609
+          y: 338
+        rect_id: 541
+        right: 845.0
+        top: 166.0
+        type: "Stanov\xE9 m\u011Bste\u010Dko"
+    - id: 849
+      other_zone: *id003
+    objects:
+    - canvas_ids:
+      - 850
+      - 851
+      extra: []
+      object: "Grill st\xE1nek"
+      x: 206
+      y: 262
+    - canvas_ids:
+      - 852
+      - 853
+      extra: []
+      object: "Nealko st\xE1nek"
+      x: 341
+      y: 301
+    - canvas_ids:
+      - 854
+      - 855
+      extra: []
+      object: "Burger st\xE1nek"
+      x: 374
+      y: 228
+    rect_id: 187
+    right: 438.0
+    top: 159.0
+    type: "Festivalov\xFD are\xE1l"
+  multiple: false
+Spawn bod:
+  instances: []
+  multiple: true
+"Stanov\xE9 m\u011Bste\u010Dko":
+  instances:
+  - *id002
+  multiple: true
+"Vstupn\xED z\xF3na":
+  instances: []
+  multiple: true
+"Z\xE1bavn\xED z\xF3na":
+  instances:
+  - *id003
+  multiple: false

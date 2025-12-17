@@ -132,18 +132,74 @@ env.run()
 \end{verbatim}
 
 \subsection{Prostředí simulace}
-Simulační prostředí spravuje čas simulace, plánování a zpracování událostí, a poskytuje také prostředky pro postupné provádění simulace. To jsme již vysvětlili v základních principech SimPy. 
+Již víme, že simulační prostředí spravuje čas simulace, plánování a zpracování událostí, a poskytuje také prostředky pro postupné provádění simulace. Mimo to SimPy také nabízí simulační prostředí \texttt{RealtimeEnvironment}, které simulační čas synchronizuje s reálným časem. To umožňuje například běh simulace paralelně s reálnými událostmi, kdy čas simulace plyne stejně jako skutečný čas, to však v této práci nevyužijeme.
 
-Prostředí obsluhuje spuštění simulace. Simulace v SimPy se spouští zasláním zprávy \texttt{env.run()}. Simulaci zle spustit do okamžiku, kdy nezbývá žádná další událost, a to v případě, že zašleme zprávu \texttt{env.run()} bez argumentů. To znamená, že pokud procesy popisující aktivity entit běží v nekonečné smyčce \texttt{While True:}, tak jak jsme si ukázali v příkladu s roboty, tak simulace samovolně nikdy neskončí a musíme ji přerušit ručně. Dalším způsobem, jak můžeme simulaci spustit, je spuštění simulace dokud simulace nedosáhne určitého simulačního času. Tímto způsobem se simulace spustí, pokud do argumentu vložíme \texttt{until=time}, kde time je hodnota datového typu \texttt{integer}, na které se má simulační čas zastavit, například  \texttt{env.run(until=10)}. Simulace se zastaví v okamžiku, kdy čas dosáhne hodnoty 10, ale neprovede žádné události naplánované na čas 10. Posledním způsbem je spuštění simulace do doby, než nenastane konkrétní událost \texttt{env.run(until=event)}. 
+Další funkce prostředí je obsluha spuštění simulace. Simulace v SimPy se spouští zasláním zprávy \texttt{env.run()}, kde případný argument této zprávy záleží na tom, kdy má simulace skončit. Simulace obvykle končí po vyčerpání všech událostí, nebo po uplynutí předem stanoveného času. Pokud chceme, aby simulace skončila po vyčerpání všech naplánovaných událostí, necháme zprávu \texttt{env.run()} bez argumentu. Speciálním případem takto spuštěné simulace může být nekonečná simulace, a to například když kód procesní funkce běží v nekonečné smyčce \texttt{while True:}, jako jsme si ukázali v příkladu s roboty. Tato simulace samovolně nikdy neskončí a musíme ji ukončit násilně.
+V případě ukončení po uplynutí předem stanoveného času zašleme zprávu \texttt{env.run()} s argumentem \texttt{until=time}, kde time je hodnota datového typu \texttt{integer}, na které se má simulační čas zastavit, například \texttt{env.run(until=10)}. Simulace se zastaví v okamžiku, kdy čas dosáhne hodnoty 10, ale neprovede žádné události naplánované na čas 10. Posledním způsbem je spuštění simulace do doby, než nenastane konkrétní událost \texttt{env.run(until=event)}. 
 
-Prostředí také poskytuje metody pro ruční krokování simulace, což je užitečné zejména pro testování a ladění simulace po jednotlivých krocích. Zaslání zprávy \texttt{peek()} vrací čas nejbližší naplánované události, aniž by byla událost vykonána, což umožňuje kontrolu plánovaného průběhu simulace. Zaslání zprávy \texttt{step()} zpracuje nejbližší naplánovanou událost, posune aktuální čas simulace na čas této události a vykoná všechny procesy, které mají tuto událost aktivní. Pokud nejsou k dispozici žádné další události, vyvolá metoda výjimku \texttt{EmptySchedule}, čímž signalizuje konec simulace. 
+Prostředí také poskytuje metody pro ruční krokování simulace, to je užitečné zejména pro testování a ladění simulace po jednotlivých krocích. Zaslání zprávy \texttt{peek()} vrací čas nejbližší naplánované události, aniž by byla událost vykonána, což umožňuje kontrolu plánovaného průběhu simulace. Zaslání zprávy \texttt{step()} zpracuje nejbližší naplánovanou událost a posune aktuální čas simulace na čas této události. Pokud nejsou k dispozici žádné další události, vyvolá metoda výjimku \texttt{EmptySchedule}, čímž signalizuje konec simulace. 
 
-SimPy také nabízí simulační prostředí \texttt{RealtimeEnvironment}, které simulační čas synchronizuje s reálným časem. To umožňuje například běh simulace paralelně s reálnými událostmi, kdy čas simulace plyne stejně jako skutečný čas.
+Zprávy \texttt{peek()} a \texttt{step()} si ukážeme na následujícím jednoduchém příkladu, kde budeme mít dvě procesní funkce \texttt{procesni\_funkce\_1} a \texttt{procesni\_funkce\_2}, a každá procesní funkce představuje jednoduchou aktivitu, která u první funkce trvá 3 časové jednotky a u druhé 5 časových jednotek.
+
+ \begin{verbatim} 
+def procesni_funkce_1(env):
+    print(f"t = {env.now}: start aktivity_1")
+    yield env.timeout(3)
+    print(f"t = {env.now}: konec aktivity_1")
+
+def procesni_funkce_2(env):
+    print(f"t = {env.now}: start aktivity_2")
+    yield env.timeout(5)
+    print(f"t = {env.now}: konec aktivity_2")
+
+env = simpy.Environment()
+env.process(procesni_funkce_1(env))
+env.process(procesni_funkce_2(env))
+
+\end{verbatim}
+
+\noindent Následně budeme na střídavě zasílat zprávy \texttt{peek()} a \texttt{step()}. Připomeňme, že \texttt{peek()}  vrací čas nejbližší naplánované události, a \texttt{peek()} zpracuje nejbližší událost.
+
+ \begin{verbatim} 
+print(env.peek())
+env.step()
+print(env.peek())
+env.step()
+print(env.peek())
+env.step()
+print(env.peek())
+env.step()
+print(env.peek())
+env.step()
+print(env.peek())
+env.step()
+\end{verbatim}
+
+\noindent První zaslání zprávy \texttt{peek()} vrátí 0, protože start procesů \texttt{procesni\_funkce\_1} a \texttt{procesni\_funkce\_2} je naplánován na čas 0. 
+Po prvním zaslání zprávy \texttt{env.step()} se spustí první proces \texttt{procesni\_funkce1} a vypíše se: \texttt{t = 0: start aktivity\_1}
+Proces narazí na \texttt{yield env.timeout(3)}, což naplánuje timeout událost v čase 3. Druhé zaslání zprávy \texttt{peek()} vrátí 0, protože další nejbližší událost (start druhého procesu \texttt{procesni\_funkce2}) je stále naplánovaná na čas 0. Druhé zaslání zprávy \texttt{env.step()} spustí start druhého procesu \texttt{procesni\_funkce2} a vypíše se: \texttt{t = 0: start aktivity\_2}. Proces narazí na \texttt{yield env.timeout(5)}, což naplánuje timeout událost v čase 5. Třetí volání \texttt{peek()} vrátí 3, protože nejbližší naplánovaná událost je timeout prvního procesu. Třetí zaslání zprávy \texttt{env.step()} zpracuje timeout první procesní funkce. Simulační čas se posune na 3 a proces dokončí svou aktivitu: \texttt{t = 3: konec aktivity\_1}. Čtvrté zaslání zprávy \texttt{peek()} ukazuje nejbližší naplánovanou událost, což je tentorkát dokončení procesu \texttt{procesni\_funkce\_1} v čase 3. V SimPy se totiž i ukončení procesu zapisuje jako událost do plánovače. Proto po dokončení těla procesní funkce ještě jedno \texttt{peek()} a \texttt{step()} jen finalizuje proces (nastaví jeho stav na finished), ale nevypíše žádný text z těla funkce. Pátá zpráva \texttt{step()} tedy nic nevypíše a pouze ukončí první proces.
+Tímto způsobem bychom pokračovali až do zaslání sedmé zprávy \texttt{env.step()}, která by už vyhodila výjimku \texttt{EmptySchedule}, protože v plánu simulace nejsou další události, což signalizuje konec simulace.
+
+\noindent Výstup by tedy vypadal následovně.
+
+ \begin{verbatim} 
+0
+t = 0: start aktivity_1
+0
+t = 0: start aktivity_2
+3
+t = 3: konec aktivity_1
+3
+5
+t = 5: konec aktivity_2
+5
+\end{verbatim}
+
 
 \subsection{Události}
-SimPy vytváří události prostřednictvím modulu \texttt{simpy.events}. Základní třídou pro všechny události je \texttt{simpy.events.Event}, která definuje společné vlastnosti a metody, jež dědí všechny specializované typy událostí. I když lze třídu Event použít přímo, SimPy nabízí několik specializovaných podtříd pro různé účely.
+SimPy vytváří události prostřednictvím modulu \texttt{simpy.events}. Základní třídou pro všechny události je \texttt{simpy.events.Event}, která definuje společné vlastnosti a metody, jenž dědí všechny specializované typy událostí. I když lze třídu Event použít přímo, SimPy nabízí několik specializovaných podtříd pro různé účely.
 
-\texttt{Timeout} je speciální událost, která je dokončena po uplynutí zadaného času. Používá se například pro simulaci něčeho co trvá určitou dobu. \texttt{Initialize} je událost, která signalizuje inicializaci nějaké komponenty. V praxi se využívá obvykle interně v SimPy. \texttt{Process} je událost reprezentující běh generátorové funkce v SimPy. Dokončení této události znamená, že skončila nějaká aktivita. \texttt{Condition} je abstraktní třída pro složitější podmínky, které závisí na jiných událostech. \texttt{AllOf} je podmíněná událost, která je dokončena až tehdy, když všechny zadané události jsou dokončeny. \texttt{AnyOf} je podmíněná událost, která je dokončena, jakmile je dokončena alespoň jedna zadaná událost.
+Z předešlých kapitol již víme, že \texttt{Timeout} je speciální událost, která je dokončena po uplynutí zadaného času. Používá se pro simulaci aktivity,která trvá určitou dobu. \texttt{Initialize} je událost, která signalizuje inicializaci komponenty a využívá obvykle interně v SimPy. Komponentou je například objekt \texttt{Resource}, který představuje přístup k omezenému zdroji. O nich se více dozvíme později. \texttt{Process} je událost reprezentující běh generátorové funkce. Dokončení této události znamená, že skončila nějaká aktivita. \texttt{Condition} je abstraktní třída pro složitější podmínky, které závisí na jiných událostech. \texttt{AllOf} je podmíněná událost, která je dokončena až tehdy, když všechny zadané události jsou dokončeny. \texttt{AnyOf} je podmíněná událost, která je dokončena, jakmile je dokončena alespoň jedna zadaná událost.
 
 Každá událost může být v jednom ze tří stavů: může nastat \texttt{(not triggered)}, má nastat \texttt{(triggered)}, nebo nastala \texttt{(processed)}. Každá událost projde těmito stavy přesně jednou a vždy v uvedeném pořadí. Události jsou úzce spjaty s časem simulace, který řídí jejich přechod mezi stavy. Po vytvoření je událost ve stavu \texttt{(not triggered)}, to znamená, že událost ještě není aktivována, ale jde pouze o objekt v paměti. Když je událost naplánována na určitý čas, přejde do stavu \texttt{triggered} a atribut \texttt{Event.triggered} je nastaven na \texttt{True}. Událost v tomto stavu čeká na svůj časový okamžik, kdy bude zpracována. Dokud událost není zpracována, lze k ní přidávat callbacky. Událost přejde do stavu  \texttt{processed} jakmile byla dokončena a všechny callbacky byly spuštěny.
 
@@ -160,11 +216,7 @@ event.callbacks.append(my_callback)
 env.run()
 \end{verbatim}
 
-Vytvořili jsme timeout událost na 3 časové jednotky. Přidali jsme callback \texttt{my\_callback}, který se automaticky spustí, když timeout skončí. Když SimPy zpracuje událost, zavolá callback a vypíše zprávu \texttt{Událost dokončena v čase 3}. Tento příklad demonstruje, že callback je funkce spouštěná po dokončení události. V SimPy ale callbacky vznikají automaticky, když aktivita vrací \texttt{yield} událost, to je hlavní mechanismus, díky kterému simulace běží sama.
-
-
-\texttt{Callbacky} jsou uloženy v seznamu \texttt{Event.callbacks}. 
-Událost je označena jako \texttt{processed} tehdy, když ji SimPy odebere z fronty událostí a zavolá všechny její \texttt{callbacky}. Od tohoto okamžiku již nelze \texttt{callbacky} přidávat. Atribut \texttt{Event.processed} se nastaví na \texttt{True}.
+Vytvořili jsme timeout událost na 3 časové jednotky. Přidali jsme callback \texttt{my\_callback}, který se automaticky spustí, když timeout skončí. Když SimPy zpracuje událost, zavolá callback a vypíše zprávu \texttt{Událost dokončena v čase 3}. Tento příklad demonstruje, že callback je funkce spouštěná po dokončení události. V SimPy ale callbacky vznikají automaticky, když aktivita vrací \texttt{yield} událost.
 
 
 \newpage

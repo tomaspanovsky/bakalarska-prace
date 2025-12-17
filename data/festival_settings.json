@@ -1,8 +1,22 @@
 {
-    "ACTIONS_BY_LOCATIONS": {},
-    "STALLS_BY_LOCATIONS": {},
+    "ACTIONS_BY_LOCATIONS": {
+        "TENT_AREA": {
+            "thirst": "GO_FOR_DRINK",
+            "wc": "GO_TO_TOILET"
+        }
+    },
+    "STALLS_BY_LOCATIONS": {
+        "TENT_AREA": [
+            "redbull_stall",
+            "toitoi"
+        ]
+    },
     "ACTIONS_MOVING": {
-        "FESTIVAL_AREA": "GO_TO_TENT_AREA",
-        "TENT_AREA": "GO_TO_FESTIVAL_AREA"
+        "FESTIVAL_AREA": [
+            "GO_TO_TENT_AREA"
+        ],
+        "TENT_AREA": [
+            "GO_TO_FESTIVAL_AREA"
+        ]
     }
 }

@@ -1,4 +1,6 @@
 import json
+import tkinter as tk
+from tkinter import filedialog
 
 def save(zones_data):
     result = {"ACTIONS_BY_LOCATIONS": {},
@@ -83,16 +85,30 @@ def save(zones_data):
                 result["ACTIONS_BY_LOCATIONS"][location_key] = action
                 result["STALLS_BY_LOCATIONS"][location_key] = stalls
 
-            line = instance.get("lines", [])
+            for line in instance.get("lines", []):
 
-            if line != []:
-                destination = line[0]
-                destination = destination["other_zone"]["type"]
-                destination = location_map.get(destination, [])
-                destination = "GO_TO_" + destination
-                result["ACTIONS_MOVING"][location_key] = destination
+                if line != []:
+                    destination = line
+                    destination = destination["other_zone"]["type"]
+                    destination = location_map.get(destination, [])
+                    destination = "GO_TO_" + destination
+                    traces.append(destination)
+                    result["ACTIONS_MOVING"][location_key] = traces
 
-    with open("data/festival_settings.json", "w", encoding="utf-8") as f:
-        json.dump(result, f, indent=4, ensure_ascii=False)
+                    line["other_zone"] = line["other_zone"]["type"]
 
+    file_path = filedialog.asksaveasfilename(
+    defaultextension=".json",    
+    filetypes=[("JSON files", "*.json")],
+    title="Uložit soubor jako"
+)
+
+    data = [result, zones_data]
+    if file_path:
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+
+        print("Soubor uložen do:", file_path)
+    else:
+        print("Uživatel zrušil uložení")
    
