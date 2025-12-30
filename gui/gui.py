@@ -51,13 +51,19 @@ def get_user_settings():
         editor_frame.pack_forget()
         main_frame.pack(fill="both", expand=True)
 
+
+
     # ---------- HLAVNÍ OKNO ----------
+
     root = tk.Tk()
     root.title("Nastavení festivalu")
     root.attributes('-fullscreen', True)
     root.configure(bg='black')
 
+
+
     # ---------- OBRAZOVKA 1: Úvodní menu ----------
+
     main_frame = tk.Frame(root, bg='black')
     main_frame.pack(fill="both", expand=True)
 
@@ -105,17 +111,16 @@ def get_user_settings():
     bottom_frame = tk.Frame(main_frame, bg='black')
     bottom_frame.pack(side="bottom", pady=30)
 
-    start_button = tk.Button(bottom_frame, text="Start", command=start, font=("Arial", 20), bg="green", fg="white", padx=40, pady=15)
-    start_button.pack(side="left", padx=10)
-
     editor_button = tk.Button(bottom_frame, text="Dále", command=open_editor, font=("Arial", 20), bg="blue", fg="white", padx=40, pady=15)
     editor_button.pack(side="left", padx=10)
 
     exit_button = tk.Button(bottom_frame, text="Zavřít", command=exit_app, font=("Arial", 20), bg="red", fg="white", padx=40, pady=15)
     exit_button.pack(side="left", padx=10)
 
+
+
     # ---------- OBRAZOVKA 2: Editor ----------
-    
+
     editor_frame = tk.Frame(root, bg="black")
 
     tk.Label(editor_frame, text="Editor festivalového areálu", font=("Arial", 30, "bold"), bg="black", fg="yellow").pack(pady=20)
@@ -143,7 +148,9 @@ def get_user_settings():
         print(zones_data)
     
     def load():
-        loading.load()
+        canvas.delete("all")
+        data = loading.load()
+        draw_load(data)
 
     # Pravý sloupec
     frame_right = tk.Frame(content_frame, width=200, height=800, bg="white")
@@ -165,6 +172,9 @@ def get_user_settings():
 
     print_button = tk.Button(buttons_frame, text="Print Zones data", command=print_zones_data, font=("Arial", 20), bg="blue", fg="white", padx=20, pady=10, width=10, height=1)
     print_button.pack(side="left", padx=10)
+
+    start_button = tk.Button(buttons_frame, text="Start", command=start, font=("Arial", 20), bg="green", fg="white", padx=20, pady=10, width=10, height=1)
+    start_button.pack(side="left", padx=10)
 
     # Výčet objektů podle zóny
     objects_for_zone = {
@@ -302,15 +312,12 @@ def get_user_settings():
             print("Zony a objekty lze přidávat pouze v režimu +")
             return
 
-        foods = ["Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek"]
-        drinks = ["Nealko stánek", "Pivní stánek", "Red Bull stánek"]
-
+    
         if current_zone is None or current_object is None:
             print("chyba: není vybrána zóna nebo objekt")
             return
 
         x, y = event.x, event.y
-        r = 13
 
         instance = find_zone_instance_for_point(current_zone, x, y)
 
@@ -328,7 +335,18 @@ def get_user_settings():
                 print("Objekt 'Vstup' musí být umístěn na okraji zóny!")
                 return
     
-        text_id = canvas.create_text(x, y-20, text=current_object, fill="black", font=("Arial", 8, "bold"), anchor="center")
+        obj_data = create_object(instance, current_object, x, y)
+        instance.setdefault("objects", []).append(obj_data)
+
+    def create_object(instance, current_object, x, y):
+        foods = ["Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek"]
+        drinks = ["Nealko stánek", "Pivní stánek", "Red Bull stánek"]
+
+        r = 13
+
+        text_id = canvas.create_text( x, y-20, text=current_object, fill="black", font=("Arial", 8, "bold"), anchor="center")
+
+        extra = []
 
         if current_object in foods:
             obj_id = canvas.create_oval(x-r, y-r, x+r, y+r, fill="green", outline="black")
@@ -354,20 +372,15 @@ def get_user_settings():
     
             # Popis stání u podia
             stand_text_id = canvas.create_text((stand_left + stand_right)/2,(stand_top + stand_bottom)/2,text="Stání u podia",fill="black", font=("Arial", 8, "bold"), anchor="center")
-
-            # Přidání do obj_data obojího
-            obj_data = {"object": current_object,"x": x,"y": y,"canvas_ids": [text_id, obj_id], "extra": [{"object": "Stání u podia", "canvas_ids": [stand_text_id, stand_id]}]}
-            instance.setdefault("objects", []).append(obj_data)
-           
-            return
+            
+            extra.append({"object": "Stání u podia", "canvas_ids": [stand_text_id, stand_id]})
         
         else:
             obj_id = canvas.create_oval(x-r, y-r, x+r, y+r, fill="gray", outline="black")
 
-        obj_data = {"object": current_object, "x": x, "y": y, "canvas_ids": [text_id, obj_id], "extra": []}
+        return { "object": current_object, "x": x, "y": y, "canvas_ids": [text_id, obj_id], "extra": extra}   
+    
 
-        instance.setdefault("objects", []).append(obj_data)
-            
     def on_click(event):
         """Začátek kreslení zóny (pokud není vybraný objekt)."""
         global drawing, last_x, last_y, zone_rect, zone_label, current_object, current_zone, current_mode, selected_zone_instance, selected_object, is_dragging_object, is_dragging_zone, connect_start_zone
@@ -700,6 +713,8 @@ def get_user_settings():
         text_y = top - 12
         zone_label = canvas.create_text(text_x, text_y, text=current_zone or "", fill="black", font=("Arial", 12, "bold"), anchor="s")
 
+
+
     def on_release(event):
         """Ukončení kreslení"""
         global drawing, zone_rect, zone_label, last_x, last_y, current_zone, zones_data, is_dragging_object
@@ -717,17 +732,14 @@ def get_user_settings():
         drawing = False
 
         if zone_rect is not None:
-            bbox = canvas.coords(zone_rect)
-            left, top, right, bottom = bbox
+            left, top, right, bottom = canvas.coords(zone_rect)
 
-            permanent_rect = canvas.create_rectangle(left, top, right, bottom, outline="blue", fill="white", width=3)
-            text_x = (left + right) / 2
-            text_y = top - 12
-            permanent_label = canvas.create_text(text_x, text_y, text=current_zone or "", fill="black", font=("Arial", 12, "bold"), anchor="s")
+            zone_instance = {"type": current_zone, "left": left, "top": top, "right": right, "bottom": bottom, "objects": [], "lines": [] }
 
-            zone_instance = { "type": current_zone, "left": left, "top": top, "right": right, "bottom": bottom, "label_id": permanent_label, "rect_id": permanent_rect,"canvas_ids":[permanent_rect, permanent_label], "objects": [], "lines": []}
-
+            draw_zone(zone_instance)
+    
             zones_data[current_zone]["instances"].append(zone_instance)
+
             print(f"Uložená zóna {current_zone}: {left, top, right, bottom}")
 
             # smaž dočasné objekty
@@ -737,6 +749,24 @@ def get_user_settings():
 
         zone_rect = None
         zone_label = None
+
+
+
+    def draw_zone(zone_instance):
+        left = zone_instance["left"]
+        top = zone_instance["top"]
+        right = zone_instance["right"]
+        bottom = zone_instance["bottom"]
+        zone_type = zone_instance["type"]
+
+        rect_id = canvas.create_rectangle(left, top, right, bottom, outline="blue", fill="white", width=3)
+        label_id = canvas.create_text((left + right)/2, top-12, text=zone_type, fill="black", font=("Arial", 12, "bold"), anchor="s")
+
+        zone_instance["rect_id"] = rect_id
+        zone_instance["label_id"] = label_id
+        zone_instance["canvas_ids"] = [rect_id, label_id]
+    
+
 
     def delete_selected(event=None):
         global selected_zone_instance, selected_object
@@ -780,6 +810,8 @@ def get_user_settings():
 
     RESIZE_TOLERANCE = 20 
 
+
+
     def get_resize_direction(zone, x, y):
         """Vrátí (dx, dy) který říká, které hrany/rohy se mají měnit"""
 
@@ -800,6 +832,8 @@ def get_user_settings():
         if not any(resize_dir.values()):
             return None
         return resize_dir
+
+
 
     def closest_point_on_zone(zone_from, zone_to):
         """Vrátí bod (x, y) na hraně zone_from nejbližší k zone_to"""
@@ -822,6 +856,8 @@ def get_user_settings():
         closest = min(edges, key=lambda p: (p[0] - cx2)**2 + (p[1] - cy2)**2)
         return closest
     
+
+
     def update_zone_lines(zone):
         for line in zone.get("lines", []):
             other = line["other_zone"]
@@ -830,6 +866,8 @@ def get_user_settings():
             x2, y2 = closest_point_on_zone(other, zone)
             canvas.coords(line["id"], x1, y1, x2, y2)
     
+
+
     def zone_overlaps(zone, other_zones):
         """Vrátí True, pokud zóna překrývá některou z ostatních zón."""
         for other in other_zones:
@@ -840,6 +878,54 @@ def get_user_settings():
                 zone["top"] < other["bottom"] and zone["bottom"] > other["top"]):
                 return True
         return False
+
+    def relink_zone_lines():
+        global zones_data
+
+        for zone_type, zone_info in zones_data.items():
+            for zone in zone_info["instances"]:
+                for line in zone.get("lines", []):
+                    other_name = line.get("other_zone")
+
+                    # už je relinknuté
+                    if isinstance(other_name, dict):
+                        continue
+
+                    target = find_zone_instance_by_type(other_name)
+                    line["other_zone"] = target
+
+    def find_zone_instance_by_type(zone_type):
+        for zt, zi in zones_data.items():
+            if zt == zone_type:
+                return zi["instances"][0] if zi["instances"] else None
+        return None
+
+    def draw_load(data):
+        global zones_data
+        zones_data = data
+        
+        for zone_type, zone_info in data.items():
+            for zone_instance in zone_info["instances"]:
+                draw_zone(zone_instance) 
+
+                objects = zone_instance.get("objects")
+                for obj in objects:
+                    new_obj = create_object(zone_instance, obj["object"], obj["x"], obj["y"])
+                    obj["canvas_ids"] = new_obj["canvas_ids"]
+
+        print("Všechny zóny a objekty vykresleny.")
+
+        relink_zone_lines()
+
+        for zone_type, zone_info in zones_data.items():
+            for zone in zone_info["instances"]:
+                for line in zone.get("lines", []):
+                    other = line["other_zone"]
+                    x1, y1 = closest_point_on_zone(zone, other)
+                    x2, y2 = closest_point_on_zone(other, zone)
+
+                    line_id = canvas.create_line(x1, y1, x2, y2, fill="black", width=2)
+                    line["id"] = line_id
 
 
     canvas.bind("<Button-1>", on_click)
