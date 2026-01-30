@@ -16,12 +16,13 @@ object_buttons = {}
 selected_zone_instance = None
 selected_object = None
 selected_connect_zone = None
+selected_line = None
 is_dragging_object = False
 is_dragging_zone = False
 connect_start_zone = None
 
 zones_data = {
-    "Spawn bod": {"multiple": True, "instances": []},
+    "Spawn zóna": {"multiple": True, "instances": []},
     "Vstupní zóna": {"multiple": True, "instances": []},
     "Festivalový areál": {"multiple": False, "instances": []},
     "Stanové městečko": {"multiple": True, "instances": []},
@@ -179,11 +180,11 @@ def get_user_settings():
     # Výčet objektů podle zóny
     objects_for_zone = {
         "Spawn bod": [],
-        "Vstupní zóna": ["Pokladna", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky"],
-        "Festivalový areál": ["Podium", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky"],
-        "Stanové městečko": ["Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Sprchy"],
-        "Chill zóna": [],
-        "Zábavní zóna": ["Bungee-jumping", "Horská dráha", "Lavice", "Kladivo", "Nealko stánek", "Pivní stánek"]
+        "Vstupní zóna": ["Pokladna", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Umývárna", "Stoly", "Bankomat"],
+        "Festivalový areál": ["Podium", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky","Umývárna", "Stoly", "Bankomat", "Merch stan", "Stan na autogramiády", "Dobíjecí stan"],
+        "Stanové městečko": ["Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Sprchy", "Umývárna", "Dobíjecí stan", "Louka na stanování"],
+        "Chill zóna": ["Stánek s vodníma dýmkama", "Cammel stánek", "Chill stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Umývárna", "Dobíjecí stan"],
+        "Zábavní zóna": ["Bungee-jumping", "Horská dráha", "Lavice", "Kladivo", "Nealko stánek", "Pivní stánek","Bankomat"]
     }
 
     # Funkce pro výběr objektu
@@ -228,7 +229,7 @@ def get_user_settings():
 
         object_buttons.clear()
         for obj in objects_for_zone.get(zone_name, []):
-            btn = tk.Button(frame_right, text=obj, font=("Arial", 13), width=15, command=lambda o=obj: select_object(o))
+            btn = tk.Button(frame_right, text=obj, font=("Arial", 8), height=1, width=25, command=lambda o=obj: select_object(o))
             btn.pack(pady=5)
             object_buttons[obj] = btn
 
@@ -357,6 +358,9 @@ def get_user_settings():
         elif current_object == "Toitoiky":
             obj_id = canvas.create_rectangle(x-50, y, x+50, y+50, fill="black")
 
+        elif current_object == "Louka na stanování":
+            obj_id = canvas.create_rectangle(x-100, y, x+100, y+100, fill="black")
+
         elif current_object == "Podium":
 
             # Podium
@@ -383,7 +387,7 @@ def get_user_settings():
 
     def on_click(event):
         """Začátek kreslení zóny (pokud není vybraný objekt)."""
-        global drawing, last_x, last_y, zone_rect, zone_label, current_object, current_zone, current_mode, selected_zone_instance, selected_object, is_dragging_object, is_dragging_zone, connect_start_zone
+        global drawing, last_x, last_y, zone_rect, zone_label, current_object, current_zone, current_mode, selected_zone_instance, selected_object, is_dragging_object, is_dragging_zone, connect_start_zone, selected_line
 
 
         print("\n[CLICK] at", event.x, event.y, "mode:", current_mode)
@@ -418,6 +422,33 @@ def get_user_settings():
             # nejdřív hledáme objekt
             clicked_obj = None
             clicked_zone = None
+            clicked_line = None
+
+            for zone_type, zone_info in zones_data.items():
+                for zone in zone_info["instances"]:
+                    for line in zone.get("lines", []):
+                        coords = canvas.coords(line["id"])
+                        if not coords:
+                            continue
+
+                        x1, y1, x2, y2 = coords
+                        # jednoduchá tolerance kliknutí
+                        if abs(event.x - (x1 + x2) / 2) < 10 and abs(event.y - (y1 + y2) / 2) < 10:
+                            clicked_line = line
+                            break
+                    if clicked_line:
+                        break
+                if clicked_line:
+                    break
+
+            if clicked_line:
+                if selected_line:
+                    canvas.itemconfig(selected_line["id"], width=2)
+
+                selected_line = clicked_line
+                canvas.itemconfig(clicked_line["id"], width=4)
+                print("Vybrána čára")
+                return
 
             for zone_type, zone_info in zones_data.items():
                 for inst in zone_info["instances"]:
@@ -769,7 +800,7 @@ def get_user_settings():
 
 
     def delete_selected(event=None):
-        global selected_zone_instance, selected_object
+        global selected_zone_instance, selected_object, selected_line
 
         if selected_object:
 
@@ -791,6 +822,18 @@ def get_user_settings():
             selected_object = None
             print("Objekt smazán")
             return  # tady ukonči, aby se dál nesmazala celá zóna
+        
+        if selected_line:
+            canvas.delete(selected_line["id"])
+
+            for zone_type, zone_info in zones_data.items():
+                for zone in zone_info["instances"]:
+                    if selected_line in zone.get("lines", []):
+                        zone["lines"].remove(selected_line)
+
+            selected_line = None
+            print("Propojení smazáno")
+            return
 
         if selected_zone_instance:
             # smažeme všechny canvas objekty spojené se zónou

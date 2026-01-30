@@ -4,6 +4,7 @@
 \usepackage[czech]{babel}
 \usepackage[a4paper, top=4cm, bottom=3cm, left=3cm, right=3cm]{geometry}
 \setlength{\parskip}{1em}
+\usepackage[htt]{hyphenat}
 
 \title{Diskrétní simulace za použití knihovny SimPy}
 \author{Panovský Tomáš}
@@ -87,7 +88,7 @@ Popsaným způsobem získáme další hodnoty z generátoru, tedy při dalším 
 V kontextu diskrétní simulace v knihovně SimPy jsou generátory využity k modelování aktivit, které představují chování jednotlivých entit, například návštěvníků festivalu. Každý příkaz \texttt{yield} v generátoru odpovídá předání řízení simulátoru a obvykle vrací objekt typu \texttt{Event}, který reprezentuje událost, na jejíž dokončení aktivita čeká. Příkladem může být čekání ve frontě u stánku s jídlem, dokončení přípravy jídla či jeho obdržení zákazníkem. Takto lze simulovat souběžné aktivity více entit a stochastické prvky, například náhodné časy příprav nebo příchodů návštěvníků, což odpovídá reálnému chování systému.
 
 \subsection{Základní principy SimPy}
-Základní komponenty SimPy jsou prostředí simulace (jenž je v SimPy označováno jako Environment), události a procesní funkce. Smyslem prostředí je řídit celou simulaci, udržovat simulační čas a organizovat události. Události udávají, kdy má dojít ke změně stavu a společně tvoří časový plán simulace. Procesní funkce jsou python generátorové funkce, které generují události. Smyslem procesních funkcí je popisovat chování entit v simulaci. Na každou procesní funkci můžeme nahlížet jako na aktivity dané entity. Voláním procesní funkce vzniká entita, jejiž chování popisuje iterátor funkcí vrácený. Jeden z argumentů volání procesní funkce je vždy prostředí.
+Základní komponenty SimPy jsou prostředí simulace (jenž je v SimPy označováno jako Environment), události a procesní funkce. Smyslem prostředí je řídit celou simulaci, udržovat simulační čas a organizovat události. Události udávají, kdy má dojít ke změně stavu a společně tvoří časový plán simulace. Procesní funkce jsou python generátorové funkce, které generují události. Smyslem procesních funkcí je popisovat chování entit v simulaci. Na každou procesní funkci můžeme nahlížet jako na aktivity dané entity. Voláním procesní funkce vzniká entita, jejiž chování popisuje iterátor funkcí vrácený. Jeden z argumentů volání procesní funkce je vždy prostředí. Instance procesní funkce běžící v simulačním prostředí v kontextu SimPy a programového řízení simulace nazýváme proces.
 
 Prostředí simulace řídí průběh simulační času a spravuje seznam plánovaných událostí. Simulační čas je čas, ve kterém simulace probíhá, nikoliv reálný čas. V SimPy je tento čas oproti reálnému času bez konkrétní jednotky a probíhá diskrétně. Simulační čas jsou tedy pouze diskrétní hodnoty jako například 0, 1, 2 a podobně. Jednotky času si můžeme určit sami podle toho, co simulujeme. Mohou to být například hodiny, minuty či sekundy. Standardně čas začíná hodnotou 0. Aktuální čas simulace můžeme získat zasláním zprávy \texttt{env.now()}. Každá událost má přiřazený čas, ve kterém nastane. Prostředí tedy vždy zpracuje událost naplánovanou na aktuální čas.
 
@@ -197,72 +198,122 @@ t = 5: konec aktivity_2
 
 
 \subsection{Události}
-SimPy vytváří události prostřednictvím modulu \texttt{simpy.events}. Základní třídou pro všechny události je \texttt{simpy.events.Event}, která definuje společné vlastnosti a metody, jenž dědí všechny specializované typy událostí. I když lze třídu Event použít přímo, SimPy nabízí několik specializovaných podtříd pro různé účely.
+SimPy vytváří události prostřednictvím modulu \texttt{simpy.events}. Základní třídou pro všechny události je \texttt{simpy.events.Event}, která definuje společné vlastnosti a metody, jenž dědí všechny specializované typy událostí. Třídu \texttt{Event} lze použít přímo u uživatelsky definovaných událostí, teré budou představeny v následující části práce. SimPy dále nabízí několik specializovaných podtříd pro různé účely.
 
-Z předešlých kapitol již víme, že \texttt{Timeout} je speciální událost, která je dokončena po uplynutí zadaného času. Používá se pro simulaci aktivity,která trvá určitou dobu.
+\subsubsection{Specializované události}
 
- \texttt{Initialize} je událost, která signalizuje inicializaci komponenty a využívá obvykle interně v SimPy. Komponentou je například objekt \texttt{Resource}, který představuje přístup k omezenému zdroji. O nich se více dozvíme později. \texttt{Process} je událost reprezentující běh generátorové funkce. Dokončení této události znamená, že skončila nějaká aktivita. \texttt{Condition} je abstraktní třída pro složitější podmínky, které závisí na jiných událostech. \texttt{AllOf} je podmíněná událost, která je dokončena až tehdy, když všechny zadané události jsou dokončeny. \texttt{AnyOf} je podmíněná událost, která je dokončena, jakmile je dokončena alespoň jedna zadaná událost.
+Z předešlých kapitol již víme, že \texttt{Timeout} je speciální událost, která je dokončena po uplynutí zadaného času. Používá se pro simulaci aktivity, která trvá určitou dobu.
+ \texttt{Initialize} je událost, která signalizuje inicializaci komponenty a využívá obvykle interně v SimPy. Komponentou je například objekt \texttt{Resource}, který představuje přístup k omezenému zdroji. O nich se více dozvíme později. \texttt{Process} je událost reprezentující běh generátorové funkce. Dokončení této události znamená, že skončila nějaká aktivita. \texttt{Condition} je abstraktní třída pro složitější podmínky, které závisí na jiných událostech. \texttt{AllOf} je podmíněná událost, která je dokončena až tehdy, když všechny zadané události jsou dokončeny. \texttt{AnyOf} je podmíněná událost, která je dokončena, jakmile je dokončena alespoň jedna ze zadaných událostí.
+
+\subsubsection{Uživatelsky definované události}
+
+Třída \texttt{Event} kromě vestavěných událostí umožňuje vytvořit vlastní události mající podobné vlastnosti jako vestavěné. Vlastní událost vznikne vytvořením nové instance třídy \texttt{Event}, které předáme prostředí, v němž se simulace odehrává. Vytvoření uživatelské události může vypadat například takto {my\_event = simpy.Event(env)}, kde \texttt{env} je prostředí. Uživatelsky definovaná událost je užitečná, když potřebujeme simulovat změnu stavu, na kterou SimPy nemá speciální událost. Typickými příklady jsou čekání na externí signál, specifická reakce systému nebo vlastní podmínky řízení toku simulace.
+
+U uživatelsky definovaných událostí lze explicitně vyvolat jejich nastání. Jakmile událost nastane, může být vyhodnocena buď jako úspěšná, nebo jako neúspěšná. Úspěšné nastání události se vyvolá voláním metody \texttt{Event.succeed()}, která může volitelně nést návratovou hodnotu reprezentující výsledek dané aktivity. Tato hodnota je následně předána procesům, které na danou událost čekají.
+
+V případě vzniku chybového stavu během zpracování procesní funkce lze událost vyhodnotit jako neúspěšnou pomocí metody \texttt{Event.fail()}. Tato metoda přijímá instanci výjimky, která je následně vyvolána v procesech čekajících na danou událost, čímž je umožněno standardní ošetření chybových stavů.
+
+SimPy dále poskytuje obecný mechanismus pro přeposílání výsledků mezi událostmi prostřednictvím metody \texttt{Event.trigger()}, která převezme výsledek i stav jiné události. Tento přístup je vhodný zejména v případech, kdy je požadováno propojení událostí bez nutnosti explicitně rozlišovat jejich úspěšné či neúspěšné vyhodnocení.
+
+\subsubsection{Stavy událostí}
 
 Každá událost může být v jednom ze tří stavů: může nastat \texttt{(not triggered)}, má nastat \texttt{(triggered)}, nebo nastala \texttt{(processed)}. Každá událost projde těmito stavy přesně jednou a vždy v uvedeném pořadí. Události jsou úzce spjaty s časem simulace, který řídí jejich přechod mezi stavy. Po vytvoření je událost ve stavu \texttt{(not triggered)}, to znamená, že událost ještě není aktivována, ale jde pouze o objekt v paměti. Když je událost naplánována na určitý čas, přejde do stavu \texttt{triggered} a atribut \texttt{Event.triggered} je nastaven na \texttt{True}. Událost v tomto stavu čeká na svůj časový okamžik, kdy bude zpracována. Dokud událost není zpracována, lze k ní přidávat callbacky. Událost přejde do stavu  \texttt{processed} jakmile byla dokončena a všechny callbacky byly spuštěny.
 
-\texttt{Callbacky} jsou funkce, které se spustí ve chvíli, kdy je událost dokončena. Každá událost v SimPy si interně udržuje seznam callbacků, do kterého lze přidávat nové funkce. Jakmile je událost dokončena, SimPy tento seznam projde a všechny uložené callbacky vykoná. Procesní funkce, která čeká na nějakou událost (např. \texttt{yield env.timeout(...)}), je automaticky zaregistrována jako jeden z callbacků této události. Díky tomu se po jejím dokončení procesní funkce znovu aktivuje a pokračuje přesně na místě, kde byla pozastavena. Tento mechanismus umožňuje přirozené střídání aktivit a souběh více entit, aniž by bylo nutné jejich běh řídit manuálně. Callback tedy reaguje na dokončení události. Aktivity, které čekají na událost, jsou jedním typem callbacků. Můžeme si ale callbacky definovat i explicitně, například pokud chceme, aby se po dokončení timeout události spustila nějaká další funkce. Jelikož jsou callbacky nízkoúrovňový mechanismus, který SimPy používá interně, umožňují reagovat na událost i bez definování procesních funkcí, jak si ukážeme v jednoduchém následujícím příkladu.
+\subsubsection{Callbacky}
 
- \begin{verbatim} 
-def my_callback(event):
-    print(f"Událost dokončena v čase {event.env.now}")
+\texttt{Callbacky} jsou funkce, které se spustí ve chvíli, kdy je událost dokončena. Každá událost v SimPy si interně udržuje seznam callbacků. Jakmile je událost dokončena, SimPy tento seznam projde a všechny uložené callbacky vykoná. Callbacky lze k události připojit také explicitně přidáním callback funkce do seznamu \texttt{callbacks} voláním metody \texttt{append()}. Procesní funkce, která čeká na nějakou událost (např. \texttt{yield env.timeout(...)}), je automaticky zaregistrována jako jeden z callbacků této události. Díky tomu se po jejím dokončení procesní funkce znovu aktivuje a pokračuje přesně na místě, kde byla pozastavena. Tento mechanismus umožňuje přirozené střídání aktivit a souběh více entit, aniž by bylo nutné jejich běh řídit manuálně. Callback tedy reaguje na dokončení události. Aktivity, které čekají na událost, jsou jedním typem callbacků. Můžeme si ale callbacky definovat i explicitně, například pokud chceme, aby se po dokončení timeout události spustila nějaká další funkce. Jelikož jsou callbacky nízkoúrovňový mechanismus, který SimPy používá interně, umožňují reagovat na událost i bez definování procesních funkcí.
 
-env = simpy.Environment()
-event = env.timeout(3)
-event.callbacks.append(my_callback)
-
-env.run()
-\end{verbatim}
-
-Vytvořili jsme timeout událost na 3 časové jednotky a uložili ji do proměnné \texttt{event}. Tu je nutné v argumentu volání předat callbacku.  Přidali jsme callback \texttt{my\_callback}, tedy funkci, která se zavolá, jakmile událost \texttt{event} skončí. Když prostředí zpracuje událost, zavolá callback a vypíše se na výstup zpráva \texttt{Událost dokončena v čase 3}. Tento příklad demonstruje, že callback je funkce spouštěná po dokončení události. V SimPy ale callbacky vznikají automaticky, když aktivita vrací \texttt{yield} událost.
-
-
-\newpage
-
-\section{Příklad metody}
-Pro ilustraci uvádím metodu \texttt{go\_to\_festival\_area()}, která simuluje průchod návštěvníka vstupním turniketem do areálu festivalu.
+\subsubsection{Příklad uživatelsky definované události s callbacky}
+Uživatelsky definovanou událost a použití callbacku demonstrujeme, když se vrátíme k příkladu s roboty. Tentorkát ho však upravíme tak, aby roboti šli opačným směrem proti sobě. Jakmile se jejich pozice shodují, je vyvolána uživatelsky definovaná událost signalizující jejich setkání. Na tuto událost je navázán callback, který je spuštěn v okamžiku dokončení události. Tento callback bude mít pouze informativní účel a vypíše informaci o nastání události setkání. Událost setkání pojmenujeme \texttt{meeting\_event} a callback \texttt{meeting\_callback}. 
 
 \begin{verbatim}
-def go_to_festival_area(self, entrances):
-        
-    yield self.festival.timeout(random.expovariate(1/5))
-    entrance_id = occupied.index(min(occupied))
-    entrance = entrances[entrance_id]
-    occupied[entrance_id] += 1
+position = {"Robot A": 0, "Robot B": 5}
 
-    with entrance.request() as req:
-        queue_start = self.festival.now  
-        yield req 
+def robot(env, name, event):
+    while True:
 
-        queue_waiting_time = self.festival.now - queue_start  
-        entry_time = random.uniform(1, 3)
-        yield self.festival.timeout(entry_time)
- 
-    self.state["location"] = resources.Location.FESTIVAL_AREA
-    occupied[entrance_id] -= 1
+        if position["Robot A"] == position["Robot B"]: 
+            event.succeed()  
+            break
+
+        else:
+            print(f"{env.now}: {name} je na pozici {position[name]} a začal se pohybovat")
+
+        if name == "Robot A":
+            position[name] += 1
+        else:
+            position[name] -= 1
+
+        yield env.timeout(random.randint(1, 3))
+        print(f"{env.now}: {name} se zastavil a rozhlíží se")
+        yield env.timeout(1)
+
+def meeting_callback(event):
+    print(f"Roboti se potkali na pozici ", position)
+
+env = simpy.Environment()
+meeting_event = env.event()
+meeting_event.callbacks.append(meeting_callback)
+
+env.process(robot(env, "Robot A", meeting_event))
+env.process(robot(env, "Robot B", meeting_event))
+
+env.run(until=meeting_event)
 \end{verbatim}
 
-\sloppy
-Metoda  \texttt{go\_to\_festival\_area()} simuluje vstup návštěvníka jedním z dostupných vstupů. Metoda příjímá dva argumenty, a to instanci 
-návštěvníka - self, a SimPy resource entrances. SimPy resource jsou objekty, ke kterým návštěvníci v simulaci přistupují, entrances je tedy seznam 
-vstupů, mezi kterými si návštěvník může vybrat.
+První změnou oproti předchozímu příkladu je, že musíme v globální proměnné \texttt{position} uchovávat aktuální pozici robotů, aby bylo možné identifikovat okamžik, kdy se roboti setkají. Dále musíme vytvořit událost setkání, tedy uživatelsky definovanou událost \texttt{meeting\_event = env.event()}, již dříve zmíňěný informativní callback \texttt{meeting\_callback} a následně ho přidat do seznamu callbacků události pomocí \texttt{meeting\_event.callbacks.append(meeting\_callback)}. Při volání \texttt{process} je tentokrát robotům předáno prostředí, název robota, a událost \texttt{meeting\_event}, simulaci v tomto případě spustíme s podmínkou ukončení při nastání této události.
 
-\vspace{1em}
-Každý návštěvník dorazí po náhodném zpoždění, které je generováno pomocí \texttt{random.expovariate(1/5)}, 
-což modeluje příchody návštěvníků s průměrem 5 časových jednotek. Metoda využívá k simulování zastavení času 
-pro návštěvníka funkci \texttt{yield self.festival.timeout()}, která na počet zadaných časových jednotek danou instanci uspí.
+V procesní funkci \texttt{Robot} je klíčový rozdíl v kontrole pozice obou robotů při každém průchodu  cyklem \texttt{while}. V okamžiku, kdy se budou roboti nacházet na shodné pozici je vyvoláno úspěšné nastání uživatelsky definované události voláním metody \texttt{event.succeed()}, čím je simulace ukončena a je spuštěn callback. Pokud roboti nejsou na stejné pozici, začnou se pohybovat a rozhlížet podobně jako v předchozím příkladu, pouze s tím rozdílem, že u robota \texttt{robot\_A} se pozice o jednu jednotku zvyšuje, a u robota \texttt{Robot\_B} se pozice o jednu jednotku snižuje.
 
-\vspace{1em}
-Návštěvník si vybere vstup, u kterého je aktuálně nejméně lidí čekajících ve frontě, což je sledováno pomocí globálního seznamu \texttt{occupied}.
-Následně požádá o přístup ke vstupu pomocí \texttt{entrance.request()}. Proměnná \texttt{queue\_waiting\_time} uchovává dobu, po kterou
- návštěvník čekal ve frontě, než se dostal „na řadu“. Po získání přístupu stráví návštěvník náhodnou dobu kontolou během vstupu, simulovanou pomocí \texttt{random.uniform(1, 3)} a \texttt{yield self.festival.timeout(entry\_time)}.  Nakonec se počet lidí u daného vstupu sníží, což znamená, 
-že návštěvník dokončil průchod vstupem, a nastaví se mu atribut „location“ na FESTIVAL\_AREA.
+\noindent Výstup příkladu v tomto případě by vypadal následovně:
 
-\vspace{1em}
-Tento přístup umožňuje sledovat délku front a čekací doby u jednotlivých vstupů, což poskytuje užitečné informace pro analýzu průchodnosti a vytíženosti vstupů během festivalu.
+\begin{verbatim}
+0: Robot A je na pozici 0 a začal se pohybovat
+0: Robot B je na pozici 5 a začal se pohybovat
+2: Robot A se zastavil a rozhlíží se
+3: Robot B se zastavil a rozhlíží se
+3: Robot A je na pozici 1 a začal se pohybovat
+4: Robot B je na pozici 4 a začal se pohybovat
+5: Robot A se zastavil a rozhlíží se
+5: Robot B se zastavil a rozhlíží se
+6: Robot A je na pozici 2 a začal se pohybovat
+Roboti se potkali na pozici  {'Robot A': 3, 'Robot B': 3}
+\end{verbatim}
+
+\subsubsection{Procesy jsou také události}
+Procesy v SimPy vytvořené pomocí \texttt{env.process()} mají příjemnou vlastnost, dají se také považovat za události. To znamená, že proces může čekat na dokončení jiného procesu pomocí příkazu yield. Jakmile proces, na který se čeká skončí, čekající proces je obnoven a je mu předána návratová hodnota ukončeného procesu.
+
+Jak může proces čekat na dokončení jiného procesu demostrujeme příkladem, v němž entita \texttt{teacher} čeká, než entita \texttt{student} vypočítá zadaný jednoduchý příklad. Po dokončení výpočtu entity \texttt{student} je návratová hodnota \texttt{result} předána entitě \texttt{teacher}, která ji následně vytiskne na standardní výstup. 
+
+\begin{verbatim}
+def student(env, duration):
+    yield env.timeout(duration)
+    result = 2 + 3
+    return result
+
+def teacher(env):
+    result = yield env.process(student(env, 3))
+    print(result)
+
+env = simpy.Environment()
+env.run(env.process(teacher(env)))
+\end{verbatim}
+
+\subsection{Sdílené zdroje}
+
+Sdílené zdroje představují objekty, o které soutěží více procesů (entit) současně. Procesy musí čekat ve frontě, pokud je zdroj momentálně obsazen, a mohou ho využít až po jeho uvolnění. Tento princip se hodí pro modelování situací, kdy více procesů chce přistoupit k jednomu zdroji a jeho kapacita je omezená, například pět lidí čekajících na jeden záchod a nebo několik aut čekajících na jednu čerpací stanici. Simpy rozlišuje tři typy zdrojů.
+
+\noindent \textbf{Resources} jsou zdroje, které mohou být současně využívány libovolným omezeným počtem procesů. U objektů \texttt{resource} je sledováno počet současných uživatelů. Příkladem může být omezený počet toalet.
+
+\noindent \textbf{Containers} představují zdroje, ve kterých se pracuje s homogení, nerozlišitelnou hmotou. Procesy do něj mohou dávat nebo brát množství hmoty. U objektů \texttt{container} je sledováno množství nějaké hmoty. \texttt{Container} může být například sud a procesy z něj mohou brát litry piva. 
+
+\noindent \textbf{Stores} jsou zdroje, které uchovávají konkrétní objekty. Procesy mohou vložit nebo vybrat jednotlivý objekt, který má své specifické vlastnosti. U objektů \texttt{store} se sledují konkrétní objekty, jejich identita, atributy a pořadí, tedy co přesně je dostupné. Příkladem mohou různá být trička v merch stánku.
+
+Všechny zdroje sdílejí stejný princip, zdroj je jakýsi kontejner s omezenou kapacitou. Procesy se mohou pokusit něco do zdroje vložit, případně do něj vstoupit, nebo něco získat, případně z něj odejít. Pokud je zdroj plný nebo prázdný, procesy musí čekat ve frontě. Každý sdílený zdroj typicky obsahuje kapacitu, frontu pro vkládání \texttt{put\_queue}, frontu pro vybírání \texttt{get\_queue}, a metody \texttt{put()} a \texttt{get()}. Metoda \texttt{put()} se používá, pokud chce proces něco vložit do zdroje, pokud je zdroj plný, proces musí čekat ve frontě \texttt{put\_queue}, dokud se místo neuvolní. Metoda \texttt{get()} se používá, pokud proces chce něco ze zdroje získat, pokud je zdroj prázdný, proces musí čekat ve frontě \texttt{get\_queue}, dokud se něco nevloží. Tyto metody nevykonávají akci okamžitě, ale vrací událost, která nastane ve chvíli, kdy je možné požadavek splnit. Proces se klíčovým slovem \texttt{yield} pozastaví a pokračuje po splnění požadavku.
+
+\subsubsection{Resource}
+Zdroje \texttt{resource} mohou být využívány omezeným počtem procesů současně. Procesy žádají zdroj o přístup metodou \texttt{request()} a po dokončení aktivity zdroj uvolní metodou \texttt{release()}.
 
 \end{document}
+
+

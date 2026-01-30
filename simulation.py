@@ -33,10 +33,10 @@ class Group:
         """Tato funkce pro daného návštěvníka spustí zvolenou akci"""
 
         if action == "go_to_entrance_zone":
-            yield self.festival.process(member.go_to_entrance_zone())
+            yield self.festival.process(member.go_to(source.Locations.ENTRANCE_ZONE, source.Locations.ENTRANCE_ZONE.value))
         
         elif action == "go_to_tent_area":
-            yield self.festival.process(member.go_to_tent_area())
+            yield self.festival.process(member.go_to(source.Locations.TENT_AREA, source.Locations.TENT_AREA.value))
 
         elif action == "go_to_festival_area":
             yield self.festival.process(member.go_to_festival_area(resources.entrances))
@@ -158,21 +158,13 @@ class Visitor:
             
 
 
-    def go_to_entrance_zone(self):
-        """Funkce která obsluje návštěvníkův přesun do vstupní zony"""
+    def go_to(self, location, zone_name):
+        """Funkce která obsluje návštěvníkův přesun do jiné zóny bez vstupní prohlídky"""
 
-        self.state["location"] = source.Locations.ENTRANCE_ZONE
-        print(f"{self.name} {self.surname} jde do vstupní zóny {self.festival.now:.2f}")
+        self.state["location"] = location
+        print(f"{self.name} {self.surname} jde do {zone_name} v čase {self.festival.now:.2f}")
         yield self.festival.timeout(10)
-        print(f"{self.name} {self.surname} dorazil do vstupní zóny {self.festival.now:.2f}")
-
-    def go_to_tent_area(self):
-        """Funkce která obsluje návštěvníkův přesun do vstupní zony"""
-
-        self.state["location"] = source.Locations.TENT_AREA
-        print(f"{self.name} {self.surname} jde do stanového městečka {self.festival.now:.2f}")
-        yield self.festival.timeout(10)
-        print(f"{self.name} {self.surname} dorazil do stanového městečka {self.festival.now:.2f}")
+        print(f"{self.name} {self.surname} dorazil do {zone_name} {self.festival.now:.2f}")
 
     def go_to_festival_area(self, entrances):
         """Funkce která obsluje návštěvníkův přesun do festivalového areálu včetně vstupní kontroly"""
@@ -371,6 +363,8 @@ class Visitor:
         else:
             print(f"{self.name} {self.surname} čekal až si člen skupiny zapálí.")
 
+    #JÍDLO
+
     def choose_stall_with_food(self):
         #funkce která návštěvníkovi vybere stánek s jídlem podle jeho oblíbeného jídla
         stall, food = self.choose_food() 
@@ -391,6 +385,7 @@ class Visitor:
                         return resources.stall_entrance_zone_sweet, food
                     case "belgian_fries_stall":
                         return resources.stall_entrance_zone_fries, food
+                    
                 
     def choose_food(self):
         """vybere jídlo, které si návštěvník chce dát -> 50% šance že si dá své oblíbené jídlo, 50% že to bude něco jiného."""

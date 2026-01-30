@@ -1,4 +1,5 @@
 import json
+import os
 import tkinter as tk
 from tkinter import filedialog
 
@@ -12,7 +13,8 @@ def save(zones_data):
         "Festivalový areál": "FESTIVAL_AREA",
         "Stanové městečko": "TENT_AREA",
         "Chill zóna": "CHILL_ZONE",
-        "Zábavní zóna": "FUN_ZONE"
+        "Zábavní zóna": "FUN_ZONE",
+        "Spawn zóna": "SPAWN_ZONE"
     }
 
     for zone_name, zone_info in zones_data.items():
@@ -88,25 +90,38 @@ def save(zones_data):
             for line in instance.get("lines", []):
 
                 if line != []:
-                    destination = line
-                    destination = destination["other_zone"]["type"]
-                    destination = location_map.get(destination, [])
-                    destination = "GO_TO_" + destination
-                    traces.append(destination)
-                    result["ACTIONS_MOVING"][location_key] = traces
+                    other = line["other_zone"]
 
-                    line["other_zone"] = line["other_zone"]["type"]
+                    if isinstance(other, dict):
+                        destination = other["type"]
+                        destination = location_map.get(destination, destination)
+                        destination = "GO_TO_" + destination
+                        traces.append(destination)
+
+                        result["ACTIONS_MOVING"][location_key] = traces
+
+                        line["other_zone"] = other["type"]
 
     file_path = filedialog.asksaveasfilename(
     defaultextension=".json",    
     filetypes=[("JSON files", "*.json")],
     title="Uložit soubor jako"
-)
+    )
 
     data = [result, zones_data]
     
     if file_path:
         with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(current_dir)
+        data_dir = os.path.join(project_root, "data")
+        os.makedirs(data_dir, exist_ok=True)
+
+        internal_path = os.path.join(data_dir, "festival_settings.json")
+
+        with open(internal_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
 
         print("Soubor uložen do:", file_path)

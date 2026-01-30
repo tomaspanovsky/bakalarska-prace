@@ -4,6 +4,7 @@
 \usepackage[czech]{babel}
 \usepackage[a4paper, top=4cm, bottom=3cm, left=3cm, right=3cm]{geometry}
 \setlength{\parskip}{1em}
+\usepackage[htt]{hyphenat}
 
 \title{Diskrétní simulace za použití knihovny SimPy}
 \author{Panovský Tomáš}
@@ -199,11 +200,16 @@ t = 5: konec aktivity_2
 \subsection{Události}
 SimPy vytváří události prostřednictvím modulu \texttt{simpy.events}. Základní třídou pro všechny události je \texttt{simpy.events.Event}, která definuje společné vlastnosti a metody, jenž dědí všechny specializované typy událostí. I když lze třídu Event použít přímo, SimPy nabízí několik specializovaných podtříd pro různé účely.
 
-Z předešlých kapitol již víme, že \texttt{Timeout} je speciální událost, která je dokončena po uplynutí zadaného času. Používá se pro simulaci aktivity,která trvá určitou dobu.
+\subsubsection{Specializované události}
 
+Z předešlých kapitol již víme, že \texttt{Timeout} je speciální událost, která je dokončena po uplynutí zadaného času. Používá se pro simulaci aktivity,která trvá určitou dobu.
  \texttt{Initialize} je událost, která signalizuje inicializaci komponenty a využívá obvykle interně v SimPy. Komponentou je například objekt \texttt{Resource}, který představuje přístup k omezenému zdroji. O nich se více dozvíme později. \texttt{Process} je událost reprezentující běh generátorové funkce. Dokončení této události znamená, že skončila nějaká aktivita. \texttt{Condition} je abstraktní třída pro složitější podmínky, které závisí na jiných událostech. \texttt{AllOf} je podmíněná událost, která je dokončena až tehdy, když všechny zadané události jsou dokončeny. \texttt{AnyOf} je podmíněná událost, která je dokončena, jakmile je dokončena alespoň jedna zadaná událost.
 
+\subsubsection{Stavy událostí}
+
 Každá událost může být v jednom ze tří stavů: může nastat \texttt{(not triggered)}, má nastat \texttt{(triggered)}, nebo nastala \texttt{(processed)}. Každá událost projde těmito stavy přesně jednou a vždy v uvedeném pořadí. Události jsou úzce spjaty s časem simulace, který řídí jejich přechod mezi stavy. Po vytvoření je událost ve stavu \texttt{(not triggered)}, to znamená, že událost ještě není aktivována, ale jde pouze o objekt v paměti. Když je událost naplánována na určitý čas, přejde do stavu \texttt{triggered} a atribut \texttt{Event.triggered} je nastaven na \texttt{True}. Událost v tomto stavu čeká na svůj časový okamžik, kdy bude zpracována. Dokud událost není zpracována, lze k ní přidávat callbacky. Událost přejde do stavu  \texttt{processed} jakmile byla dokončena a všechny callbacky byly spuštěny.
+
+\subsubsection{Callbacky}
 
 \texttt{Callbacky} jsou funkce, které se spustí ve chvíli, kdy je událost dokončena. Každá událost v SimPy si interně udržuje seznam callbacků, do kterého lze přidávat nové funkce. Jakmile je událost dokončena, SimPy tento seznam projde a všechny uložené callbacky vykoná. Procesní funkce, která čeká na nějakou událost (např. \texttt{yield env.timeout(...)}), je automaticky zaregistrována jako jeden z callbacků této události. Díky tomu se po jejím dokončení procesní funkce znovu aktivuje a pokračuje přesně na místě, kde byla pozastavena. Tento mechanismus umožňuje přirozené střídání aktivit a souběh více entit, aniž by bylo nutné jejich běh řídit manuálně. Callback tedy reaguje na dokončení události. Aktivity, které čekají na událost, jsou jedním typem callbacků. Můžeme si ale callbacky definovat i explicitně, například pokud chceme, aby se po dokončení timeout události spustila nějaká další funkce. Jelikož jsou callbacky nízkoúrovňový mechanismus, který SimPy používá interně, umožňují reagovat na událost i bez definování procesních funkcí, jak si ukážeme v jednoduchém následujícím příkladu.
 
@@ -220,49 +226,55 @@ env.run()
 
 Vytvořili jsme timeout událost na 3 časové jednotky a uložili ji do proměnné \texttt{event}. Tu je nutné v argumentu volání předat callbacku.  Přidali jsme callback \texttt{my\_callback}, tedy funkci, která se zavolá, jakmile událost \texttt{event} skončí. Když prostředí zpracuje událost, zavolá callback a vypíše se na výstup zpráva \texttt{Událost dokončena v čase 3}. Tento příklad demonstruje, že callback je funkce spouštěná po dokončení události. V SimPy ale callbacky vznikají automaticky, když aktivita vrací \texttt{yield} událost.
 
+\subsubsection{Vyvolání nastání události}
+Jakmile událost nastane, může skončit úspěně, nebo selhat. Úspěšné nastání události můžeme vyvolat voláním metody \texttt{Event.succeed()}, která může volitelně nést návratovou hodnotu představující výsledek dané činnosti. Tato hodnota je následně předána procesům čekajícím na danou událost.
 
-\newpage
+V případě, že během zpracování procesní funkce dojde k chybovému stavu, lze událost vyhodnotit jako neúspěšnou voláním metody \texttt{Event.fail()}. Tato metoda přijímá instanci výjimky, která je následně vyvolána v procesu čekajícím na danou událost, čímž je umožněno standardní ošetření chybových stavů.
 
-\section{Příklad metody}
-Pro ilustraci uvádím metodu \texttt{go\_to\_festival\_area()}, která simuluje průchod návštěvníka vstupním turniketem do areálu festivalu.
+SimPy rovněž poskytuje obecný mechanismus volání události prostřednictvím metody \texttt{Event.trigger()}, která převezme výsledek i stav (úspěch či selhání) jiné události. Tento přístup je vhodný zejména v případech, kdy je požadováno přeposílání výsledků mezi událostmi bez nutnosti explicitně rozlišovat jejich stav.
+
+Metody \texttt{Event.succeed()} a \texttt{Event.fail()} vracejí instanci události, ke které náleží, což umožňuje jejich použití přímo ve výrazu \texttt{yield}. Naproti tomu metoda \texttt{Event.trigger()} návratovou hodnotu neposkytuje.
+
+Následující příklad ilustruje použití vyvolání události metodou \texttt{Event.fail()}. V příkladu je modelována situace, kdy entita manažera \texttt{manager} zadá entitě dělníka \texttt{worker} úkol na tři časové jednotky, například hodiny, a čeká na dokončení jeho úkolu prostřednictvím události \texttt{done\_event}. Událost dokončení úkolu může nastat úspěšně, nebo selhat a v tomto simulujeme, že se úkol nepodařilo splnit. Tento příklad demonstruje mechanismus předávání výsledku mezi procesy a ošetření případné výjimky.
 
 \begin{verbatim}
-def go_to_festival_area(self, entrances):
-        
-    yield self.festival.timeout(random.expovariate(1/5))
-    entrance_id = occupied.index(min(occupied))
-    entrance = entrances[entrance_id]
-    occupied[entrance_id] += 1
+def worker(env, done_event):
+    yield env.timeout(3)
+    done_event.fail(RuntimeError("Worker: Úkol se nepodařilo splnit"))
 
-    with entrance.request() as req:
-        queue_start = self.festival.now  
-        yield req 
+def manager(env):
+    print("Manager: Zadávám úkol na 3 hodiny")
+    done_event = simpy.Event(env)
+    env.process(worker(env, done_event))
 
-        queue_waiting_time = self.festival.now - queue_start  
-        entry_time = random.uniform(1, 3)
-        yield self.festival.timeout(entry_time)
- 
-    self.state["location"] = resources.Location.FESTIVAL_AREA
-    occupied[entrance_id] -= 1
+    try:
+        yield done_event
+
+    except RuntimeError as e:
+        print(e)
+
+env = simpy.Environment()
+env.process(manager(env))
+env.run()
 \end{verbatim}
 
-\sloppy
-Metoda  \texttt{go\_to\_festival\_area()} simuluje vstup návštěvníka jedním z dostupných vstupů. Metoda příjímá dva argumenty, a to instanci 
-návštěvníka - self, a SimPy resource entrances. SimPy resource jsou objekty, ke kterým návštěvníci v simulaci přistupují, entrances je tedy seznam 
-vstupů, mezi kterými si návštěvník může vybrat.
+V ukázce procesní funkce \texttt{manager} inicializuje simulaci a vytváří událost \texttt{done\_event}, která slouží k synchronizaci s procesní funkcí \texttt{worker}. 
+Proces \texttt{worker} reprezentuje vykonání úkolu, který trvá tři časové jednotky, a po jejich uplynutí vyvolá neúspěšné nastání události voláním metody \texttt{Event.fail()}.
+Před voláním \texttt{done\_event.fail(..)} by samozřejmě byl kód obsluhující pokus o splnění úkolu od manažera, ten však v této ukázce není podstatný.
 
-\vspace{1em}
-Každý návštěvník dorazí po náhodném zpoždění, které je generováno pomocí \texttt{random.expovariate(1/5)}, 
-což modeluje příchody návštěvníků s průměrem 5 časových jednotek. Metoda využívá k simulování zastavení času 
-pro návštěvníka funkci \texttt{yield self.festival.timeout()}, která na počet zadaných časových jednotek danou instanci uspí.
+Pro zajištění simultánního průběhu procesů je v těle funkce \texttt{manager} volána metoda \texttt{env.process(worker(env, done\_event))}, čímž je proces \texttt{worker} registrován u simulačního prostředí a spuštěn paralelně s procesem \texttt{manager}. Současně je proces \texttt{manager} registrován a spuštěn voláním 
+\texttt{env.process(manager(env))} na konci ukázky. Toto dvojí volání \texttt{env.process} ilustruje, že v SimPy může být současně aktivních více procesů, které se vzájemně 
+synchronizují prostřednictvím událostí.
 
-\vspace{1em}
-Návštěvník si vybere vstup, u kterého je aktuálně nejméně lidí čekajících ve frontě, což je sledováno pomocí globálního seznamu \texttt{occupied}.
-Následně požádá o přístup ke vstupu pomocí \texttt{entrance.request()}. Proměnná \texttt{queue\_waiting\_time} uchovává dobu, po kterou
- návštěvník čekal ve frontě, než se dostal „na řadu“. Po získání přístupu stráví návštěvník náhodnou dobu kontolou během vstupu, simulovanou pomocí \texttt{random.uniform(1, 3)} a \texttt{yield self.festival.timeout(entry\_time)}.  Nakonec se počet lidí u daného vstupu sníží, což znamená, 
-že návštěvník dokončil průchod vstupem, a nastaví se mu atribut „location“ na FESTIVAL\_AREA.
+Proces \texttt{manager} čeká na nastání této události pomocí příkazu \texttt{yield done\_event}. Jakmile \texttt{worker} vyvolá neúspěšné nastání události, 
+dojde k vyvolání výjimky v procesu \texttt{manager}, která je následně zachycena blokem \texttt{try-except}. V simulaci se tímto mechanismem demonstruje, jak je možné 
+modelovat a ošetřovat chybové stavy mezi procesy a předávat informace o úspěchu či selhání činností.
 
-\vspace{1em}
-Tento přístup umožňuje sledovat délku front a čekací doby u jednotlivých vstupů, což poskytuje užitečné informace pro analýzu průchodnosti a vytíženosti vstupů během festivalu.
+Výstup tohoto příkladu by vypadal následovně:
 
-\end{document}
+\begin{verbatim}
+Manager: Zadávám úkol na 3 hodiny
+Worker: Úkol se nepodařilo splnit
+\end{verbatim}
+
+

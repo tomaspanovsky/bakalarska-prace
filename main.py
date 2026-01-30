@@ -32,4 +32,4 @@ visitors.print_visitors(people)
 
 festival.process(simulation.spawn_groups(festival, groups_of_visitors))
 
-festival.run(until=500)
+festival.run(until=(num_days * 1140))
