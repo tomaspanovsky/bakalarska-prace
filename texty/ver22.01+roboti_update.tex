@@ -14,6 +14,8 @@
 
 \maketitle
 
+\tableofcontents
+
 \section{Úvod}
 V této bakalářské práci se zabývám diskrétní simulací za použití knihovny SimPy v Pythonu. 
 Knihovna Simpy umožňuje modelovat procesy, jenž probíhají souběžně, a mohou být zastaveny, nebo pozastaveny na určitou dobu. Praktická část bakalářské práce obsahuje aplikaci simulující průběh hudebního festivalu.
@@ -198,7 +200,7 @@ t = 5: konec aktivity_2
 
 
 \subsection{Události}
-SimPy vytváří události prostřednictvím modulu \texttt{simpy.events}. Základní třídou pro všechny události je \texttt{simpy.events.Event}, která definuje společné vlastnosti a metody, jenž dědí všechny specializované typy událostí. Třídu \texttt{Event} lze použít přímo u uživatelsky definovaných událostí, teré budou představeny v následující části práce. SimPy dále nabízí několik specializovaných podtříd pro různé účely.
+SimPy vytváří události prostřednictvím modulu \texttt{simpy.events}. Základní třídou pro všechny události je \texttt{simpy.events.Event}, která definuje společné vlastnosti a metody, jenž dědí všechny specializované typy událostí. Třídu \texttt{Event} lze použít přímo u uživatelsky definovaných událostí, které budou představeny v následující části práce. SimPy dále nabízí několik specializovaných podtříd pro různé účely.
 
 \subsubsection{Specializované události}
 
@@ -311,8 +313,47 @@ Sdílené zdroje představují objekty, o které soutěží více procesů (enti
 
 Všechny zdroje sdílejí stejný princip, zdroj je jakýsi kontejner s omezenou kapacitou. Procesy se mohou pokusit něco do zdroje vložit, případně do něj vstoupit, nebo něco získat, případně z něj odejít. Pokud je zdroj plný nebo prázdný, procesy musí čekat ve frontě. Každý sdílený zdroj typicky obsahuje kapacitu, frontu pro vkládání \texttt{put\_queue}, frontu pro vybírání \texttt{get\_queue}, a metody \texttt{put()} a \texttt{get()}. Metoda \texttt{put()} se používá, pokud chce proces něco vložit do zdroje, pokud je zdroj plný, proces musí čekat ve frontě \texttt{put\_queue}, dokud se místo neuvolní. Metoda \texttt{get()} se používá, pokud proces chce něco ze zdroje získat, pokud je zdroj prázdný, proces musí čekat ve frontě \texttt{get\_queue}, dokud se něco nevloží. Tyto metody nevykonávají akci okamžitě, ale vrací událost, která nastane ve chvíli, kdy je možné požadavek splnit. Proces se klíčovým slovem \texttt{yield} pozastaví a pokračuje po splnění požadavku.
 
-\subsubsection{Resource}
-Zdroje \texttt{resource} mohou být využívány omezeným počtem procesů současně. Procesy žádají zdroj o přístup metodou \texttt{request()} a po dokončení aktivity zdroj uvolní metodou \texttt{release()}.
+\subsubsection{Resources}
+Zdroje \texttt{Resources} mohou být využívány omezeným počtem procesů současně. Aby proces směl daný \texttt{resource} používat, musí si k němu vyžádat přístup, a to metodou \texttt{request()}. Po skončení proces musí zdroj \texttt{resource(res)} uvolnit metodou \texttt{release(res)}. Parametr \texttt{res} je zdroj, který ke kterému chceme přistoupit, nebo ho uvolnit. Volání \texttt{request()/release()} je tedy formou volání \texttt{put()/get()} u zdroje \texttt{resource}. Uvolnění proběhne vždy okamžitě. .
+
+Simpy implementuje \texttt{Resources} ve třech variantách. První variantou je základní zdroj \texttt{Resource}, jeho parametry jsou prostředí a kapcita, ta musí být vždy kladné celé číslo a ve výchozím nastavení je kapacita rovna jedné, tedy \texttt{Resource(env, capacity=1)}. Metoda \texttt{Resource.request()} vytváří \texttt{request token}, který reprezentuje konkrétní žádost procesu o daný zdroj. Tento token je uložen ve zdroji po celou dobu jeho využívání a je následně předán metodě \texttt{release()}, která na jeho základě zdroj uvolní.  Uvolnění \texttt{Resource} lze provést jednoduchým způsobem, kdy pomocí \texttt{resource.request(req)} zažádáme o zdoj \texttt{req} a poté čekáme, až bude volný. Následně proběhne nějaká aktivita, a nakonec zdroj uvolníme pomocí \texttt{resource.release(req)}.
+
+\begin{verbatim}
+req = resource.request()  
+yield req              
+yield env.timeout(1)
+resource.release(req)      
+\end{verbatim}
+
+Aby se předešlo situacím, kdy by zdroj zůstal obsazený například v důsledku přerušení procesu nebo vzniku chyby, nabízí SimPy elegantnější řešení v podobě \textbf{context manageru}. Ten využívá klíčová slova \texttt{with} a \texttt{as} a zajišťuje automatické uvolnění zdroje po opuštění příslušného bloku kódu:
+
+\begin{verbatim}
+with resource.request() as req:
+    yield req              
+    yield env.timeout(1)
+\end{verbatim}
+
+V tomto případě je \texttt{request token} automaticky zaregistrován v rámci bloku \texttt{with}. Jakmile je blok opuštěn, SimPy zajistí uvolnění zdroje bez nutnosti explicitního volání metody \texttt{release()}. Tento mechanismus je funkčně obdobný práci se soubory v jazyce Python, kde konstrukce \texttt{with open(...)} zajišťuje automatické uzavření souboru. Z vnitřního pohledu lze chování \texttt{context manageru} zjednodušeně přirovnat k následující struktuře:
+
+\begin{verbatim}
+try:
+    yield req
+    yield env.timeout(1)
+finally:
+    resource.release(req)
+\end{verbatim}
+
+Díky tomuto přístupu je zaručeno, že zdroj bude vždy korektně uvolněn, a to i v případě přerušení procesu (\texttt{Interrupt}) nebo vzniku výjimky. 
+
+Druhou variantou sdíleného zdroje \texttt{Resources} je \texttt{PriorityResource}. Tato třída je podtřídou základní třídy \texttt{Resource} a umožňuje procesům při každé žádosti o zdroj specifikovat prioritu. Požadavky s vyšší prioritou získají přístup ke zdroji dřívě než požadavky s nižší prioritou. Priorita je vyjádřena celočíselnou hodnotou, přičemž menší hodnota znamená vyšší prioritu než vyšší hodnota. Například \texttt{PriorityResource} s prioritou 1 má vyšší prioritu než \texttt{PriorityResource} s prioritou 2. Ve všech ostatních ohledech se \texttt{PriorityResource} chová stejně jako běžný \texttt{Resource}.
+
+Poslední variantou \texttt{Resources} je třída \texttt{PreemptiveResource}. Tato třída umožňuje odebrat zdroj procesu, který jej právě využívá. To je užitečné, pokud jsou nové požadavky natolik důležité, že pouhé přednostní zařazení do fronty nestačí a je nutné procesu, který využívá daný zdroj, tento zdroj odebrat. Tento mechanizmus se označuje jako \texttt{preemption}, tedy přerušení. Třída \texttt{PreemptiveResource} dědí z \texttt{PriorityResource} a rozšiřuje metodu \texttt{request()} o parametr \texttt{preempt}, který je ve výchozím stavu nastaven na True. Pokud je tento parametr nastaven na False \texttt{(resource.request(priority=x, preempt=False))}, proces se rozhodne nepřerušovat jiný proces, který zdroj právě využívá. Takový požadavek je nicméně stále zařazen do fronty podle své priority.
+
+Implementace \texttt{PreemptiveResource} klade větší důraz na prioritu než na samotné přerušení. To znamená, že preemptivní požadavky nemohou přeskočit požadavek s vyšší prioritou, který již čeká ve frontě. 
+
+
+
+
 
 \end{document}
 

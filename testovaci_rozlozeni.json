@@ -1,0 +1,903 @@
+[
+    {
+        "ACTIONS_BY_LOCATIONS": {
+            "ENTRANCE_ZONE": {
+                "bracelet_exchange": "BRACELET_EXCHANGE",
+                "thirst": "GO_FOR_DRINK",
+                "hunger": "GO_FOR_FOOD",
+                "wc": "GO_TO_TOILET"
+            },
+            "FESTIVAL_AREA": {
+                "band_playing": "GO_TO_CONCERT",
+                "hunger": "GO_FOR_FOOD",
+                "thirst": "GO_FOR_DRINK",
+                "wc": "GO_TO_TOILET"
+            },
+            "TENT_AREA": {
+                "wc": "GO_TO_TOILET",
+                "hygiene": "GO_TO_SCHOWER",
+                "thirst": "GO_FOR_DRINK"
+            },
+            "CHILL_ZONE": {
+                "thirst": "GO_FOR_DRINK",
+                "wc": "GO_TO_TOILET"
+            }
+        },
+        "STALLS_BY_LOCATIONS": {
+            "ENTRANCE_ZONE": [
+                "ticket_booth",
+                "ticket_booth",
+                "beer_stall",
+                "redbull_stall",
+                "nonalcohol_stall",
+                "grill_stall",
+                "gyros_stall",
+                "burger_stall",
+                "pizza_stall",
+                "ticket_booth",
+                "toitoi"
+            ],
+            "FESTIVAL_AREA": [
+                "pizza_stall",
+                "burger_stall",
+                "gyros_stall",
+                "grill_stall",
+                "belgian_fries_stall",
+                "langos_stall",
+                "sweet_stall",
+                "nonalcohol_stall",
+                "beer_stall",
+                "redbull_stall",
+                "toitoi",
+                "langos_stall",
+                "beer_stall",
+                "beer_stall",
+                "beer_stall",
+                "nonalcohol_stall",
+                "nonalcohol_stall"
+            ],
+            "TENT_AREA": [
+                "toitoi",
+                "showers",
+                "showers",
+                "beer_stall",
+                "nonalcohol_stall"
+            ],
+            "CHILL_ZONE": [
+                "nonalcohol_stall",
+                "beer_stall",
+                "redbull_stall",
+                "toitoi"
+            ]
+        },
+        "ACTIONS_MOVING": {
+            "SPAWN_ZONE": [
+                "GO_TO_ENTRANCE_ZONE"
+            ],
+            "ENTRANCE_ZONE": [
+                "GO_TO_SPAWN_ZONE",
+                "GO_TO_FESTIVAL_AREA",
+                "GO_TO_CHILL_ZONE",
+                "GO_TO_TENT_AREA"
+            ],
+            "FESTIVAL_AREA": [
+                "GO_TO_ENTRANCE_ZONE"
+            ],
+            "TENT_AREA": [
+                "GO_TO_ENTRANCE_ZONE"
+            ],
+            "CHILL_ZONE": [
+                "GO_TO_ENTRANCE_ZONE"
+            ]
+        }
+    },
+    {
+        "Spawn zóna": {
+            "multiple": true,
+            "instances": [
+                {
+                    "type": "Spawn zóna",
+                    "left": 124.0,
+                    "top": 37.0,
+                    "right": 218.0,
+                    "bottom": 110.0,
+                    "objects": [],
+                    "lines": [
+                        {
+                            "id": 139,
+                            "other_zone": "Vstupní zóna"
+                        }
+                    ],
+                    "rect_id": 1,
+                    "label_id": 2,
+                    "canvas_ids": [
+                        1,
+                        2
+                    ]
+                }
+            ]
+        },
+        "Vstupní zóna": {
+            "multiple": true,
+            "instances": [
+                {
+                    "type": "Vstupní zóna",
+                    "left": 130.0,
+                    "top": 185.0,
+                    "right": 569.0,
+                    "bottom": 551.0,
+                    "objects": [
+                        {
+                            "object": "Pokladna",
+                            "x": 495.0,
+                            "y": 227.0,
+                            "canvas_ids": [
+                                5,
+                                6
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Pokladna",
+                            "x": 434.0,
+                            "y": 225.0,
+                            "canvas_ids": [
+                                7,
+                                8
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Pivní stánek",
+                            "x": 535.0,
+                            "y": 314.0,
+                            "canvas_ids": [
+                                9,
+                                10
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Red Bull stánek",
+                            "x": 376.0,
+                            "y": 313.0,
+                            "canvas_ids": [
+                                11,
+                                12
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Nealko stánek",
+                            "x": 460.0,
+                            "y": 313.0,
+                            "canvas_ids": [
+                                13,
+                                14
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Stoly",
+                            "x": 225.0,
+                            "y": 287.0,
+                            "canvas_ids": [
+                                15,
+                                16
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Grill stánek",
+                            "x": 254.0,
+                            "y": 243.0,
+                            "canvas_ids": [
+                                17,
+                                18
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Gyros stánek",
+                            "x": 182.0,
+                            "y": 335.0,
+                            "canvas_ids": [
+                                19,
+                                20
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Burger stánek",
+                            "x": 184.0,
+                            "y": 241.0,
+                            "canvas_ids": [
+                                21,
+                                22
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Pizza stánek",
+                            "x": 259.0,
+                            "y": 338.0,
+                            "canvas_ids": [
+                                23,
+                                24
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Pokladna",
+                            "x": 378.0,
+                            "y": 223.0,
+                            "canvas_ids": [
+                                25,
+                                26
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Toitoiky",
+                            "x": 220,
+                            "y": 491,
+                            "canvas_ids": [
+                                27,
+                                28
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Umývárna",
+                            "x": 183.0,
+                            "y": 444.0,
+                            "canvas_ids": [
+                                29,
+                                30
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Umývárna",
+                            "x": 246.0,
+                            "y": 443.0,
+                            "canvas_ids": [
+                                31,
+                                32
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Stoly",
+                            "x": 182.0,
+                            "y": 286.0,
+                            "canvas_ids": [
+                                33,
+                                34
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Stoly",
+                            "x": 266.0,
+                            "y": 287.0,
+                            "canvas_ids": [
+                                35,
+                                36
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Bankomat",
+                            "x": 526.0,
+                            "y": 519.0,
+                            "canvas_ids": [
+                                37,
+                                38
+                            ],
+                            "extra": []
+                        }
+                    ],
+                    "lines": [
+                        {
+                            "id": 140,
+                            "other_zone": "Spawn zóna"
+                        },
+                        {
+                            "id": 141,
+                            "other_zone": "Festivalový areál"
+                        },
+                        {
+                            "id": 142,
+                            "other_zone": "Chill zóna"
+                        },
+                        {
+                            "id": 143,
+                            "other_zone": "Stanové městečko"
+                        }
+                    ],
+                    "rect_id": 3,
+                    "label_id": 4,
+                    "canvas_ids": [
+                        3,
+                        4
+                    ],
+                    "resize_info": {
+                        "left": true,
+                        "right": false,
+                        "top": false,
+                        "bottom": false
+                    }
+                }
+            ]
+        },
+        "Festivalový areál": {
+            "multiple": false,
+            "instances": [
+                {
+                    "type": "Festivalový areál",
+                    "left": 730.0,
+                    "top": 44.0,
+                    "right": 1335.0,
+                    "bottom": 551.0,
+                    "objects": [
+                        {
+                            "object": "Podium",
+                            "x": 1212.0,
+                            "y": 104.0,
+                            "canvas_ids": [
+                                41,
+                                42
+                            ],
+                            "extra": [
+                                {
+                                    "object": "Stání u podia",
+                                    "canvas_ids": [
+                                        7046,
+                                        7045
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "object": "Pizza stánek",
+                            "x": 791.0,
+                            "y": 89.0,
+                            "canvas_ids": [
+                                45,
+                                46
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Burger stánek",
+                            "x": 871.0,
+                            "y": 88.0,
+                            "canvas_ids": [
+                                47,
+                                48
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Gyros stánek",
+                            "x": 957.0,
+                            "y": 87.0,
+                            "canvas_ids": [
+                                49,
+                                50
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Grill stánek",
+                            "x": 965.0,
+                            "y": 208.0,
+                            "canvas_ids": [
+                                51,
+                                52
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Bel hranolky stánek",
+                            "x": 790.0,
+                            "y": 206.0,
+                            "canvas_ids": [
+                                53,
+                                54
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Langoš stánek",
+                            "x": 891.0,
+                            "y": 207.0,
+                            "canvas_ids": [
+                                55,
+                                56
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Sladký stánek",
+                            "x": 790.0,
+                            "y": 344.0,
+                            "canvas_ids": [
+                                57,
+                                58
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Nealko stánek",
+                            "x": 1038.0,
+                            "y": 140.0,
+                            "canvas_ids": [
+                                59,
+                                60
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Pivní stánek",
+                            "x": 1038.0,
+                            "y": 191.0,
+                            "canvas_ids": [
+                                61,
+                                62
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Red Bull stánek",
+                            "x": 1037.0,
+                            "y": 89.0,
+                            "canvas_ids": [
+                                63,
+                                64
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Toitoiky",
+                            "x": 1086.0,
+                            "y": 512.0,
+                            "canvas_ids": [
+                                65,
+                                66
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Umývárna",
+                            "x": 1081.0,
+                            "y": 438.0,
+                            "canvas_ids": [
+                                67,
+                                68
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Stoly",
+                            "x": 827.0,
+                            "y": 390.0,
+                            "canvas_ids": [
+                                69,
+                                70
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Stoly",
+                            "x": 889.0,
+                            "y": 147.0,
+                            "canvas_ids": [
+                                71,
+                                72
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Stoly",
+                            "x": 827.0,
+                            "y": 145.0,
+                            "canvas_ids": [
+                                73,
+                                74
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Stoly",
+                            "x": 953.0,
+                            "y": 147.0,
+                            "canvas_ids": [
+                                75,
+                                76
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Bankomat",
+                            "x": 771.0,
+                            "y": 521.0,
+                            "canvas_ids": [
+                                77,
+                                78
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Merch stan",
+                            "x": 1281.0,
+                            "y": 387.0,
+                            "canvas_ids": [
+                                79,
+                                80
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Stan na autogramiády",
+                            "x": 1277.0,
+                            "y": 330.0,
+                            "canvas_ids": [
+                                81,
+                                82
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Dobíjecí stan",
+                            "x": 1284.0,
+                            "y": 448.0,
+                            "canvas_ids": [
+                                83,
+                                84
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Dobíjecí stan",
+                            "x": 766.0,
+                            "y": 256.0,
+                            "canvas_ids": [
+                                85,
+                                86
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Langoš stánek",
+                            "x": 863.0,
+                            "y": 345.0,
+                            "canvas_ids": [
+                                87,
+                                88
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Pivní stánek",
+                            "x": 1286.0,
+                            "y": 503.0,
+                            "canvas_ids": [
+                                89,
+                                90
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Pivní stánek",
+                            "x": 1097.0,
+                            "y": 335.0,
+                            "canvas_ids": [
+                                91,
+                                92
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Pivní stánek",
+                            "x": 866.0,
+                            "y": 430.0,
+                            "canvas_ids": [
+                                93,
+                                94
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Nealko stánek",
+                            "x": 1173.0,
+                            "y": 335.0,
+                            "canvas_ids": [
+                                95,
+                                96
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Nealko stánek",
+                            "x": 789.0,
+                            "y": 432.0,
+                            "canvas_ids": [
+                                97,
+                                98
+                            ],
+                            "extra": []
+                        }
+                    ],
+                    "lines": [
+                        {
+                            "id": 144,
+                            "other_zone": "Vstupní zóna"
+                        }
+                    ],
+                    "rect_id": 39,
+                    "label_id": 40,
+                    "canvas_ids": [
+                        39,
+                        40
+                    ],
+                    "resize_info": {
+                        "left": true,
+                        "right": false,
+                        "top": false,
+                        "bottom": false
+                    }
+                }
+            ]
+        },
+        "Stanové městečko": {
+            "multiple": true,
+            "instances": [
+                {
+                    "type": "Stanové městečko",
+                    "left": 158.0,
+                    "top": 603.0,
+                    "right": 607.0,
+                    "bottom": 799.0,
+                    "objects": [
+                        {
+                            "object": "Louka na stanování",
+                            "x": 470.0,
+                            "y": 739.0,
+                            "canvas_ids": [
+                                101,
+                                102
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Toitoiky",
+                            "x": 228.0,
+                            "y": 763.0,
+                            "canvas_ids": [
+                                103,
+                                104
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Sprchy",
+                            "x": 187,
+                            "y": 632,
+                            "canvas_ids": [
+                                105,
+                                106
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Sprchy",
+                            "x": 234,
+                            "y": 631,
+                            "canvas_ids": [
+                                107,
+                                108
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Umývárna",
+                            "x": 187,
+                            "y": 677,
+                            "canvas_ids": [
+                                109,
+                                110
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Umývárna",
+                            "x": 236.0,
+                            "y": 678.0,
+                            "canvas_ids": [
+                                111,
+                                112
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Dobíjecí stan",
+                            "x": 560,
+                            "y": 632,
+                            "canvas_ids": [
+                                113,
+                                114
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Pivní stánek",
+                            "x": 329,
+                            "y": 632,
+                            "canvas_ids": [
+                                115,
+                                116
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Nealko stánek",
+                            "x": 405.0,
+                            "y": 632.0,
+                            "canvas_ids": [
+                                117,
+                                118
+                            ],
+                            "extra": []
+                        }
+                    ],
+                    "lines": [
+                        {
+                            "id": 145,
+                            "other_zone": "Vstupní zóna"
+                        }
+                    ],
+                    "rect_id": 99,
+                    "label_id": 100,
+                    "canvas_ids": [
+                        99,
+                        100
+                    ],
+                    "resize_info": {
+                        "left": false,
+                        "right": false,
+                        "top": true,
+                        "bottom": false
+                    }
+                }
+            ]
+        },
+        "Chill zóna": {
+            "multiple": true,
+            "instances": [
+                {
+                    "type": "Chill zóna",
+                    "left": 741.0,
+                    "top": 591.0,
+                    "right": 1113.0,
+                    "bottom": 788.0,
+                    "objects": [
+                        {
+                            "object": "Stánek s vodníma dýmkama",
+                            "x": 1027.0,
+                            "y": 628.0,
+                            "canvas_ids": [
+                                121,
+                                122
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Cammel stánek",
+                            "x": 1028.0,
+                            "y": 680.0,
+                            "canvas_ids": [
+                                123,
+                                124
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Chill stánek",
+                            "x": 1028.0,
+                            "y": 728.0,
+                            "canvas_ids": [
+                                125,
+                                126
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Nealko stánek",
+                            "x": 796.0,
+                            "y": 626.0,
+                            "canvas_ids": [
+                                127,
+                                128
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Pivní stánek",
+                            "x": 872.0,
+                            "y": 627.0,
+                            "canvas_ids": [
+                                129,
+                                130
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Red Bull stánek",
+                            "x": 926.0,
+                            "y": 679.0,
+                            "canvas_ids": [
+                                131,
+                                132
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Toitoiky",
+                            "x": 815.0,
+                            "y": 752.0,
+                            "canvas_ids": [
+                                133,
+                                134
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Umývárna",
+                            "x": 815.0,
+                            "y": 673.0,
+                            "canvas_ids": [
+                                135,
+                                136
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Dobíjecí stan",
+                            "x": 960.0,
+                            "y": 755.0,
+                            "canvas_ids": [
+                                137,
+                                138
+                            ],
+                            "extra": []
+                        }
+                    ],
+                    "lines": [
+                        {
+                            "id": 146,
+                            "other_zone": "Vstupní zóna"
+                        }
+                    ],
+                    "rect_id": 119,
+                    "label_id": 120,
+                    "canvas_ids": [
+                        119,
+                        120
+                    ],
+                    "resize_info": {
+                        "left": false,
+                        "right": true,
+                        "top": false,
+                        "bottom": true
+                    }
+                }
+            ]
+        },
+        "Zábavní zóna": {
+            "multiple": false,
+            "instances": []
+        }
+    }
+]

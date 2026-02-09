@@ -196,6 +196,7 @@ def get_user_settings():
 
             for btn in object_buttons.values():
                 btn.config(bg="SystemButtonFace", fg="black")
+
             print(f"Objekt {obj_name} odvybrán")
             return
 
@@ -326,16 +327,6 @@ def get_user_settings():
             print("chyba: objekt musí být uvnitř existující zóny")
             return
 
-        EDGE_TOLERANCE = 15 
-
-        if current_object == "Vstup":
-            left, top, right, bottom = instance["left"], instance["top"], instance["right"], instance["bottom"]
-            on_edge = (abs(x - left) <= EDGE_TOLERANCE or abs(x - right) <= EDGE_TOLERANCE or abs(y - top) <= EDGE_TOLERANCE or abs(y - bottom) <= EDGE_TOLERANCE)
-
-            if not on_edge:
-                print("Objekt 'Vstup' musí být umístěn na okraji zóny!")
-                return
-    
         obj_data = create_object(instance, current_object, x, y)
         instance.setdefault("objects", []).append(obj_data)
 
@@ -842,8 +833,13 @@ def get_user_settings():
             for obj in selected_zone_instance.get("objects", []):
                 for cid in obj.get("canvas_ids", []):
                     canvas.delete(cid)
-            for line_id in selected_zone_instance.get("lines", []):
-                canvas.delete(line_id)
+            for line in selected_zone_instance.get("lines", []):
+                canvas.delete(line["id"])
+
+                other_zone = line["other_zone"]
+
+                if other_zone and "lines" in other_zone:
+                    other_zone["lines"] = [l for l in other_zone["lines"] if l["id"] != line["id"]]
 
             # odstraníme z dat
             zone_type = selected_zone_instance["type"]
@@ -917,8 +913,7 @@ def get_user_settings():
             if other == zone:
                 continue
             
-            if (zone["left"] < other["right"] and zone["right"] > other["left"] and
-                zone["top"] < other["bottom"] and zone["bottom"] > other["top"]):
+            if (zone["left"] < other["right"] and zone["right"] > other["left"] and zone["top"] < other["bottom"] and zone["bottom"] > other["top"]):
                 return True
         return False
 
