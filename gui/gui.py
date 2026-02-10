@@ -21,6 +21,7 @@ selected_line = None
 is_dragging_object = False
 is_dragging_zone = False
 connect_start_zone = None
+capacities = {}
 
 zones_data = {
     "Spawn zóna": {"multiple": True, "instances": []},
@@ -51,7 +52,15 @@ def get_user_settings():
         main_frame.pack_forget()
         editor_frame.pack(fill="both", expand=True)
 
+    def open_stalls_settings():
+        main_frame.pack_forget()
+        stall_settings_frame.pack(fill="both", expand=True)
+
     def go_back():
+        if stall_settings_frame.winfo_ismapped():
+            get_capacities()
+
+        stall_settings_frame.pack_forget()
         editor_frame.pack_forget()
         main_frame.pack(fill="both", expand=True)
 
@@ -71,8 +80,7 @@ def get_user_settings():
     main_frame = tk.Frame(root, bg='black')
     main_frame.pack(fill="both", expand=True)
 
-    title_label = tk.Label(main_frame, text="Simulace hudebního festivalu",
-                           font=("Arial", 36, "bold"), bg="black", fg="yellow")
+    title_label = tk.Label(main_frame, text="Simulace hudebního festivalu", font=("Arial", 36, "bold"), bg="black", fg="yellow")
     title_label.pack(pady=30)
 
 
@@ -88,6 +96,7 @@ def get_user_settings():
 
     label_style = {"bg": "black", "fg": "white", "font": ("Arial", 20)}
     entry_style = {"font": ("Arial", 18), "bg": "#222", "fg": "white", "insertbackground": "white", "width": 10}
+    entry_style2 = {"font": ("Arial", 18), "bg": "#222", "fg": "white", "insertbackground": "white", "width": 5}
 
     frame = tk.Frame(main_frame, bg='black')
     frame.pack(pady=30)
@@ -118,12 +127,195 @@ def get_user_settings():
     editor_button = tk.Button(bottom_frame, text="Dále", command=open_editor, font=("Arial", 20), bg="blue", fg="white", padx=40, pady=15)
     editor_button.pack(side="left", padx=10)
 
+    stall_settings_button = tk.Button(bottom_frame, text="Nastavení stánků", command=open_stalls_settings, font=("Arial", 20), bg="blue", fg="white", padx=40, pady=15)
+    stall_settings_button.pack(side="left", padx=10)
+
     exit_button = tk.Button(bottom_frame, text="Zavřít", command=exit_app, font=("Arial", 20), bg="red", fg="white", padx=40, pady=15)
     exit_button.pack(side="left", padx=10)
 
+    # ---------- OBRAZOVKA2: Stall capacities settings
+
+    stall_settings_frame = tk.Frame(root, bg="black")
+
+    tk.Label(stall_settings_frame, text="Kapacity", font=("Arial", 32, "bold"), bg="black", fg="yellow").grid(row=0, column=0, columnspan=2, pady=(30, 40))
+
+    tk.Label(stall_settings_frame, text="Pizza stánek:", **label_style).grid(row=1, column=0, pady=5, sticky="w", padx=50)
+    cap_pizza_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_pizza_stall.grid(row=1, column=1, padx=20)
+    cap_pizza_stall.insert(0, "2")
+
+    tk.Label(stall_settings_frame, text="Burger stánek:", **label_style).grid(row=2, column=0, pady=5, sticky="w", padx=50)
+    cap_burger_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_burger_stall.grid(row=2, column=1, padx=20)
+    cap_burger_stall.insert(0, "2")
+
+    tk.Label(stall_settings_frame, text="Gyros stánek:", **label_style).grid(row=3, column=0, pady=5, sticky="w", padx=50)
+    cap_gyros_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_gyros_stall.grid(row=3, column=1, padx=20)
+    cap_gyros_stall.insert(0, "2")
+
+    tk.Label(stall_settings_frame, text="Grill stánek:", **label_style).grid(row=4, column=0, pady=5, sticky="w", padx=50)
+    cap_grill_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_grill_stall.grid(row=4, column=1, padx=20)
+    cap_grill_stall.insert(0, "2")
+
+    tk.Label(stall_settings_frame, text="Bel hranolky stánek:", **label_style).grid(row=5, column=0, pady=5, sticky="w", padx=50)
+    cap_fries_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_fries_stall.grid(row=5, column=1, padx=20)
+    cap_fries_stall.insert(0, "2")
+
+    tk.Label(stall_settings_frame, text="Langoš stánek:", **label_style).grid(row=6, column=0, pady=5, sticky="w", padx=50)
+    cap_langos_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_langos_stall.grid(row=6, column=1, padx=20)
+    cap_langos_stall.insert(0, "2")
+
+    tk.Label(stall_settings_frame, text="Sladký stánek:", **label_style).grid(row=6, column=0, pady=5, sticky="w", padx=50)
+    cap_sweet_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_sweet_stall.grid(row=6, column=1, padx=20)
+    cap_sweet_stall.insert(0, "2")
+
+    tk.Label(stall_settings_frame, text="Nealko stánek:", **label_style).grid(row=7, column=0, pady=5, sticky="w", padx=50)
+    cap_nonalcohol_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_nonalcohol_stall.grid(row=7, column=1, padx=20)
+    cap_nonalcohol_stall.insert(0, "2")
+
+    tk.Label(stall_settings_frame, text="Pivní stánek:", **label_style).grid(row=8, column=0, pady=5, sticky="w", padx=50)
+    cap_beer_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_beer_stall.grid(row=8, column=1, padx=20)
+    cap_beer_stall.insert(0, "2")
+
+    tk.Label(stall_settings_frame, text="Red Bull stánek:", **label_style).grid(row=9, column=0, pady=5, sticky="w", padx=50)
+    cap_redbull_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_redbull_stall.grid(row=9, column=1, padx=20)
+    cap_redbull_stall.insert(0, "2")
+
+    tk.Label(stall_settings_frame, text="Sprchy:", **label_style).grid(row=10, column=0, pady=5, sticky="w", padx=50)
+    cap_showers = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_showers.grid(row=10, column=1, padx=20)
+    cap_showers.insert(0, "5")
+
+    tk.Label(stall_settings_frame, text="Stany ve stanovém městečku:", **label_style).grid(row=11, column=0, pady=5, sticky="w", padx=50)
+    cap_tents = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_tents.grid(row=11, column=1, padx=20)
+    cap_tents.insert(0, "500")
+
+    tk.Label(stall_settings_frame, text="Stánek s cigaretama:", **label_style).grid(row=12, column=0, pady=5, sticky="w", padx=50)
+    cap_cigars_tent = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_cigars_tent.grid(row=12, column=1, padx=20)
+    cap_cigars_tent.insert(0, "1")
+
+    tk.Label(stall_settings_frame, text="Stánek s vodníma dýmkama", **label_style).grid(row=13, column=0, pady=5, sticky="w", padx=50)
+    cap_water_pipe_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_water_pipe_stall.grid(row=13, column=1, padx=20)
+    cap_water_pipe_stall.insert(0, "20")    
+
+    tk.Label(stall_settings_frame, text="Chill stánek", **label_style).grid(row=14, column=0, pady=5, sticky="w", padx=50)
+    cap_chill_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_chill_stall.grid(row=14, column=1, padx=20)
+    cap_chill_stall.insert(0, "20")  
+
+    tk.Label(stall_settings_frame, text="Pokladna:", **label_style).grid(row=1, column=4, pady=5, sticky="w", padx=50)
+    cap_ticket_booth = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_ticket_booth.grid(row=1, column=5, padx=20)
+    cap_ticket_booth.insert(0, "2")
+    
+    tk.Label(stall_settings_frame, text="Toitoiky:", **label_style).grid(row=2, column=4, pady=5, sticky="w", padx=50)
+    cap_toitoi = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_toitoi.grid(row=2, column=5, padx=20)
+    cap_toitoi.insert(0, "20")
+
+    tk.Label(stall_settings_frame, text="Umývárna:", **label_style).grid(row=3, column=4, pady=5, sticky="w", padx=50)
+    cap_handwashing_station = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_handwashing_station.grid(row=3, column=5, padx=20)
+    cap_handwashing_station.insert(0, "20")
+
+    tk.Label(stall_settings_frame, text="Stoly:", **label_style).grid(row=4, column=4, pady=5, sticky="w", padx=50)
+    cap_tables = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_tables.grid(row=4, column=5, padx=20)
+    cap_tables.insert(0, "20")
+
+    tk.Label(stall_settings_frame, text="Plocha na stání u pódia:", **label_style).grid(row=5, column=4, pady=5, sticky="w", padx=50)
+    cap_standing = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_standing.grid(row=5, column=5, padx=20)
+    cap_standing.insert(0, "1000")
+
+    tk.Label(stall_settings_frame, text="Merch stan:", **label_style).grid(row=6, column=4, pady=5, sticky="w", padx=50)
+    cap_merch_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_merch_stall.grid(row=6, column=5, padx=20)
+    cap_merch_stall.insert(0, "3")
+
+    tk.Label(stall_settings_frame, text="Fronta na autogramiády", **label_style).grid(row=7, column=4, pady=5, sticky="w", padx=50)
+    cap_signing_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_signing_stall.grid(row=7, column=5, padx=20)
+    cap_signing_stall.insert(0, "500")
+
+    tk.Label(stall_settings_frame, text="Dobíjecí stan:", **label_style).grid(row=8, column=4, pady=5, sticky="w", padx=50)
+    cap_charging_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_charging_stall.grid(row=8, column=5, padx=20)
+    cap_charging_stall.insert(0, "2")
+
+    tk.Label(stall_settings_frame, text="Dobíjecí stan - max počet telefonů:", **label_style).grid(row=9, column=4, pady=5, sticky="w", padx=50)
+    cap_charging_stall_mobile = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_charging_stall_mobile.grid(row=9, column=5, padx=20)
+    cap_charging_stall_mobile.insert(0, "20")
+
+    tk.Label(stall_settings_frame, text="Lidí na Bungee-jumping:", **label_style).grid(row=10, column=4, pady=5, sticky="w", padx=50)
+    cap_bungee_jumping = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_bungee_jumping.grid(row=10, column=5, padx=20)
+    cap_bungee_jumping.insert(0, "1")
+
+    tk.Label(stall_settings_frame, text="Lidí horské dráze:", **label_style).grid(row=11, column=4, pady=5, sticky="w", padx=50)
+    cap_roallercoaster = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_roallercoaster.grid(row=11, column=5, padx=20)
+    cap_roallercoaster.insert(0, "24")
+
+    tk.Label(stall_settings_frame, text="Lidí na lavici:", **label_style).grid(row=12, column=4, pady=5, sticky="w", padx=50)
+    cap_bench_attraction = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_bench_attraction.grid(row=12, column=5, padx=20)
+    cap_bench_attraction.insert(0, "20")
+
+    tk.Label(stall_settings_frame, text="Lidí na kladivu:", **label_style).grid(row=13, column=4, pady=5, sticky="w", padx=50)
+    cap_hammer_attraction = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_hammer_attraction.grid(row=13, column=5, padx=20)
+    cap_hammer_attraction.insert(0, "32")
 
 
-    # ---------- OBRAZOVKA 2: Editor ----------
+    bottom_settings_stalls_frame = tk.Frame(stall_settings_frame, bg="black")
+    bottom_settings_stalls_frame.grid(row=15, column=0, columnspan=2, pady=40)
+
+    back_button2 = tk.Button(bottom_settings_stalls_frame, text="Zpět", command=go_back, font=("Arial", 20), bg="blue", fg="white", padx=20, pady=10, width=10)
+    back_button2.pack()
+
+    def get_capacities():
+        capacities["cap_pizza_stall"] = int(cap_pizza_stall.get())
+        capacities["cap_burger_stall"] = int(cap_burger_stall.get())
+        capacities["cap_gyros_stall"] = int(cap_gyros_stall.get())
+        capacities["cap_grill_stall"] = int(cap_grill_stall.get())
+        capacities["cap_fries_stall"] = int(cap_fries_stall.get())
+        capacities["cap_langos_stall"] = int(cap_langos_stall.get())
+        capacities["cap_sweet_stall"] = int(cap_sweet_stall.get())
+        capacities["cap_ticket_booth"] = int(cap_ticket_booth.get())
+        capacities["cap_toitoi"] = int(cap_toitoi.get())
+        capacities["cap_handwashing_station"] = int(cap_handwashing_station.get())
+        capacities["cap_tables"] = int(cap_tables.get())
+        capacities["cap_standing"] = int(cap_standing.get())
+        capacities["cap_merch_stall"] = int(cap_merch_stall.get())
+        capacities["cap_sigining_stall"] = int(cap_signing_stall.get())
+        capacities["cap_charging_stall"] = int(cap_charging_stall.get())
+        capacities["cap_charging_stall_mobile"] = int(cap_charging_stall_mobile.get())
+        capacities["cap_shower"] = int(cap_showers.get())
+        capacities["cap_tents"] = int(cap_tents.get())
+        capacities["cap_cigars_tent"] = int(cap_cigars_tent.get())
+        capacities["cap_water_pipe_stall"] = int(cap_water_pipe_stall.get())
+        capacities["cap_chill_stall"] = int(cap_charging_stall.get())
+        capacities["cap_bungee_jumping"] = int(cap_bungee_jumping.get())
+        capacities["cap_roallercoaster"] = int(cap_roallercoaster.get())
+        capacities["cap_bench_attraction"] = int(cap_bench_attraction.get())
+        capacities["cap_hammer_attraction"] = int(cap_hammer_attraction.get())
+
+
+
+    # ---------- OBRAZOVKA3: Editor ----------
 
     editor_frame = tk.Frame(root, bg="black")
 
@@ -343,50 +535,60 @@ def get_user_settings():
         obj_data = create_object(instance, current_object, x, y)
         instance.setdefault("objects", []).append(obj_data)
 
-    def create_object(instance, current_object, x, y):
+    def create_object(instance, current_object, x, y, x1=None, y1=None, x2=None, y2=None):
         foods = ["Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek"]
         drinks = ["Nealko stánek", "Pivní stánek", "Red Bull stánek"]
-
-        r = 13
-
-        text_id = canvas.create_text( x, y-20, text=current_object, fill="black", font=("Arial", 8, "bold"), anchor="center")
-
         extra = []
 
+        r = 13
+        if x1 is not None and y1 is not None and x2 is not None and y2 is not None:
+            coords_oval = (x1, y1, x2, y2)
+            coords_toiky = (x1, y1, x2, y2)
+            coords_camping = (x1, y1, x2, y2)
+            coords_stage = (x1, y1, x2, y2)
+            coords_stage_standing = (x1, y1, x2, y2)
+        else:
+            coords_oval = (x-r, y-r, x+r, y+r)
+            coords_toiky = (x-50, y, x+50, y+50)
+            coords_camping = (x-100, y, x+100, y+100)
+            coords_stage = (x-80, y, x+80, y+50)
+            coords_stage_standing = (x - 110, y + 55, x + 110, y + 200)
+
+        text_id = canvas.create_text(x, y-20, text=current_object, fill="black", font=("Arial", 8, "bold"), anchor="center")
+
         if current_object in foods:
-            obj_id = canvas.create_oval(x-r, y-r, x+r, y+r, fill="green", outline="black")
+            x1, y1, x2, y2 = coords_oval
+            obj_id = canvas.create_oval(*coords_oval, fill="green", outline="black")
 
         elif current_object in drinks:
-            obj_id = canvas.create_oval(x-r, y-r, x+r, y+r, fill="blue", outline="black")
+            x1, y1, x2, y2 = coords_oval
+            obj_id = canvas.create_oval(*coords_oval, fill="blue", outline="black")
 
         elif current_object == "Toitoiky":
-            obj_id = canvas.create_rectangle(x-50, y, x+50, y+50, fill="black")
+            x1, y1, x2, y2 = coords_toiky
+            obj_id = canvas.create_rectangle(*coords_toiky, fill="black")
 
         elif current_object == "Louka na stanování":
-            obj_id = canvas.create_rectangle(x-100, y, x+100, y+100, fill="black")
+            x1, y1, x2, y2 = coords_camping
+            obj_id = canvas.create_rectangle(*coords_camping, fill="black")
 
         elif current_object == "Podium":
+            x1, y1, x2, y2 = coords_stage_standing
 
             # Podium
-            obj_id = canvas.create_rectangle(x-80, y, x+80, y+50, fill="black")
-
-            # Stání u podia
-            stand_top = y + 55
-            stand_bottom = y + 50 + 150
-            stand_left = x - 110
-            stand_right = x + 110
-
-            stand_id = canvas.create_rectangle(stand_left, stand_top, stand_right, stand_bottom, fill="grey", outline="black")
+            obj_id = canvas.create_rectangle(*coords_stage, fill="black")
+            stand_id = canvas.create_rectangle(*coords_stage_standing, fill="grey", outline="black")
     
             # Popis stání u podia
-            stand_text_id = canvas.create_text((stand_left + stand_right)/2,(stand_top + stand_bottom)/2,text="Stání u podia",fill="black", font=("Arial", 8, "bold"), anchor="center")
+            
+            stand_text_id = canvas.create_text((x1 + x2) / 2, (y1 + y2) / 2, text="Stání u podia",fill="black", font=("Arial", 8, "bold"), anchor="center")
             
             extra.append({"object": "Stání u podia", "canvas_ids": [stand_text_id, stand_id]})
         
         else:
-            obj_id = canvas.create_oval(x-r, y-r, x+r, y+r, fill="gray", outline="black")
+            obj_id = canvas.create_oval(*coords_oval, fill="gray", outline="black")
 
-        return { "object": current_object, "x1": x1, "y1": y1, "x2":x2, "y2": y2, "canvas_ids": [text_id, obj_id], "extra": extra}   
+        return { "object": current_object, "x": x, "y": y, "x1": x1, "y1": y1, "x2": x2, "y2": y2, "canvas_ids": [text_id, obj_id], "extra": extra}   
     
 
     def on_click(event):
@@ -986,6 +1188,6 @@ def get_user_settings():
     root.bind("<Delete>", delete_selected)
 
     root.mainloop()
-    return settings
+    return settings, capacities
             
                     
