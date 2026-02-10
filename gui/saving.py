@@ -40,16 +40,50 @@ def save(zones_data):
                     stalls.append("toitoi")
                     action["wc"] = "GO_TO_TOILET"
 
+                elif "umývárna" in obj_name:
+                    stalls.append("handwashing_station")
+                    action["dirty"] = "WASH"
+
+                elif "stoly" in obj_name:
+                    stalls.append("tables")
+                    action["sitting"] = "SIT"
+
+                elif "bankomat" in obj_name:
+                    stalls.append("atm")
+                    action["low_money"] = "WITHDRAW" 
+
                 elif "sprchy" in obj_name:
                     stalls.append("showers")
-                    action["hygiene"] = "GO_TO_SCHOWER"
+                    action["hygiene"] = "GO_TO_SHOWER"
+
+                elif "merch" in obj_name:
+                    stalls.append("merch_stall")
+                    action["meet_band"] = "GO_TO_SIGNING_SESSION"
+
+                elif "dobíjecí" in obj_name:
+                    stalls.append("charging_stall")
+                    action["phone_dead"] = "CHARGE_PHONE"
 
                 elif "pokladna" in obj_name:
                     stalls.append("ticket_booth")
                     action["bracelet_exchange"] = "BRACELET_EXCHANGE"
-                    
+
+                elif "louka_na_stanovani" in obj_name:
+                    stalls.append("meadow for living")
+
                 elif "podium" in obj_name: 
                     action["band_playing"] = "GO_TO_CONCERT"
+
+                elif "vodníma" in obj_name:
+                    stalls.append("smoke_stall")
+
+                elif "cigaretový" in obj_name:
+                    stalls.append("cigaret_stall")
+                    action["low_cigars"] = "BUY_CIGARS"
+
+                elif "chill" in obj_name:
+                    stalls.append("chill_stall")
+                    action["tiredness"] = "GO_CHILL"
 
                 elif any(food_stall.lower() in obj_name for food_stall in food_stalls):
                     
@@ -82,10 +116,20 @@ def save(zones_data):
                     action["thirst"] = "GO_FOR_DRINK"
 
                 if any(atraction.lower() in obj_name for atraction in atractions):
+
+                    if "bungee" in obj_name:
+                        stalls.append("bungee_jumping")
+
+                    elif "horská" in obj_name:
+                        stalls.append("roallercoaster")
+                    
+                    elif "lavice" in obj_name:
+                        stalls.append("hammer")
+ 
                     action["atraction_desire"] = "GO_TO_ATRACTION"
 
-                result["ACTIONS_BY_LOCATIONS"][location_key] = action
-                result["STALLS_BY_LOCATIONS"][location_key] = stalls
+            result["ACTIONS_BY_LOCATIONS"][location_key] = action
+            result["STALLS_BY_LOCATIONS"][location_key] = stalls
 
             for line in instance.get("lines", []):
 

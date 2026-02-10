@@ -3,6 +3,7 @@ from PIL import Image, ImageTk
 from . import saving
 from . import loading 
 import os
+import copy
 
 # Stav aplikace
 current_zone = None         
@@ -29,6 +30,8 @@ zones_data = {
     "Chill zóna": {"multiple": True, "instances": []},
     "Zábavní zóna": {"multiple": False, "instances": []}
 }
+
+zones_data_default = copy.deepcopy(zones_data)
 
 def get_user_settings():
     settings = {}
@@ -149,9 +152,16 @@ def get_user_settings():
         print(zones_data)
     
     def load():
-        canvas.delete("all")
+        delete()
         data = loading.load()
         draw_load(data)
+
+    def delete():
+        global zones_data
+
+        canvas.delete("all")
+        zones_data = copy.deepcopy(zones_data_default)
+        print("Uživatel smazal canvas")
 
     # Pravý sloupec
     frame_right = tk.Frame(content_frame, width=200, height=800, bg="white")
@@ -171,6 +181,9 @@ def get_user_settings():
     save_button = tk.Button(buttons_frame, text="Načíst", command=load, font=("Arial", 20), bg="blue", fg="white", padx=20, pady=10, width=10, height=1)
     save_button.pack(side="left", padx=10)
 
+    delete_button = tk.Button(buttons_frame, text="Smazat", command=delete, font=("Arial", 20), bg="blue", fg="white", padx=20, pady=10, width=10, height=1)
+    delete_button.pack(side="left", padx=10)
+
     print_button = tk.Button(buttons_frame, text="Print Zones data", command=print_zones_data, font=("Arial", 20), bg="blue", fg="white", padx=20, pady=10, width=10, height=1)
     print_button.pack(side="left", padx=10)
 
@@ -183,7 +196,7 @@ def get_user_settings():
         "Vstupní zóna": ["Pokladna", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Umývárna", "Stoly", "Bankomat"],
         "Festivalový areál": ["Podium", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky","Umývárna", "Stoly", "Bankomat", "Merch stan", "Stan na autogramiády", "Dobíjecí stan"],
         "Stanové městečko": ["Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Sprchy", "Umývárna", "Dobíjecí stan", "Louka na stanování"],
-        "Chill zóna": ["Stánek s vodníma dýmkama", "Cammel stánek", "Chill stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Umývárna", "Dobíjecí stan"],
+        "Chill zóna": ["Stánek s vodníma dýmkama", "Cigaretový stánek", "Chill stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Umývárna", "Dobíjecí stan"],
         "Zábavní zóna": ["Bungee-jumping", "Horská dráha", "Lavice", "Kladivo", "Nealko stánek", "Pivní stánek","Bankomat"]
     }
 
@@ -373,7 +386,7 @@ def get_user_settings():
         else:
             obj_id = canvas.create_oval(x-r, y-r, x+r, y+r, fill="gray", outline="black")
 
-        return { "object": current_object, "x": x, "y": y, "canvas_ids": [text_id, obj_id], "extra": extra}   
+        return { "object": current_object, "x1": x1, "y1": y1, "x2":x2, "y2": y2, "canvas_ids": [text_id, obj_id], "extra": extra}   
     
 
     def on_click(event):
@@ -950,6 +963,7 @@ def get_user_settings():
                 for obj in objects:
                     new_obj = create_object(zone_instance, obj["object"], obj["x"], obj["y"])
                     obj["canvas_ids"] = new_obj["canvas_ids"]
+                    obj["extra"] = new_obj.get("extra", [])
 
         print("Všechny zóny a objekty vykresleny.")
 
