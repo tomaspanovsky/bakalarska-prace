@@ -75,7 +75,7 @@ def save(zones_data):
                     action["band_playing"] = "GO_TO_CONCERT"
 
                 elif "vodníma" in obj_name:
-                    stalls.append("smoke_stall")
+                    stalls.append("water_pipe_stall")
 
                 elif "cigaretový" in obj_name:
                     stalls.append("cigaret_stall")
@@ -124,7 +124,7 @@ def save(zones_data):
                         stalls.append("roallercoaster")
                     
                     elif "lavice" in obj_name:
-                        stalls.append("hammer")
+                        stalls.append("hammer_attraction")
  
                     action["atraction_desire"] = "GO_TO_ATRACTION"
 

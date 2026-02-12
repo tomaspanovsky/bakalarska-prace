@@ -3,7 +3,7 @@ import simpy
 import visitors
 import bands
 import locations
-import resources_zaloha
+import resources
 import simulation
 
 
@@ -22,7 +22,7 @@ num_bands = settings['num_bands']
 
 festival = simpy.Environment()
 tent_area = locations.create_tent_area(num_visitors)
-resources_zaloha.create_resources(festival, tent_area)
+resources.create_resources(festival, capacities)
 people, groups_of_visitors = visitors.create_visitors(num_visitors, income, festival)
 lineup, total_price_for_bands = bands.create_lineup(num_days, budget_for_bands, num_bands)
 people = bands.add_favorite_bands_to_visitor(people, lineup)

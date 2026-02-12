@@ -100,7 +100,7 @@
                 "nonalcohol_stall"
             ],
             "CHILL_ZONE": [
-                "smoke_stall",
+                "water_pipe_stall",
                 "chill_stall",
                 "nonalcohol_stall",
                 "beer_stall",
