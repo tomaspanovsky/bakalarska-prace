@@ -35,99 +35,104 @@ def save(zones_data):
             # seznam objektů v dané zóně
             for obj in instance.get("objects", []):
                 obj_name = obj["object"].lower()
+                stall = []
 
                 if "toitoiky" in obj_name:
-                    stalls.append("toitoi")
+                    stall.append("toitoi")
                     action["wc"] = "GO_TO_TOILET"
 
                 elif "umývárna" in obj_name:
-                    stalls.append("handwashing_station")
+                    stall.append("handwashing_station")
                     action["dirty"] = "WASH"
 
                 elif "stoly" in obj_name:
-                    stalls.append("tables")
+                    stall.append("tables")
                     action["sitting"] = "SIT"
 
                 elif "bankomat" in obj_name:
-                    stalls.append("atm")
+                    stall.append("atm")
                     action["low_money"] = "WITHDRAW" 
 
                 elif "sprchy" in obj_name:
-                    stalls.append("showers")
+                    stall.append("showers")
                     action["hygiene"] = "GO_TO_SHOWER"
 
                 elif "merch" in obj_name:
-                    stalls.append("merch_stall")
+                    stall.append("merch_stall")
                     action["meet_band"] = "GO_TO_SIGNING_SESSION"
 
                 elif "dobíjecí" in obj_name:
-                    stalls.append("charging_stall")
+                    stall.append("charging_stall")
                     action["phone_dead"] = "CHARGE_PHONE"
 
                 elif "pokladna" in obj_name:
-                    stalls.append("ticket_booth")
+                    stall.append("ticket_booth")
                     action["bracelet_exchange"] = "BRACELET_EXCHANGE"
 
                 elif "louka_na_stanovani" in obj_name:
-                    stalls.append("meadow for living")
+                    stall.append("meadow for living")
 
                 elif "podium" in obj_name: 
                     action["band_playing"] = "GO_TO_CONCERT"
 
                 elif "vodníma" in obj_name:
-                    stalls.append("water_pipe_stall")
+                    stall.append("water_pipe_stall")
 
                 elif "cigaretový" in obj_name:
-                    stalls.append("cigaret_stall")
+                    stall.append("cigaret_stall")
                     action["low_cigars"] = "BUY_CIGARS"
 
                 elif "chill" in obj_name:
-                    stalls.append("chill_stall")
+                    stall.append("chill_stall")
                     action["tiredness"] = "GO_CHILL"
 
                 elif any(food_stall.lower() in obj_name for food_stall in food_stalls):
                     
                     if "pizza" in obj_name:
-                        stalls.append("pizza_stall")
+                        stall.append("pizza_stall")
                     elif "burger" in obj_name:
-                        stalls.append("burger_stall")
+                        stall.append("burger_stall")
                     elif "gyros" in obj_name:
-                        stalls.append("gyros_stall")
+                        stall.append("gyros_stall")
                     elif "grill" in obj_name:
-                        stalls.append("grill_stall")
+                        stall.append("grill_stall")
                     elif "bel" in obj_name:
-                        stalls.append("belgian_fries_stall")
+                        stall.append("belgian_fries_stall")
                     elif "langoš" in obj_name:
-                        stalls.append("langos_stall")
+                        stall.append("langos_stall")
                     elif "sladký" in obj_name:
-                        stalls.append("sweet_stall")
+                        stall.append("sweet_stall")
 
                     action["hunger"] = "GO_FOR_FOOD"
 
                 elif any(drink_stall.lower() in obj_name for drink_stall in drink_stalls):
                     
                     if "nealko" in obj_name:
-                        stalls.append("nonalcohol_stall")
+                        stall.append("nonalcohol_stall")
                     if "pivní" in obj_name:
-                        stalls.append("beer_stall")
+                        stall.append("beer_stall")
                     if "red bull" in obj_name:
-                        stalls.append("redbull_stall")
+                        stall.append("redbull_stall")
 
                     action["thirst"] = "GO_FOR_DRINK"
 
                 if any(atraction.lower() in obj_name for atraction in atractions):
 
                     if "bungee" in obj_name:
-                        stalls.append("bungee_jumping")
+                        stall.append("bungee_jumping")
 
                     elif "horská" in obj_name:
-                        stalls.append("roallercoaster")
+                        stall.append("roallercoaster")
                     
                     elif "lavice" in obj_name:
-                        stalls.append("hammer_attraction")
+                        stall.append("hammer_attraction")
  
                     action["atraction_desire"] = "GO_TO_ATRACTION"
 
+                stall.append(obj["x"])
+                stall.append(obj["y"])
+                stalls.append(stall)
+                
             result["ACTIONS_BY_LOCATIONS"][location_key] = action
             result["STALLS_BY_LOCATIONS"][location_key] = stalls
 

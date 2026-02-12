@@ -4,7 +4,7 @@ import visitors
 import bands
 import locations
 import resources
-import simulation
+import simulation_new
 
 
 #promene, ktere budou vstupní parametry
@@ -30,6 +30,6 @@ people = bands.add_favorite_bands_to_visitor(people, lineup)
 bands.print_lineup(lineup)
 visitors.print_visitors(people)
 
-festival.process(simulation.spawn_groups(festival, groups_of_visitors))
+festival.process(simulation_new.spawn_groups(festival, groups_of_visitors))
 
 festival.run(until=(num_days * 1140))

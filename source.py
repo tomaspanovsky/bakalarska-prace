@@ -19,14 +19,12 @@ class Groups_modes(enum.Enum):
     INDIVIDUALLY = "individuálně"
 
 class Locations(enum.Enum):
-    TRAIN_STATION = "nádraží"
-    PARKING_LOT = "parkoviště"
+    SPAWN_AREA = "spawn zóna"
     TENT_AREA = "stanové městečko"
     ENTRANCE_ZONE = "vstupní zóna"
     FESTIVAL_AREA = "festivalý areál"
     CHILL_ZONE = "chill zóna"
     STAGE_STANDING = "Stání u podia"
-    FOOD_ZONE = "food zóna"
     ATRACTION_ZONE = "atrakce zóna"
 
 class Actions_onetime(enum.Enum):
@@ -95,10 +93,6 @@ SELECTIONS_OF_STALLS = {
         "stall_entrance_zone_sweet"
         }
     }
-
-class Yes_no(enum.Enum):
-    YES = True
-    NO = False
 
 class Gender(enum.Enum):
     MALE = "muž"

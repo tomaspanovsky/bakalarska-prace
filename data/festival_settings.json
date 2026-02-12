@@ -43,76 +43,348 @@
         "STALLS_BY_LOCATIONS": {
             "SPAWN_ZONE": [],
             "ENTRANCE_ZONE": [
-                "ticket_booth",
-                "ticket_booth",
-                "beer_stall",
-                "redbull_stall",
-                "nonalcohol_stall",
-                "tables",
-                "grill_stall",
-                "gyros_stall",
-                "burger_stall",
-                "pizza_stall",
-                "ticket_booth",
-                "toitoi",
-                "handwashing_station",
-                "handwashing_station",
-                "tables",
-                "tables",
-                "atm"
+                [
+                    "ticket_booth",
+                    495.0,
+                    227.0
+                ],
+                [
+                    "ticket_booth",
+                    434.0,
+                    225.0
+                ],
+                [
+                    "beer_stall",
+                    535.0,
+                    314.0
+                ],
+                [
+                    "redbull_stall",
+                    376.0,
+                    313.0
+                ],
+                [
+                    "nonalcohol_stall",
+                    460.0,
+                    313.0
+                ],
+                [
+                    "tables",
+                    225.0,
+                    287.0
+                ],
+                [
+                    "grill_stall",
+                    254.0,
+                    243.0
+                ],
+                [
+                    "gyros_stall",
+                    182.0,
+                    335.0
+                ],
+                [
+                    "burger_stall",
+                    184.0,
+                    241.0
+                ],
+                [
+                    "pizza_stall",
+                    259.0,
+                    338.0
+                ],
+                [
+                    "ticket_booth",
+                    378.0,
+                    223.0
+                ],
+                [
+                    "toitoi",
+                    220,
+                    491
+                ],
+                [
+                    "handwashing_station",
+                    183.0,
+                    444.0
+                ],
+                [
+                    "handwashing_station",
+                    246.0,
+                    443.0
+                ],
+                [
+                    "tables",
+                    182.0,
+                    286.0
+                ],
+                [
+                    "tables",
+                    266.0,
+                    287.0
+                ],
+                [
+                    "atm",
+                    526.0,
+                    519.0
+                ]
             ],
             "FESTIVAL_AREA": [
-                "pizza_stall",
-                "burger_stall",
-                "gyros_stall",
-                "grill_stall",
-                "belgian_fries_stall",
-                "langos_stall",
-                "sweet_stall",
-                "nonalcohol_stall",
-                "beer_stall",
-                "redbull_stall",
-                "toitoi",
-                "handwashing_station",
-                "tables",
-                "tables",
-                "tables",
-                "tables",
-                "atm",
-                "merch_stall",
-                "charging_stall",
-                "charging_stall",
-                "langos_stall",
-                "beer_stall",
-                "beer_stall",
-                "beer_stall",
-                "nonalcohol_stall",
-                "nonalcohol_stall"
+                [
+                    1211.0,
+                    105.0
+                ],
+                [
+                    "pizza_stall",
+                    791.0,
+                    89.0
+                ],
+                [
+                    "burger_stall",
+                    871.0,
+                    88.0
+                ],
+                [
+                    "gyros_stall",
+                    957.0,
+                    87.0
+                ],
+                [
+                    "grill_stall",
+                    965.0,
+                    208.0
+                ],
+                [
+                    "belgian_fries_stall",
+                    790.0,
+                    206.0
+                ],
+                [
+                    "langos_stall",
+                    891.0,
+                    207.0
+                ],
+                [
+                    "sweet_stall",
+                    790.0,
+                    344.0
+                ],
+                [
+                    "nonalcohol_stall",
+                    1038.0,
+                    140.0
+                ],
+                [
+                    "beer_stall",
+                    1038.0,
+                    191.0
+                ],
+                [
+                    "redbull_stall",
+                    1037.0,
+                    89.0
+                ],
+                [
+                    "toitoi",
+                    1133.0,
+                    514.0
+                ],
+                [
+                    "handwashing_station",
+                    1130.0,
+                    434.0
+                ],
+                [
+                    "tables",
+                    827.0,
+                    390.0
+                ],
+                [
+                    "tables",
+                    889.0,
+                    147.0
+                ],
+                [
+                    "tables",
+                    827.0,
+                    145.0
+                ],
+                [
+                    "tables",
+                    953.0,
+                    147.0
+                ],
+                [
+                    "atm",
+                    771.0,
+                    521.0
+                ],
+                [
+                    "merch_stall",
+                    1281.0,
+                    387.0
+                ],
+                [
+                    1277.0,
+                    330.0
+                ],
+                [
+                    "charging_stall",
+                    1284.0,
+                    448.0
+                ],
+                [
+                    "charging_stall",
+                    766.0,
+                    256.0
+                ],
+                [
+                    "langos_stall",
+                    863.0,
+                    345.0
+                ],
+                [
+                    "beer_stall",
+                    1286.0,
+                    503.0
+                ],
+                [
+                    "beer_stall",
+                    1097.0,
+                    335.0
+                ],
+                [
+                    "beer_stall",
+                    866.0,
+                    430.0
+                ],
+                [
+                    "nonalcohol_stall",
+                    1173.0,
+                    335.0
+                ],
+                [
+                    "nonalcohol_stall",
+                    789.0,
+                    432.0
+                ],
+                [
+                    730.0,
+                    297.5
+                ],
+                [
+                    1032.5,
+                    551.0
+                ]
             ],
             "TENT_AREA": [
-                "toitoi",
-                "showers",
-                "showers",
-                "handwashing_station",
-                "handwashing_station",
-                "charging_stall",
-                "beer_stall",
-                "nonalcohol_stall"
+                [
+                    476.0,
+                    736.0
+                ],
+                [
+                    "toitoi",
+                    229.0,
+                    761.0
+                ],
+                [
+                    "showers",
+                    187,
+                    632
+                ],
+                [
+                    "showers",
+                    234,
+                    631
+                ],
+                [
+                    "handwashing_station",
+                    187,
+                    677
+                ],
+                [
+                    "handwashing_station",
+                    236.0,
+                    678.0
+                ],
+                [
+                    "charging_stall",
+                    560,
+                    632
+                ],
+                [
+                    "beer_stall",
+                    329,
+                    632
+                ],
+                [
+                    "nonalcohol_stall",
+                    405.0,
+                    632.0
+                ]
             ],
             "CHILL_ZONE": [
-                "water_pipe_stall",
-                "chill_stall",
-                "nonalcohol_stall",
-                "beer_stall",
-                "redbull_stall",
-                "toitoi",
-                "handwashing_station",
-                "charging_stall"
+                [
+                    "water_pipe_stall",
+                    1027.0,
+                    628.0
+                ],
+                [
+                    1028.0,
+                    680.0
+                ],
+                [
+                    "chill_stall",
+                    1028.0,
+                    728.0
+                ],
+                [
+                    "nonalcohol_stall",
+                    796.0,
+                    626.0
+                ],
+                [
+                    "beer_stall",
+                    872.0,
+                    627.0
+                ],
+                [
+                    "redbull_stall",
+                    926.0,
+                    679.0
+                ],
+                [
+                    "toitoi",
+                    814.0,
+                    753.0
+                ],
+                [
+                    "handwashing_station",
+                    815.0,
+                    673.0
+                ],
+                [
+                    "charging_stall",
+                    960.0,
+                    755.0
+                ]
             ],
             "FUN_ZONE": [
-                "bungee_jumping",
-                "hammer",
-                "roallercoaster"
+                [
+                    "bungee_jumping",
+                    484.0,
+                    72.0
+                ],
+                [
+                    "hammer_attraction",
+                    637.0,
+                    71.0
+                ],
+                [
+                    "roallercoaster",
+                    563.0,
+                    129.0
+                ]
             ]
         },
         "ACTIONS_MOVING": {
@@ -121,19 +393,19 @@
             ],
             "ENTRANCE_ZONE": [
                 "GO_TO_SPAWN_ZONE",
+                "GO_TO_FUN_ZONE",
                 "GO_TO_FESTIVAL_AREA",
-                "GO_TO_CHILL_ZONE",
-                "GO_TO_TENT_AREA",
-                "GO_TO_FUN_ZONE"
+                "GO_TO_TENT_AREA"
             ],
             "FESTIVAL_AREA": [
-                "GO_TO_ENTRANCE_ZONE"
+                "GO_TO_ENTRANCE_ZONE",
+                "GO_TO_CHILL_ZONE"
             ],
             "TENT_AREA": [
                 "GO_TO_ENTRANCE_ZONE"
             ],
             "CHILL_ZONE": [
-                "GO_TO_ENTRANCE_ZONE"
+                "GO_TO_FESTIVAL_AREA"
             ],
             "FUN_ZONE": [
                 "GO_TO_ENTRANCE_ZONE"
@@ -153,7 +425,7 @@
                     "objects": [],
                     "lines": [
                         {
-                            "id": 139,
+                            "id": 151,
                             "other_zone": "Vstupní zóna"
                         }
                     ],
@@ -349,24 +621,20 @@
                     ],
                     "lines": [
                         {
-                            "id": 140,
+                            "id": 152,
                             "other_zone": "Spawn zóna"
                         },
                         {
-                            "id": 141,
+                            "id": 153,
+                            "other_zone": "Zábavní zóna"
+                        },
+                        {
+                            "id": 154,
                             "other_zone": "Festivalový areál"
                         },
                         {
-                            "id": 142,
-                            "other_zone": "Chill zóna"
-                        },
-                        {
-                            "id": 143,
+                            "id": 155,
                             "other_zone": "Stanové městečko"
-                        },
-                        {
-                            "id": 1130,
-                            "other_zone": "Zábavní zóna"
                         }
                     ],
                     "rect_id": 3,
@@ -396,8 +664,8 @@
                     "objects": [
                         {
                             "object": "Podium",
-                            "x": 1216.0,
-                            "y": 123.0,
+                            "x": 1211.0,
+                            "y": 105.0,
                             "canvas_ids": [
                                 41,
                                 42
@@ -406,8 +674,8 @@
                                 {
                                     "object": "Stání u podia",
                                     "canvas_ids": [
-                                        7046,
-                                        7045
+                                        44,
+                                        43
                                     ]
                                 }
                             ]
@@ -514,8 +782,8 @@
                         },
                         {
                             "object": "Toitoiky",
-                            "x": 1085.0,
-                            "y": 516.0,
+                            "x": 1133.0,
+                            "y": 514.0,
                             "canvas_ids": [
                                 65,
                                 66
@@ -524,8 +792,8 @@
                         },
                         {
                             "object": "Umývárna",
-                            "x": 1081.0,
-                            "y": 438.0,
+                            "x": 1130.0,
+                            "y": 434.0,
                             "canvas_ids": [
                                 67,
                                 68
@@ -681,12 +949,44 @@
                                 98
                             ],
                             "extra": []
+                        },
+                        {
+                            "object": "vstup",
+                            "x": 730.0,
+                            "y": 297.5,
+                            "x1": null,
+                            "y1": null,
+                            "x2": null,
+                            "y2": null,
+                            "canvas_ids": [
+                                99,
+                                100
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "vstup",
+                            "x": 1032.5,
+                            "y": 551.0,
+                            "x1": null,
+                            "y1": null,
+                            "x2": null,
+                            "y2": null,
+                            "canvas_ids": [
+                                101,
+                                102
+                            ],
+                            "extra": []
                         }
                     ],
                     "lines": [
                         {
-                            "id": 144,
+                            "id": 156,
                             "other_zone": "Vstupní zóna"
+                        },
+                        {
+                            "id": 157,
+                            "other_zone": "Chill zóna"
                         }
                     ],
                     "rect_id": 39,
@@ -716,21 +1016,21 @@
                     "objects": [
                         {
                             "object": "Louka na stanování",
-                            "x": 475.0,
-                            "y": 745.0,
+                            "x": 476.0,
+                            "y": 736.0,
                             "canvas_ids": [
-                                101,
-                                102
+                                105,
+                                106
                             ],
                             "extra": []
                         },
                         {
                             "object": "Toitoiky",
                             "x": 229.0,
-                            "y": 764.0,
+                            "y": 761.0,
                             "canvas_ids": [
-                                103,
-                                104
+                                107,
+                                108
                             ],
                             "extra": []
                         },
@@ -739,8 +1039,8 @@
                             "x": 187,
                             "y": 632,
                             "canvas_ids": [
-                                105,
-                                106
+                                109,
+                                110
                             ],
                             "extra": []
                         },
@@ -749,8 +1049,8 @@
                             "x": 234,
                             "y": 631,
                             "canvas_ids": [
-                                107,
-                                108
+                                111,
+                                112
                             ],
                             "extra": []
                         },
@@ -759,8 +1059,8 @@
                             "x": 187,
                             "y": 677,
                             "canvas_ids": [
-                                109,
-                                110
+                                113,
+                                114
                             ],
                             "extra": []
                         },
@@ -769,8 +1069,8 @@
                             "x": 236.0,
                             "y": 678.0,
                             "canvas_ids": [
-                                111,
-                                112
+                                115,
+                                116
                             ],
                             "extra": []
                         },
@@ -779,8 +1079,8 @@
                             "x": 560,
                             "y": 632,
                             "canvas_ids": [
-                                113,
-                                114
+                                117,
+                                118
                             ],
                             "extra": []
                         },
@@ -789,8 +1089,8 @@
                             "x": 329,
                             "y": 632,
                             "canvas_ids": [
-                                115,
-                                116
+                                119,
+                                120
                             ],
                             "extra": []
                         },
@@ -799,23 +1099,23 @@
                             "x": 405.0,
                             "y": 632.0,
                             "canvas_ids": [
-                                117,
-                                118
+                                121,
+                                122
                             ],
                             "extra": []
                         }
                     ],
                     "lines": [
                         {
-                            "id": 145,
+                            "id": 158,
                             "other_zone": "Vstupní zóna"
                         }
                     ],
-                    "rect_id": 99,
-                    "label_id": 100,
+                    "rect_id": 103,
+                    "label_id": 104,
                     "canvas_ids": [
-                        99,
-                        100
+                        103,
+                        104
                     ],
                     "resize_info": {
                         "left": false,
@@ -841,8 +1141,8 @@
                             "x": 1027.0,
                             "y": 628.0,
                             "canvas_ids": [
-                                121,
-                                122
+                                125,
+                                126
                             ],
                             "extra": []
                         },
@@ -851,8 +1151,8 @@
                             "x": 1028.0,
                             "y": 680.0,
                             "canvas_ids": [
-                                123,
-                                124
+                                127,
+                                128
                             ],
                             "extra": []
                         },
@@ -861,8 +1161,8 @@
                             "x": 1028.0,
                             "y": 728.0,
                             "canvas_ids": [
-                                125,
-                                126
+                                129,
+                                130
                             ],
                             "extra": []
                         },
@@ -871,8 +1171,8 @@
                             "x": 796.0,
                             "y": 626.0,
                             "canvas_ids": [
-                                127,
-                                128
+                                131,
+                                132
                             ],
                             "extra": []
                         },
@@ -881,8 +1181,8 @@
                             "x": 872.0,
                             "y": 627.0,
                             "canvas_ids": [
-                                129,
-                                130
+                                133,
+                                134
                             ],
                             "extra": []
                         },
@@ -891,18 +1191,18 @@
                             "x": 926.0,
                             "y": 679.0,
                             "canvas_ids": [
-                                131,
-                                132
+                                135,
+                                136
                             ],
                             "extra": []
                         },
                         {
                             "object": "Toitoiky",
-                            "x": 818.0,
-                            "y": 752.0,
+                            "x": 814.0,
+                            "y": 753.0,
                             "canvas_ids": [
-                                133,
-                                134
+                                137,
+                                138
                             ],
                             "extra": []
                         },
@@ -911,8 +1211,8 @@
                             "x": 815.0,
                             "y": 673.0,
                             "canvas_ids": [
-                                135,
-                                136
+                                139,
+                                140
                             ],
                             "extra": []
                         },
@@ -921,23 +1221,23 @@
                             "x": 960.0,
                             "y": 755.0,
                             "canvas_ids": [
-                                137,
-                                138
+                                141,
+                                142
                             ],
                             "extra": []
                         }
                     ],
                     "lines": [
                         {
-                            "id": 146,
-                            "other_zone": "Vstupní zóna"
+                            "id": 159,
+                            "other_zone": "Festivalový areál"
                         }
                     ],
-                    "rect_id": 119,
-                    "label_id": 120,
+                    "rect_id": 123,
+                    "label_id": 124,
                     "canvas_ids": [
-                        119,
-                        120
+                        123,
+                        124
                     ],
                     "resize_info": {
                         "left": false,
@@ -963,8 +1263,8 @@
                             "x": 484.0,
                             "y": 72.0,
                             "canvas_ids": [
-                                1131,
-                                1132
+                                145,
+                                146
                             ],
                             "extra": []
                         },
@@ -973,33 +1273,33 @@
                             "x": 637.0,
                             "y": 71.0,
                             "canvas_ids": [
-                                1133,
-                                1134
+                                147,
+                                148
                             ],
                             "extra": []
                         },
                         {
                             "object": "Horská dráha",
-                            "x": 564.0,
-                            "y": 118.0,
+                            "x": 563.0,
+                            "y": 129.0,
                             "canvas_ids": [
-                                1135,
-                                1136
+                                149,
+                                150
                             ],
                             "extra": []
                         }
                     ],
                     "lines": [
                         {
-                            "id": 1130,
+                            "id": 160,
                             "other_zone": "Vstupní zóna"
                         }
                     ],
-                    "rect_id": 1128,
-                    "label_id": 1129,
+                    "rect_id": 143,
+                    "label_id": 144,
                     "canvas_ids": [
-                        1128,
-                        1129
+                        143,
+                        144
                     ],
                     "resize_info": {
                         "left": false,
