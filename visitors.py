@@ -1,7 +1,7 @@
 import simpy
 import random
 import source
-import simulation
+import simulation_new
 global income
 
 pre_sale_ticket_price = 1000
@@ -113,14 +113,14 @@ def create_visitors(num_visitors, income, environment):
 
                 num_visitors -= 1
                 
-                nav = simulation.Visitor(environment, id, name=name, surname=surname, gender=gender, age_category = age_category, age = age, qualities = qualities, state = state, preference = preference, accommodation = accommodation, fellows = fellows, inventory = inventory)
+                nav = simulation_new.Visitor(environment, id, name=name, surname=surname, gender=gender, age_category = age_category, age = age, qualities = qualities, state = state, preference = preference, accommodation = accommodation, fellows = fellows, inventory = inventory)
                 visitors.append(nav)                
                 group_members.append(nav)
 
             if len(group_members) == 1:
-                groups = simulation.Group(environment, group_members, source.Groups.INDIVIDUAL, source.Groups_modes.INDIVIDUALLY)
+                groups = simulation_new.Group(environment, group_members, source.Groups.INDIVIDUAL, source.Groups_modes.INDIVIDUALLY)
             else: 
-                groups = simulation.Group(environment, group_members, source.Groups.GROUP, source.Groups_modes.IN_GROUP)
+                groups = simulation_new.Group(environment, group_members, source.Groups.GROUP, source.Groups_modes.IN_GROUP)
 
             visitors_groups.append(groups)
             group_members = []
@@ -207,7 +207,7 @@ def create_visitors(num_visitors, income, environment):
 
                     num_visitors -= 1
 
-                    nav = simulation.Visitor(environment, id, name=name, surname=surname, gender=gender, age_category = age_category, age = age, qualities = qualities, state = state, preference = preference, accommodation = accommodation, fellows = fellows, inventory = inventory)    
+                    nav = simulation_new.Visitor(environment, id, name=name, surname=surname, gender=gender, age_category = age_category, age = age, qualities = qualities, state = state, preference = preference, accommodation = accommodation, fellows = fellows, inventory = inventory)    
                     visitors.append(nav)
                     group_members.append(nav)
 
@@ -234,11 +234,11 @@ def create_visitors(num_visitors, income, environment):
                     accommodation = {"owner": False, "tent_id" : id_tent, "built" : False} #První argument je zda návštěvník vlastní stan, druhý je id_tentu ve kterém bude bydlet, třetí jestli už je postavený.
                     num_visitors -= 1
 
-                    nav = simulation.Visitor(environment, id, name=name, surname=surname, gender=gender, age_category = age_category, age = age, qualities = qualities, state = state, preference = preference, accommodation = accommodation, fellows = fellows, inventory = inventory)    
+                    nav = simulation_new.Visitor(environment, id, name=name, surname=surname, gender=gender, age_category = age_category, age = age, qualities = qualities, state = state, preference = preference, accommodation = accommodation, fellows = fellows, inventory = inventory)    
                     visitors.append(nav)
                     group_members.append(nav)
 
-            groups = simulation.Group(environment, group_members, source.Groups.FAMILY, source.Groups_modes.IN_GROUP)
+            groups = simulation_new.Group(environment, group_members, source.Groups.FAMILY, source.Groups_modes.IN_GROUP)
             visitors_groups.append(groups)
             group_members = []
 

@@ -27,49 +27,6 @@ class Locations(enum.Enum):
     STAGE_STANDING = "Stání u podia"
     ATRACTION_ZONE = "atrakce zóna"
 
-class Actions_onetime(enum.Enum):
-    PITCH_TENT = "pitch_tent"
-    BRACELET_EXCHANGE = "bracelet_exchange"
-
-class Actions_moves(enum.Enum):
-    GO_TO_TRAIN_STATION = "go_to_train_station"
-    GO_TO_PARKING_LOT = "go_to_parking_lot"
-    GO_TO_ENTRANCE_ZONE = "go_to_entrance_zone"
-    GO_TO_TENT_AREA = "go_to_tent_area"
-    GO_TO_FESTIVAL_AREA = "go_to_festival_area"
-
-class Actions_departure(enum.Enum):
-    GO_TO_TRAIN_STATION = "go_to_train_station"
-    GO_TO_PARKING_LOT = "go_to_parking_lot"
-
-class Actions_entrance_zone(enum.Enum):
-    GO_TO_TOILET = "go_to_the_toilet"
-    GO_FOR_DRINK = "go_for_drink"
-    GO_FOR_FOOD = "go_for_food"
-
-class Actions_tent_area(enum.Enum):
-    GO_TO_TOILET = "go_to_toilet"
-    GO_TO_SCHOWER = "go_to_shower"
-    GO_FOR_DRINK = "go_for_drink"
-    GO_TO_TENT = "go_to_tent"
-    
-ACTIONS_BY_LOCATIONS = {
-    Locations.ENTRANCE_ZONE: {
-        "hunger": Actions_entrance_zone.GO_FOR_FOOD.value, #ok
-        #"thirst": Actions_entrance_zone.GO_FOR_DRINK.value,
-        "wc": Actions_entrance_zone.GO_TO_TOILET.value, #ok
-        "bracelet_exchange": Actions_onetime.BRACELET_EXCHANGE.value, #ok
-        "go_to_festival_area": Actions_moves.GO_TO_FESTIVAL_AREA.value #ok
-    },
-    Locations.TENT_AREA: {
-        "wc": Actions_tent_area.GO_TO_TOILET.value,   #ok
-        "hygiene": Actions_tent_area.GO_TO_SCHOWER.value, #ok
-        #"thirst": Actions_tent_area.GO_FOR_DRINK.value,
-        #"tiredness": Actions_tent_area.GO_TO_TENT.value,
-        "pitch_tent": Actions_onetime.PITCH_TENT.value #ok
-    }
-}
-
 with open(file_path_foods, "r", encoding="utf-8") as f:
     foods_data = json.load(f)
 
