@@ -1,25 +1,46 @@
 {
-  "alcohol": [
-    "pivo Radegast",
-    "pivo Plzeň",
-    "pivo Gambrinus",
-    "jablečný cider",
-    "zelená",
-    "rum",
-    "slivovice",
-    "pinacolada",
-    "cubalibre",
-    "fernet",
-    "vodka"
-  ],
-  
-  "soft_drinks": [
-    "kofola",
-    "malinovka",
-    "jablečný džus",
-    "pomerančový džus",
-    "birel",
-    "Ovocný birell",
-    "Capri-sun"
-  ]
+  "drinks": {
+    "pivo Radegast": {"price": 70, "preparation_time": [10, 20], "hydration": 10, "drunkness": 15},
+    "pivo Plzeň": {"price": 75, "preparation_time": [10, 20], "hydration": 10, "drunkness": 15},
+    "pivo Gambrinus": {"price": 65, "preparation_time": [10, 20], "hydration": 10, "drunkness": 14},
+    "Birell": {"price": 60, "preparation_time": [8, 15], "hydration": 15, "drunkness": 0},
+    
+    "Red Bull": {"price": 80, "preparation_time": [5, 10], "energy": 30},
+    "Red Bull Vodka": {"price": 140, "preparation_time": [10, 20], "energy": 25, "drunkness": 20},
+    "Red Bull Jager": {"price": 150, "preparation_time": [10, 20], "energy": 20, "drunkness": 25},
+    
+    "Cuba Libre": {"price": 160, "preparation_time": [15, 30], "drunkness": 30},
+    "Piña Colada": {"price": 170, "preparation_time": [20, 40], "drunkness": 25},
+    "Sex on the Beach": {"price": 170, "preparation_time": [20, 40], "drunkness": 28},
+    "Mojito": {"price": 160, "preparation_time": [20, 35], "drunkness": 22},
+    "Gin Tonic": {"price": 150, "preparation_time": [15, 30], "drunkness": 25},
+    
+    "Zelená": {"price": 90, "preparation_time": [5, 10], "drunkness": 20},
+    "Rum": {"price": 90, "preparation_time": [5, 10], "drunkness": 22},
+    "Slivovice": {"price": 100, "preparation_time": [5, 10], "drunkness": 25},
+    "Vodka": {"price": 90, "preparation_time": [5, 10], "drunkness": 22},
+    "Fernet": {"price": 90, "preparation_time": [5, 10], "drunkness": 20},
+    "Jagermeister": {"price": 100, "preparation_time": [5, 10], "drunkness": 23},
+    
+    "Kofola": {"price": 60, "preparation_time": [5, 10], "hydration": 20},
+    "Malinovka": {"price": 55, "preparation_time": [5, 10], "hydration": 20},
+    "Jablečný džus": {"price": 65, "preparation_time": [5, 10], "hydration": 18},
+    "Pomerančový džus": {"price": 65, "preparation_time": [5, 10], "hydration": 18},
+    "Capri-Sun": {"price": 50, "preparation_time": [3, 6], "hydration": 15},
+    "Voda": {"price": 40, "preparation_time": [3, 6], "hydration": 30},
+    "Coca cola": {"price": 60, "preparation_time": [5, 10], "hydration": 20}
+  },
+
+  "stalls": {
+    "beer_stall": ["pivo Radegast", "pivo Plzeň", "pivo Gambrinus", "Birell"],
+    "redbull_stall": ["Red Bull", "Coca cola", "Voda", "Red Bull Vodka", "Red Bull Jager", "Zelená", "Rum", "Slivovice", "Vodka", "Fernet", "Jagermeister"],
+    "cocktail_stall": ["Cuba Libre", "Piña Colada", "Sex on the Beach", "Mojito", "Gin Tonic"],
+    "non_alcoholic_stall": ["Kofola", "Malinovka", "Jablečný džus", "Pomerančový džus", "Capri-Sun", "Voda"]
+  },
+
+  "alcohol" : ["pivo Radegast", "pivo Plzeň", "pivo Gambrinus", "Red Bull Vodka", "Red Bull Jager", "Zelená", "Rum", "Slivovice", "Vodka", "Fernet", "Jagermeister", "Cuba Libre", "Piña Colada", "Sex on the Beach", "Mojito", "Gin Tonic"],
+  "soft_drinks" : ["Birell", "Red Bull", "Kofola", "Malinovka", "Jablečný džus", "Pomerančový džus", "Capri-Sun", "Voda", "Coca cola"],
+  "beers" : ["pivo Radegast", "pivo Plzeň", "pivo Gambrinus"],
+  "hard_alcohol" : ["Zelená", "Rum", "Slivovice", "Vodka", "Fernet", "Jagermeister"],
+  "cocktails" : ["Cuba Libre", "Piña Colada", "Sex on the Beach", "Mojito", "Gin Tonic", "Red Bull Vodka", "Red Bull Jager"]
 }

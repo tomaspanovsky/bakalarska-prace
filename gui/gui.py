@@ -24,11 +24,11 @@ connect_start_zone = None
 capacities = {}
 
 zones_data = {
-    "Spawn zóna": {"multiple": True, "instances": []},
-    "Vstupní zóna": {"multiple": True, "instances": []},
+    "Spawn zóna": {"multiple": False, "instances": []},
+    "Vstupní zóna": {"multiple": False, "instances": []},
     "Festivalový areál": {"multiple": False, "instances": []},
-    "Stanové městečko": {"multiple": True, "instances": []},
-    "Chill zóna": {"multiple": True, "instances": []},
+    "Stanové městečko": {"multiple": False, "instances": []},
+    "Chill zóna": {"multiple": False, "instances": []},
     "Zábavní zóna": {"multiple": False, "instances": []}
 }
 
@@ -218,99 +218,104 @@ def get_user_settings():
     cap_redbull_stall.grid(row=10, column=2, padx=20)
     cap_redbull_stall.insert(0, "2")
 
-    tk.Label(stall_settings_frame, text="Sprchy:", **label_style).grid(row=11, column=1, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Stánek s míchanými drinky:", **label_style).grid(row=11, column=1, pady=5, sticky="w", padx=50)
+    cap_cocktail_stall = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_cocktail_stall.grid(row=11, column=2, padx=20)
+    cap_cocktail_stall.insert(0, "2")
+
+    tk.Label(stall_settings_frame, text="Sprchy:", **label_style).grid(row=12, column=1, pady=5, sticky="w", padx=50)
     cap_showers = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_showers.grid(row=11, column=2, padx=20)
+    cap_showers.grid(row=12, column=2, padx=20)
     cap_showers.insert(0, "5")
 
-    tk.Label(stall_settings_frame, text="Stany ve stanovém městečku:", **label_style).grid(row=12, column=1, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Stany ve stanovém městečku:", **label_style).grid(row=13, column=1, pady=5, sticky="w", padx=50)
     cap_tents = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_tents.grid(row=12, column=2, padx=20)
+    cap_tents.grid(row=13, column=2, padx=20)
     cap_tents.insert(0, "500")
 
-    tk.Label(stall_settings_frame, text="Stánek s cigaretama:", **label_style).grid(row=13, column=1, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Stánek s cigaretama:", **label_style).grid(row=14, column=1, pady=5, sticky="w", padx=50)
     cap_cigars_tent = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_cigars_tent.grid(row=13, column=2, padx=20)
+    cap_cigars_tent.grid(row=14, column=2, padx=20)
     cap_cigars_tent.insert(0, "1")
 
-    tk.Label(stall_settings_frame, text="Stánek s vodníma dýmkama", **label_style).grid(row=14, column=1, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Stánek s vodníma dýmkama", **label_style).grid(row=15, column=1, pady=5, sticky="w", padx=50)
     cap_water_pipe_stall = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_water_pipe_stall.grid(row=14, column=2, padx=20)
+    cap_water_pipe_stall.grid(row=15, column=2, padx=20)
     cap_water_pipe_stall.insert(0, "20")    
 
-    tk.Label(stall_settings_frame, text="Chill stánek", **label_style).grid(row=15, column=1, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Chill stánek", **label_style).grid(row=1, column=4, pady=5, sticky="w", padx=50)
     cap_chill_stall = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_chill_stall.grid(row=15, column=2, padx=20)
+    cap_chill_stall.grid(row=1, column=5, padx=20)
     cap_chill_stall.insert(0, "20")  
 
-    tk.Label(stall_settings_frame, text="Pokladna:", **label_style).grid(row=1, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Pokladna:", **label_style).grid(row=2, column=4, pady=5, sticky="w", padx=50)
     cap_ticket_booth = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_ticket_booth.grid(row=1, column=5, padx=20)
+    cap_ticket_booth.grid(row=2, column=5, padx=20)
     cap_ticket_booth.insert(0, "2")
     
-    tk.Label(stall_settings_frame, text="Toitoiky:", **label_style).grid(row=2, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Toitoiky:", **label_style).grid(row=3, column=4, pady=5, sticky="w", padx=50)
     cap_toitoi = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_toitoi.grid(row=2, column=5, padx=20)
+    cap_toitoi.grid(row=3, column=5, padx=20)
     cap_toitoi.insert(0, "20")
 
-    tk.Label(stall_settings_frame, text="Umývárna:", **label_style).grid(row=3, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Umývárna:", **label_style).grid(row=4, column=4, pady=5, sticky="w", padx=50)
     cap_handwashing_station = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_handwashing_station.grid(row=3, column=5, padx=20)
+    cap_handwashing_station.grid(row=4, column=5, padx=20)
     cap_handwashing_station.insert(0, "20")
 
-    tk.Label(stall_settings_frame, text="Stoly:", **label_style).grid(row=4, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Stoly:", **label_style).grid(row=5, column=4, pady=5, sticky="w", padx=50)
     cap_tables = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_tables.grid(row=4, column=5, padx=20)
+    cap_tables.grid(row=5, column=5, padx=20)
     cap_tables.insert(0, "20")
 
-    tk.Label(stall_settings_frame, text="Plocha na stání u pódia:", **label_style).grid(row=5, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Plocha na stání u pódia:", **label_style).grid(row=6, column=4, pady=5, sticky="w", padx=50)
     cap_standing = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_standing.grid(row=5, column=5, padx=20)
+    cap_standing.grid(row=6, column=5, padx=20)
     cap_standing.insert(0, "1000")
 
-    tk.Label(stall_settings_frame, text="Merch stan:", **label_style).grid(row=6, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Merch stan:", **label_style).grid(row=7, column=4, pady=5, sticky="w", padx=50)
     cap_merch_stall = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_merch_stall.grid(row=6, column=5, padx=20)
+    cap_merch_stall.grid(row=7, column=5, padx=20)
     cap_merch_stall.insert(0, "3")
 
-    tk.Label(stall_settings_frame, text="Fronta na autogramiády", **label_style).grid(row=7, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Fronta na autogramiády", **label_style).grid(row=8, column=4, pady=5, sticky="w", padx=50)
     cap_signing_stall = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_signing_stall.grid(row=7, column=5, padx=20)
+    cap_signing_stall.grid(row=8, column=5, padx=20)
     cap_signing_stall.insert(0, "500")
 
-    tk.Label(stall_settings_frame, text="Dobíjecí stan:", **label_style).grid(row=8, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Dobíjecí stan:", **label_style).grid(row=9, column=4, pady=5, sticky="w", padx=50)
     cap_charging_stall = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_charging_stall.grid(row=8, column=5, padx=20)
+    cap_charging_stall.grid(row=9, column=5, padx=20)
     cap_charging_stall.insert(0, "2")
 
-    tk.Label(stall_settings_frame, text="Dobíjecí stan - max počet telefonů:", **label_style).grid(row=9, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Dobíjecí stan - max počet telefonů:", **label_style).grid(row=10, column=4, pady=5, sticky="w", padx=50)
     cap_charging_stall_mobile = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_charging_stall_mobile.grid(row=9, column=5, padx=20)
+    cap_charging_stall_mobile.grid(row=10, column=5, padx=20)
     cap_charging_stall_mobile.insert(0, "20")
 
-    tk.Label(stall_settings_frame, text="Lidí na Bungee-jumping:", **label_style).grid(row=10, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Lidí na Bungee-jumping:", **label_style).grid(row=11, column=4, pady=5, sticky="w", padx=50)
     cap_bungee_jumping = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_bungee_jumping.grid(row=10, column=5, padx=20)
+    cap_bungee_jumping.grid(row=11, column=5, padx=20)
     cap_bungee_jumping.insert(0, "1")
 
-    tk.Label(stall_settings_frame, text="Lidí horské dráze:", **label_style).grid(row=11, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Lidí horské dráze:", **label_style).grid(row=12, column=4, pady=5, sticky="w", padx=50)
     cap_roallercoaster = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_roallercoaster.grid(row=11, column=5, padx=20)
+    cap_roallercoaster.grid(row=12, column=5, padx=20)
     cap_roallercoaster.insert(0, "24")
 
-    tk.Label(stall_settings_frame, text="Lidí na lavici:", **label_style).grid(row=12, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Lidí na lavici:", **label_style).grid(row=13, column=4, pady=5, sticky="w", padx=50)
     cap_bench_attraction = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_bench_attraction.grid(row=12, column=5, padx=20)
+    cap_bench_attraction.grid(row=13, column=5, padx=20)
     cap_bench_attraction.insert(0, "20")
 
-    tk.Label(stall_settings_frame, text="Lidí na kladivu:", **label_style).grid(row=13, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Lidí na kladivu:", **label_style).grid(row=14, column=4, pady=5, sticky="w", padx=50)
     cap_hammer_attraction = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_hammer_attraction.grid(row=13, column=5, padx=20)
+    cap_hammer_attraction.grid(row=14, column=5, padx=20)
     cap_hammer_attraction.insert(0, "32")
 
-    tk.Label(stall_settings_frame, text="Počet turniketů u vstupu:", **label_style).grid(row=14, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Počet turniketů u vstupu:", **label_style).grid(row=15, column=4, pady=5, sticky="w", padx=50)
     num_entrance_gate = tk.Entry(stall_settings_frame, **entry_style2)
-    num_entrance_gate.grid(row=14, column=5, padx=20)
+    num_entrance_gate.grid(row=15, column=5, padx=20)
     num_entrance_gate.insert(0, "4")
 
 
@@ -348,6 +353,7 @@ def get_user_settings():
         capacities["nonalcohol_stall"] = int(cap_nonalcohol_stall.get())
         capacities["beer_stall"] = int(cap_beer_stall.get())
         capacities["redbull_stall"] = int(cap_redbull_stall.get())
+        capacities["cocktail_stall"] = int(cap_cocktail_stall.get())
         capacities["entry"] = int(num_entrance_gate.get())
         capacities["signing_stall"] = int(cap_signing_stall.get())
         capacities["meadow_for_living"] = int(cap_tents.get())
@@ -423,11 +429,11 @@ def get_user_settings():
 
     objects_for_zone = {
         "Spawn bod": [],
-        "Vstupní zóna": ["Pokladna", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Umývárna", "Stoly", "Bankomat"],
-        "Festivalový areál": ["Podium", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky","Umývárna", "Stoly", "Bankomat", "Merch stan", "Stan na autogramiády", "Dobíjecí stan"],
-        "Stanové městečko": ["Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Sprchy", "Umývárna", "Dobíjecí stan", "Louka na stanování"],
-        "Chill zóna": ["Stánek s vodníma dýmkama", "Cigaretový stánek", "Chill stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Umývárna", "Dobíjecí stan"],
-        "Zábavní zóna": ["Bungee-jumping", "Horská dráha", "Lavice", "Kladivo", "Nealko stánek", "Pivní stánek","Bankomat"]
+        "Vstupní zóna": ["Pokladna", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek","Stánek s míchanými drinky", "Toitoiky", "Umývárna", "Stoly", "Bankomat"],
+        "Festivalový areál": ["Podium", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek","Stánek s míchanými drinky", "Toitoiky","Umývárna", "Stoly", "Bankomat", "Merch stan", "Stan na autogramiády", "Dobíjecí stan"],
+        "Stanové městečko": ["Nealko stánek", "Pivní stánek", "Red Bull stánek","Stánek s míchanými drinky", "Toitoiky", "Sprchy", "Umývárna", "Dobíjecí stan", "Louka na stanování"],
+        "Chill zóna": ["Stánek s vodníma dýmkama", "Cigaretový stánek", "Chill stánek", "Nealko stánek","Stánek s míchanými drinky", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Umývárna", "Dobíjecí stan"],
+        "Zábavní zóna": ["Bungee-jumping", "Horská dráha", "Lavice", "Kladivo", "Nealko stánek", "Pivní stánek","Stánek s míchanými drinky", "Red Bull stánek", "Bankomat"]
     }
 
     # Funkce pro výběr objektu

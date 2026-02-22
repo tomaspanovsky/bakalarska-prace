@@ -46,103 +46,127 @@
                     "name": "ticket_booth",
                     "x": 495.0,
                     "y": 227.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "pokladna"
                 },
                 {
                     "name": "ticket_booth",
                     "x": 434.0,
                     "y": 225.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "pokladna"
                 },
                 {
                     "name": "beer_stall",
                     "x": 535.0,
                     "y": 314.0,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "pivní stánek"
                 },
                 {
                     "name": "redbull_stall",
                     "x": 376.0,
                     "y": 313.0,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "red bull stánek"
                 },
                 {
                     "name": "nonalcohol_stall",
                     "x": 460.0,
                     "y": 313.0,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "nealko stánek"
                 },
                 {
                     "name": "tables",
                     "x": 225.0,
                     "y": 287.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "stoly"
                 },
                 {
                     "name": "grill_stall",
                     "x": 254.0,
                     "y": 243.0,
-                    "type": "foods"
+                    "type": "foods",
+                    "cz_name": "grill stánek"
                 },
                 {
                     "name": "gyros_stall",
                     "x": 182.0,
                     "y": 335.0,
-                    "type": "foods"
+                    "type": "foods",
+                    "cz_name": "gyros stánek"
                 },
                 {
                     "name": "burger_stall",
                     "x": 184.0,
                     "y": 241.0,
-                    "type": "foods"
+                    "type": "foods",
+                    "cz_name": "burger stánek"
                 },
                 {
                     "name": "pizza_stall",
                     "x": 259.0,
                     "y": 338.0,
-                    "type": "foods"
+                    "type": "foods",
+                    "cz_name": "pizza stánek"
                 },
                 {
                     "name": "ticket_booth",
                     "x": 378.0,
                     "y": 223.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "pokladna"
                 },
                 {
                     "name": "toitoi",
                     "x": 220,
                     "y": 491,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "toitoiky"
                 },
                 {
                     "name": "handwashing_station",
                     "x": 183.0,
                     "y": 444.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "umývárna"
                 },
                 {
                     "name": "handwashing_station",
                     "x": 246.0,
                     "y": 443.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "umývárna"
                 },
                 {
                     "name": "tables",
                     "x": 182.0,
                     "y": 286.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "stoly"
                 },
                 {
                     "name": "tables",
                     "x": 266.0,
                     "y": 287.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "stoly"
                 },
                 {
                     "name": "atm",
                     "x": 526.0,
                     "y": 519.0,
-                    "type": "Others"
+                    "type": "atm",
+                    "cz_name": "bankomat"
+                },
+                {
+                    "name": "cocktail_stall",
+                    "x": 373.0,
+                    "y": 376.0,
+                    "type": "drinks",
+                    "cz_name": "stánek s míchanými drinky"
                 }
             ],
             "FESTIVAL_AREA": [
@@ -150,237 +174,290 @@
                     "name": "pizza_stall",
                     "x": 791.0,
                     "y": 89.0,
-                    "type": "foods"
+                    "type": "foods",
+                    "cz_name": "pizza stánek"
                 },
                 {
                     "name": "burger_stall",
                     "x": 871.0,
                     "y": 88.0,
-                    "type": "foods"
+                    "type": "foods",
+                    "cz_name": "burger stánek"
                 },
                 {
                     "name": "gyros_stall",
                     "x": 957.0,
                     "y": 87.0,
-                    "type": "foods"
+                    "type": "foods",
+                    "cz_name": "gyros stánek"
                 },
                 {
                     "name": "grill_stall",
                     "x": 965.0,
                     "y": 208.0,
-                    "type": "foods"
+                    "type": "foods",
+                    "cz_name": "grill stánek"
                 },
                 {
                     "name": "belgian_fries_stall",
                     "x": 790.0,
                     "y": 206.0,
-                    "type": "foods"
+                    "type": "foods",
+                    "cz_name": "bel hranolky stánek"
                 },
                 {
                     "name": "langos_stall",
                     "x": 891.0,
                     "y": 207.0,
-                    "type": "foods"
+                    "type": "foods",
+                    "cz_name": "langoš stánek"
                 },
                 {
                     "name": "sweet_stall",
                     "x": 790.0,
                     "y": 344.0,
-                    "type": "foods"
+                    "type": "foods",
+                    "cz_name": "sladký stánek"
                 },
                 {
                     "name": "nonalcohol_stall",
                     "x": 1038.0,
                     "y": 140.0,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "nealko stánek"
                 },
                 {
                     "name": "beer_stall",
                     "x": 1038.0,
                     "y": 191.0,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "pivní stánek"
                 },
                 {
                     "name": "redbull_stall",
                     "x": 1037.0,
                     "y": 89.0,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "red bull stánek"
                 },
                 {
                     "name": "toitoi",
                     "x": 1118.0,
                     "y": 514.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "toitoiky"
                 },
                 {
                     "name": "handwashing_station",
                     "x": 1117.0,
                     "y": 438.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "umývárna"
                 },
                 {
                     "name": "tables",
                     "x": 827.0,
                     "y": 390.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "stoly"
                 },
                 {
                     "name": "tables",
                     "x": 889.0,
                     "y": 147.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "stoly"
                 },
                 {
                     "name": "tables",
                     "x": 827.0,
                     "y": 145.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "stoly"
                 },
                 {
                     "name": "tables",
                     "x": 953.0,
                     "y": 147.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "stoly"
                 },
                 {
                     "name": "atm",
                     "x": 771.0,
                     "y": 521.0,
-                    "type": "Others"
+                    "type": "atm",
+                    "cz_name": "bankomat"
                 },
                 {
                     "name": "merch_stall",
                     "x": 1281.0,
                     "y": 387.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "merch stan"
                 },
                 {
                     "name": "signing_stall",
                     "x": 1277.0,
                     "y": 330.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "stan na autogramiády"
                 },
                 {
                     "name": "charging_stall",
                     "x": 1284.0,
                     "y": 448.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "dobíjecí stan"
                 },
                 {
                     "name": "charging_stall",
                     "x": 766.0,
                     "y": 256.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "dobíjecí stan"
                 },
                 {
                     "name": "langos_stall",
                     "x": 863.0,
                     "y": 345.0,
-                    "type": "foods"
+                    "type": "foods",
+                    "cz_name": "langoš stánek"
                 },
                 {
                     "name": "beer_stall",
                     "x": 1286.0,
                     "y": 503.0,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "pivní stánek"
                 },
                 {
                     "name": "beer_stall",
                     "x": 1097.0,
                     "y": 335.0,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "pivní stánek"
                 },
                 {
                     "name": "beer_stall",
                     "x": 866.0,
                     "y": 430.0,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "pivní stánek"
                 },
                 {
                     "name": "nonalcohol_stall",
                     "x": 1173.0,
                     "y": 335.0,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "nealko stánek"
                 },
                 {
                     "name": "nonalcohol_stall",
                     "x": 789.0,
                     "y": 432.0,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "nealko stánek"
                 },
                 {
                     "name": "entry",
                     "x": 730.0,
                     "y": 297.5,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "vstup"
                 },
                 {
                     "name": "entry",
                     "x": 730.0,
                     "y": 297.5,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "vstup"
                 },
                 {
                     "name": "entry",
                     "x": 1032.5,
                     "y": 551.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "vstup"
+                },
+                {
+                    "name": "cocktail_stall",
+                    "x": 1040.0,
+                    "y": 243.0,
+                    "type": "drinks",
+                    "cz_name": "stánek s míchanými drinky"
+                },
+                {
+                    "name": "cocktail_stall",
+                    "x": 942.0,
+                    "y": 431.0,
+                    "type": "drinks",
+                    "cz_name": "stánek s míchanými drinky"
                 }
             ],
             "TENT_AREA": [
                 {
                     "name": "meadow_for_living",
-                    "x": 488.0,
-                    "y": 739.0,
-                    "type": "Others"
+                    "x": 490.0,
+                    "y": 738.0,
+                    "type": "Others",
+                    "cz_name": "louka na stanování"
                 },
                 {
                     "name": "toitoi",
                     "x": 226.0,
-                    "y": 761.0,
-                    "type": "Others"
+                    "y": 762.0,
+                    "type": "Others",
+                    "cz_name": "toitoiky"
                 },
                 {
                     "name": "showers",
                     "x": 187,
                     "y": 632,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "sprchy"
                 },
                 {
                     "name": "showers",
                     "x": 234,
                     "y": 631,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "sprchy"
                 },
                 {
                     "name": "handwashing_station",
                     "x": 187,
                     "y": 677,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "umývárna"
                 },
                 {
                     "name": "handwashing_station",
                     "x": 236.0,
                     "y": 678.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "umývárna"
                 },
                 {
                     "name": "charging_stall",
                     "x": 560,
                     "y": 632,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "dobíjecí stan"
                 },
                 {
                     "name": "beer_stall",
                     "x": 329,
                     "y": 632,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "pivní stánek"
                 },
                 {
                     "name": "nonalcohol_stall",
                     "x": 405.0,
                     "y": 632.0,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "nealko stánek"
                 }
             ],
             "CHILL_ZONE": [
@@ -388,55 +465,64 @@
                     "name": "water_pipe_stall",
                     "x": 1027.0,
                     "y": 628.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "stánek s vodníma dýmkama"
                 },
                 {
                     "name": "cigars_tent",
                     "x": 1028.0,
                     "y": 680.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "cammel stánek"
                 },
                 {
                     "name": "chill_stall",
                     "x": 1028.0,
                     "y": 728.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "chill stánek"
                 },
                 {
                     "name": "nonalcohol_stall",
                     "x": 796.0,
                     "y": 626.0,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "nealko stánek"
                 },
                 {
                     "name": "beer_stall",
                     "x": 872.0,
                     "y": 627.0,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "pivní stánek"
                 },
                 {
                     "name": "redbull_stall",
                     "x": 926.0,
                     "y": 679.0,
-                    "type": "drinks"
+                    "type": "drinks",
+                    "cz_name": "red bull stánek"
                 },
                 {
                     "name": "toitoi",
-                    "x": 811.0,
+                    "x": 814.0,
                     "y": 754.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "toitoiky"
                 },
                 {
                     "name": "handwashing_station",
                     "x": 815.0,
                     "y": 673.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "umývárna"
                 },
                 {
                     "name": "charging_stall",
                     "x": 960.0,
                     "y": 755.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "dobíjecí stan"
                 }
             ],
             "FUN_ZONE": [
@@ -444,19 +530,22 @@
                     "name": "bungee_jumping",
                     "x": 484.0,
                     "y": 72.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "bungee-jumping"
                 },
                 {
                     "name": "hammer_attraction",
                     "x": 637.0,
                     "y": 71.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "lavice"
                 },
                 {
                     "name": "roallercoaster",
                     "x": 564.0,
                     "y": 118.0,
-                    "type": "Others"
+                    "type": "Others",
+                    "cz_name": "horská dráha"
                 }
             ]
         },
@@ -690,6 +779,20 @@
                             "canvas_ids": [
                                 37,
                                 38
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Stánek s míchanými drinky",
+                            "x": 373.0,
+                            "y": 376.0,
+                            "x1": null,
+                            "y1": null,
+                            "x2": null,
+                            "y2": null,
+                            "canvas_ids": [
+                                169,
+                                170
                             ],
                             "extra": []
                         }
@@ -1009,8 +1112,8 @@
                         },
                         {
                             "object": "Podium",
-                            "x": 1210.0,
-                            "y": 103.0,
+                            "x": 1217.0,
+                            "y": 105.0,
                             "x1": 1137,
                             "y1": 231,
                             "x2": 1357,
@@ -1070,6 +1173,34 @@
                                 104
                             ],
                             "extra": []
+                        },
+                        {
+                            "object": "Stánek s míchanými drinky",
+                            "x": 1040.0,
+                            "y": 243.0,
+                            "x1": null,
+                            "y1": null,
+                            "x2": null,
+                            "y2": null,
+                            "canvas_ids": [
+                                165,
+                                166
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Stánek s míchanými drinky",
+                            "x": 942.0,
+                            "y": 431.0,
+                            "x1": null,
+                            "y1": null,
+                            "x2": null,
+                            "y2": null,
+                            "canvas_ids": [
+                                167,
+                                168
+                            ],
+                            "extra": []
                         }
                     ],
                     "lines": [
@@ -1113,8 +1244,8 @@
                     "objects": [
                         {
                             "object": "Louka na stanování",
-                            "x": 488.0,
-                            "y": 739.0,
+                            "x": 490.0,
+                            "y": 738.0,
                             "canvas_ids": [
                                 107,
                                 108
@@ -1124,7 +1255,7 @@
                         {
                             "object": "Toitoiky",
                             "x": 226.0,
-                            "y": 761.0,
+                            "y": 762.0,
                             "canvas_ids": [
                                 109,
                                 110
@@ -1295,7 +1426,7 @@
                         },
                         {
                             "object": "Toitoiky",
-                            "x": 811.0,
+                            "x": 814.0,
                             "y": 754.0,
                             "canvas_ids": [
                                 139,

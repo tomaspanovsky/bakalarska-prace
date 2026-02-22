@@ -29,13 +29,13 @@ def save(zones_data):
             print("aktuální instance:", instance)
 
             food_stalls = ["Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek"]
-            drink_stalls = ["Nealko stánek", "Pivní stánek", "Red Bull stánek"]
+            drink_stalls = ["Nealko stánek", "Pivní stánek", "Red Bull stánek", "Stánek s míchanými drinky"]
             atractions = ["Bungee-jumping", "Horská dráha", "Lavice", "Kladivo"]
 
             # seznam objektů v dané zóně
             for obj in instance.get("objects", []):
                 obj_name = obj["object"].lower()
-                stall = {"name": None, "x": None, "y": None, "type": None}
+                stall = {"name": None, "x": None, "y": None, "type": None, "cz_name": None}
 
                 if "podium" in obj_name:
                     continue
@@ -62,6 +62,7 @@ def save(zones_data):
                     action["sitting"] = "SIT"
 
                 elif "bankomat" in obj_name:
+                    stall["type"] = "atm"
                     stall["name"] = "atm"
                     action["low_money"] = "WITHDRAW" 
 
@@ -127,6 +128,9 @@ def save(zones_data):
                         stall["name"] = "beer_stall"
                     if "red bull" in obj_name:
                         stall["name"] = "redbull_stall"
+                    
+                    if "míchanými" in obj_name:
+                        stall["name"] = "cocktail_stall"
 
                     action["thirst"] = "GO_FOR_DRINK"
 
@@ -145,6 +149,7 @@ def save(zones_data):
 
                 stall["x"] = obj["x"]
                 stall["y"] = obj["y"]
+                stall["cz_name"] = obj_name
 
                 if stall["type"] == None:
                     stall["type"] = "Others"

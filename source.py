@@ -19,10 +19,10 @@ class Groups_modes(enum.Enum):
     INDIVIDUALLY = "individuálně"
 
 class Locations(enum.Enum):
-    SPAWN_AREA = "spawn zóna"
+    SPAWN_ZONE= "spawn zóna"
     TENT_AREA = "stanové městečko"
     ENTRANCE_ZONE = "vstupní zóna"
-    FESTIVAL_AREA = "festivalý areál"
+    FESTIVAL_ZONE = "festivalý areál"
     CHILL_ZONE = "chill zóna"
     STAGE_STANDING = "Stání u podia"
     ATRACTION_ZONE = "atrakce zóna"
@@ -31,13 +31,18 @@ with open(file_path_foods, "r", encoding="utf-8") as f:
     foods_data = json.load(f)
 
 foods = foods_data["foods"]
-stalls = foods_data["stalls"]
+food_stalls = foods_data["stalls"]
 
 with open(file_path_drinks, "r", encoding="utf-8") as f:
     drinks_data = json.load(f)
 
 soft_drinks = drinks_data["soft_drinks"]
 alcohol = drinks_data["alcohol"]
+beers = drinks_data["beers"]
+hard_alcohol = drinks_data["hard_alcohol"]
+cocktails = drinks_data["cocktails"]
+drink_stalls = drinks_data["stalls"]
+drinks = drinks_data["drinks"]
 
 SELECTIONS_OF_STALLS = {
     Locations.ENTRANCE_ZONE : {
