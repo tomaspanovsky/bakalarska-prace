@@ -134,7 +134,7 @@
                     "name": "toitoi",
                     "x": 220,
                     "y": 491,
-                    "type": "Others",
+                    "type": "toitoi",
                     "cz_name": "toitoiky",
                     "from": null
                 },
@@ -270,9 +270,9 @@
                 },
                 {
                     "name": "toitoi",
-                    "x": 1118.0,
-                    "y": 515.0,
-                    "type": "Others",
+                    "x": 1119.0,
+                    "y": 513.0,
+                    "type": "toitoi",
                     "cz_name": "toitoiky",
                     "from": null
                 },
@@ -440,8 +440,8 @@
             "TENT_AREA": [
                 {
                     "name": "meadow_for_living",
-                    "x": 496.0,
-                    "y": 739.0,
+                    "x": 493.0,
+                    "y": 742.0,
                     "type": "tent_area",
                     "cz_name": "louka na stanování",
                     "from": null
@@ -450,7 +450,7 @@
                     "name": "toitoi",
                     "x": 220.0,
                     "y": 766.0,
-                    "type": "Others",
+                    "type": "toitoi",
                     "cz_name": "toitoiky",
                     "from": null
                 },
@@ -563,8 +563,8 @@
                 {
                     "name": "toitoi",
                     "x": 815.0,
-                    "y": 757.0,
-                    "type": "Others",
+                    "y": 756.0,
+                    "type": "toitoi",
                     "cz_name": "toitoiky",
                     "from": null
                 },
@@ -1003,8 +1003,8 @@
                         },
                         {
                             "object": "Toitoiky",
-                            "x": 1118.0,
-                            "y": 515.0,
+                            "x": 1119.0,
+                            "y": 513.0,
                             "canvas_ids": [
                                 63,
                                 64
@@ -1287,8 +1287,8 @@
                     "objects": [
                         {
                             "object": "Louka na stanování",
-                            "x": 496.0,
-                            "y": 739.0,
+                            "x": 493.0,
+                            "y": 742.0,
                             "canvas_ids": [
                                 111,
                                 112
@@ -1470,7 +1470,7 @@
                         {
                             "object": "Toitoiky",
                             "x": 815.0,
-                            "y": 757.0,
+                            "y": 756.0,
                             "canvas_ids": [
                                 143,
                                 144

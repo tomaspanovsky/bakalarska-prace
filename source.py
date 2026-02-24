@@ -24,8 +24,8 @@ class Locations(enum.Enum):
     ENTRANCE_ZONE = "vstupní zóna"
     FESTIVAL_AREA = "festivalý areál"
     CHILL_ZONE = "chill zóna"
-    STAGE_STANDING = "Stání u podia"
-    ATRACTION_ZONE = "atrakce zóna"
+    STAGE_STANDING = "stání u podia"
+    FUN_ZONE = "zábavní zóna"
 
 with open(file_path_foods, "r", encoding="utf-8") as f:
     foods_data = json.load(f)

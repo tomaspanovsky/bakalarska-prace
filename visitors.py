@@ -61,9 +61,9 @@ def create_visitors(num_visitors, income, environment, available_foods, availabl
                         age = random.randint(65,80)
 
                 if age >= 18:
-                    preference = {"alcohol_consumer" : random.choice([True, False]), "smoker" : random.choice([True, False]), "favourite_food" : random.choice(available_foods), "favourite_soft_drink" : random.choice(available_soft_drinks)}
+                    preference = {"alcohol_consumer" : random.choice([True, False]), "smoker" : random.choice([True, False]), "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_alcohol_drinks else None}
                 else:
-                    preference = {"alcohol_consumer" : False, "smoker" : False, "favourite_food" : random.choice(available_foods), "favourite_soft_drink" : random.choice(available_soft_drinks)}
+                    preference = {"alcohol_consumer" : False, "smoker" : False, "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_soft_drinks else None}
 
                 qualities = {"impatience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
                 state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : random.choice([True, False]) , "entry_bracelet" : False ,"plastic_cup": False, "tiredness": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "sociability" : 100}                
@@ -84,7 +84,7 @@ def create_visitors(num_visitors, income, environment, available_foods, availabl
                     state["cigarettes"] = random.randint(1,60)
                 
                 if preference["alcohol_consumer"] == True:
-                    preference["favourite_alcohol"] = random.choice(available_alcohol_drinks)
+                    preference["favourite_alcohol"] = random.choice(available_alcohol_drinks) if available_alcohol_drinks else None
 
                 if state["pre_sale_ticket"] == True:
                     income += pre_sale_ticket_price
@@ -170,7 +170,7 @@ def create_visitors(num_visitors, income, environment, available_foods, availabl
                                 #nedočkavost
                     qualities = {"impatience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
                     state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : random.choice([True, False]) , "entry_bracelet" : False , "plastic_cup": False, "tiredness": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "sociability" : 100}
-                    preference = {"alcohol_consumer" : random.choice([True, False]), "smoker" : random.choice([True, False]), "favourite_food" : random.choice(available_foods), "favourite_soft_drink" : random.choice(available_soft_drinks)}
+                    preference = {"alcohol_consumer" : random.choice([True, False]), "smoker" : random.choice([True, False]), "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_soft_drinks else None}
                     inventory = []
                     age_category = source.Age_category.ADULT
                     age = random.randint(26, 64)
@@ -189,7 +189,7 @@ def create_visitors(num_visitors, income, environment, available_foods, availabl
                         state["cigarettes"] = random.randint(1,60)
                 
                     if preference["alcohol_consumer"] == True:
-                        preference["favourite_alcohol"] = random.choice(available_alcohol_drinks)
+                        preference["favourite_alcohol"] = random.choice(available_alcohol_drinks) if available_alcohol_drinks else None
 
                     if state["pre_sale_ticket"] == True:
                         income += pre_sale_ticket_price
@@ -215,7 +215,7 @@ def create_visitors(num_visitors, income, environment, available_foods, availabl
                     gender = random.choice(list(source.Gender))
                     qualities = {"impatience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
                     state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : random.choice([True, False]) , "entry_bracelet" : False ,"plastic_cup": False, "tiredness": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "sociability" : 100}
-                    preference = {"alcohol_consumer" : False, "smoker" : False, "favourite_food" : random.choice(available_foods), "favourite_soft_drink" : random.choice(available_soft_drinks)}
+                    preference = {"alcohol_consumer" : False, "smoker" : False, "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_soft_drinks else None}
                     inventory = []
                     age_category = source.Age_category.CHILD
                     age = random.randint(6, 14)

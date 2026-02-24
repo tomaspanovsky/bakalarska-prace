@@ -62,7 +62,7 @@ def create_resources(env, capacities):
 def multiple_resources(env, stall, capacities, location):
     urinals = []
     toitois = []
-    stalls = ["toitoi"]
+    stalls = []
 
     for i in range(capacities[stall["name"]]):
         name = stall["name"]
@@ -92,7 +92,8 @@ def multiple_resources(env, stall, capacities, location):
                             stall["x"],
                             stall["y"]))
             
-    stalls.append(urinals, toitois)
+    stalls.append(urinals)
+    stalls.append(toitois)
     return stalls
 
 def identify_entrances(stalls):
@@ -154,6 +155,7 @@ def find_stalls_in_zone(self, festival, type, name=None):
         location = self.state["location"].name
 
     for stall in festival.stalls[location]:
+        
         if stall.stall_type == type:
             if name:
                 if stall.stall_name == name:            
@@ -161,20 +163,6 @@ def find_stalls_in_zone(self, festival, type, name=None):
             else:
                 stalls.append(stall)
     return stalls
-
-def is_type_stalls_in_actual_zone(self, festival, type):
-    """Vrátí True, pokud je hledaný typ stánku v zóně"""
-
-    for stall in festival.stalls[self.state["location"].name]:
-
-        if type == "toitoi":
-            if stall[0] == "toitoi":
-                return True
-            
-        elif stall.stall_type == type:
-            return True
-    
-    return False
 
 def find_all_type_stall_at_festival(all_stalls, type):
     all_food_stalls_at_festival = []
@@ -185,21 +173,6 @@ def find_all_type_stall_at_festival(all_stalls, type):
                 all_food_stalls_at_festival.append(stall.stall_name)
     
     return all_food_stalls_at_festival
-
-def find_nearest_zone_with_stall(self, need):
-    connections = load_data("ACTIONS_MOVING")
-    possible_actions = load_data("ACTIONS_BY_LOCATIONS")
-    actual_location = self.state["location"]
-    possibilites = connections[actual_location.name]
-
-    for moving in possibilites:
-        zone = moving.split("GO_TO_")[1]
-
-        if need in possible_actions[zone].keys():
-            return moving
-    
-    print("Error: Není připojená zona s daným požadavkem")
-    return None
 
 def can_afford(self, what):
     return self.state["money"] > what["price"]

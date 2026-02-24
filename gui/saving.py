@@ -50,6 +50,7 @@ def save(zones_data):
 
                 if "toitoiky" in obj_name:
                     stall["name"] = "toitoi"
+                    stall["type"] = "toitoi"
                     action["wc"] = "GO_TO_TOILET"
 
                 elif "vstup" in obj_name:
