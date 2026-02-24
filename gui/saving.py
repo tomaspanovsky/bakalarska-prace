@@ -35,30 +35,35 @@ def save(zones_data):
             # seznam objektů v dané zóně
             for obj in instance.get("objects", []):
                 obj_name = obj["object"].lower()
-                stall = {"name": None, "x": None, "y": None, "type": None, "cz_name": None}
+                stall = {"name": None, "x": None, "y": None, "type": None, "cz_name": None, "from": None}
 
                 if "podium" in obj_name:
                     continue
 
                 if "cammel" in obj_name:
                     stall["name"] = "cigars_tent"
+                    stall["type"] = "smoking"
 
                 if "autogramiády" in obj_name:
                     stall["name"] = "signing_stall"
+                    stall["type"] = "festival"
 
                 if "toitoiky" in obj_name:
                     stall["name"] = "toitoi"
                     action["wc"] = "GO_TO_TOILET"
 
                 elif "vstup" in obj_name:
-                    stall["name"] = "entry"
+                    stall["name"] = "entrance"
+                    stall["type"] = "entrances"
 
                 elif "umývárna" in obj_name:
                     stall["name"] = "handwashing_station"
+                    stall["type"] = "handwashing_station"
                     action["dirty"] = "WASH"
 
                 elif "stoly" in obj_name:
                     stall["name"] = "tables"
+                    stall["type"] = "tables"
                     action["sitting"] = "SIT"
 
                 elif "bankomat" in obj_name:
@@ -68,35 +73,43 @@ def save(zones_data):
 
                 elif "sprchy" in obj_name:
                     stall["name"] = "showers"
+                    stall["type"] = "showers"
                     action["hygiene"] = "GO_TO_SHOWER"
 
                 elif "merch" in obj_name:
                     stall["name"] = "merch_stall"
+                    stall["type"] = "merch_stall"
                     action["meet_band"] = "GO_TO_SIGNING_SESSION"
 
                 elif "dobíjecí" in obj_name:
                     stall["name"] = "charging_stall"
+                    stall["type"] = "charging_stall"
                     action["phone_dead"] = "CHARGE_PHONE"
 
                 elif "pokladna" in obj_name:
                     stall["name"] = "ticket_booth"
+                    stall["type"] = "ticket_booth"
                     action["bracelet_exchange"] = "BRACELET_EXCHANGE"
 
                 elif "louka na stanování" in obj_name:
                     stall["name"] = "meadow_for_living"
+                    stall["type"] = "tent_area"
 
                 elif "podium" in obj_name: 
                     action["band_playing"] = "GO_TO_CONCERT"
 
                 elif "vodníma" in obj_name:
                     stall["name"] = "water_pipe_stall"
+                    stall["type"] = "smoking"
 
                 elif "cigaretový" in obj_name:
                     stall["name"] = "cigaret_stall"
+                    stall["type"] = "smoking"
                     action["low_cigars"] = "BUY_CIGARS"
 
                 elif "chill" in obj_name:
                     stall["name"] = "chill_stall"
+                    stall["type"] = "chill_stall"
                     action["tiredness"] = "GO_CHILL"
 
                 elif any(food_stall.lower() in obj_name for food_stall in food_stalls):
@@ -173,6 +186,11 @@ def save(zones_data):
                         result["ACTIONS_MOVING"][location_key] = traces
 
                         line["other_zone"] = other["type"]
+
+                        if other["type"] == "Festivalový areál":
+                            pass
+                            #line["entrance"] =
+                        
 
     file_path = filedialog.asksaveasfilename(
     defaultextension=".json",    

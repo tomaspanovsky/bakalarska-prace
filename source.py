@@ -22,7 +22,7 @@ class Locations(enum.Enum):
     SPAWN_ZONE= "spawn zóna"
     TENT_AREA = "stanové městečko"
     ENTRANCE_ZONE = "vstupní zóna"
-    FESTIVAL_ZONE = "festivalý areál"
+    FESTIVAL_AREA = "festivalý areál"
     CHILL_ZONE = "chill zóna"
     STAGE_STANDING = "Stání u podia"
     ATRACTION_ZONE = "atrakce zóna"

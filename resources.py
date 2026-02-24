@@ -4,24 +4,23 @@ import source
 from data.load_data import load_data
 
 class Stall:
-    def __init__(self, stall_type, stall_name, stall_cz_name, resource, id, x, y):
+    def __init__(self, stall_type, stall_name, stall_cz_name, zone, resource, id, x, y):
         self.stall_type = stall_type
         self.stall_name = stall_name
         self.stall_cz_name = stall_cz_name
+        self.zone = zone
         self.resource = resource
         self.id = id
         self.x = x
         self.y = y
         self.queue_length = 0
+        self.from_zone = None
 
 def create_resources(env, capacities):
     stalls = {"ENTRANCE_ZONE" : [], "TENT_AREA" : [], "FESTIVAL_AREA" : [], "CHILL_ZONE" : [], "ATRACTION_ZONE" : []}
 
-    with open("data/festival_settings.json", "r", encoding="utf-8") as f:
-        data = json.load(f)
-        stalls_in_locations = data[0]
-        stalls_in_locations = stalls_in_locations["STALLS_BY_LOCATIONS"]
-    
+    stalls_in_locations = load_data("STALLS_BY_LOCATIONS")
+
     for location in stalls_in_locations:
         objected_stall = []
         i = 1
@@ -35,18 +34,96 @@ def create_resources(env, capacities):
                 i = 1
 
             previous_stall = stall["name"]
-            objected_stall.append(Stall(stall["type"],
-                                        stall["name"],
-                                        stall["cz_name"], 
-                                        simpy.Resource(env, capacity=capacities[stall["name"]]),
-                                        i,
-                                        stall["x"],
-                                        stall["y"]))
+
+            if stall["name"] == "toitoi":
+                multiple_stall = multiple_resources(env, stall, capacities, location)
+                objected_stall.append(Stall(stall["type"],
+                                            stall["name"],
+                                            stall["cz_name"],
+                                            location,
+                                            multiple_stall,
+                                            i,
+                                            stall["x"],
+                                            stall["y"]))
+            else:
+                objected_stall.append(Stall(stall["type"],
+                                            stall["name"],
+                                            stall["cz_name"],
+                                            location,
+                                            simpy.Resource(env, capacity=capacities[stall["name"]]),
+                                            i,
+                                            stall["x"],
+                                            stall["y"]))
             i += 1
 
         stalls[location] = objected_stall
-
     return stalls
+
+def multiple_resources(env, stall, capacities, location):
+    urinals = []
+    toitois = []
+    stalls = ["toitoi"]
+
+    for i in range(capacities[stall["name"]]):
+        name = stall["name"]
+        cz_name = stall["cz_name"]
+
+        if stall["name"] == "toitoi" and i < capacities["toitoi"] // 3:
+            name = "urinal"
+            cz_name = "pisoar"
+
+            urinals.append(Stall(stall["type"],
+                            name,
+                            cz_name,
+                            location,
+                            simpy.Resource(env, capacity=1),
+                            i,
+                            stall["x"],
+                            stall["y"]))
+        else:
+            name = "toitoi"
+            cz_name = "toitoi"
+            toitois.append(Stall(stall["type"],
+                            name,
+                            cz_name,
+                            location,
+                            simpy.Resource(env, capacity=1),
+                            i,
+                            stall["x"],
+                            stall["y"]))
+            
+    stalls.append(urinals, toitois)
+    return stalls
+
+def identify_entrances(stalls):
+    zones = load_data()
+    entrances = []
+
+    location_map = {
+        "Vstupní zóna": "ENTRANCE_ZONE",
+        "Festivalový areál": "FESTIVAL_AREA",
+        "Stanové městečko": "TENT_AREA",
+        "Chill zóna": "CHILL_ZONE",
+        "Zábavní zóna": "FUN_ZONE",
+        "Spawn zóna": "SPAWN_ZONE"
+    }
+
+    for stall in stalls:
+        if stall.stall_name == "entrance":
+            entrances.append(stall)
+    
+    for zone_name, zone_data in zones.items():
+
+        for instance in zone_data["instances"]:
+            lines = instance.get("lines", [])
+
+            for line in lines:
+                other_zone = line.get("other_zone")
+
+                if other_zone == "Festivalový areál":
+                    entrances[0].from_zone = location_map[zone_name]
+                    del entrances[0]
+            
 
 def get_name(stall):
     return stall["name"]
@@ -68,8 +145,15 @@ def find_stall_with_shortest_queue_in_zone(self, festival, type, name=None):
 
 def find_stalls_in_zone(self, festival, type, name=None):
     """Vrátí stánky konkrétního typu v dané zóně, případně i stánky daného jména"""
+
     stalls = []
-    for stall in festival.stalls[self.state["location"].name]:
+    
+    if type == "entrances":
+        location = "FESTIVAL_AREA"
+    else:
+        location = self.state["location"].name
+
+    for stall in festival.stalls[location]:
         if stall.stall_type == type:
             if name:
                 if stall.stall_name == name:            
@@ -82,7 +166,12 @@ def is_type_stalls_in_actual_zone(self, festival, type):
     """Vrátí True, pokud je hledaný typ stánku v zóně"""
 
     for stall in festival.stalls[self.state["location"].name]:
-        if stall.stall_type == type:
+
+        if type == "toitoi":
+            if stall[0] == "toitoi":
+                return True
+            
+        elif stall.stall_type == type:
             return True
     
     return False

@@ -35,7 +35,7 @@
     "beer_stall": ["pivo Radegast", "pivo Plzeň", "pivo Gambrinus", "Birell"],
     "redbull_stall": ["Red Bull", "Coca cola", "Voda", "Red Bull Vodka", "Red Bull Jager", "Zelená", "Rum", "Slivovice", "Vodka", "Fernet", "Jagermeister"],
     "cocktail_stall": ["Cuba Libre", "Piña Colada", "Sex on the Beach", "Mojito", "Gin Tonic"],
-    "non_alcoholic_stall": ["Kofola", "Malinovka", "Jablečný džus", "Pomerančový džus", "Capri-Sun", "Voda"]
+    "nonalcohol_stall": ["Kofola", "Malinovka", "Jablečný džus", "Pomerančový džus", "Capri-Sun", "Voda"]
   },
 
   "alcohol" : ["pivo Radegast", "pivo Plzeň", "pivo Gambrinus", "Red Bull Vodka", "Red Bull Jager", "Zelená", "Rum", "Slivovice", "Vodka", "Fernet", "Jagermeister", "Cuba Libre", "Piña Colada", "Sex on the Beach", "Mojito", "Gin Tonic"],

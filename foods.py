@@ -9,7 +9,7 @@ def find_all_foods_at_festival(food_stalls_at_festival):
     for stall_name in food_stalls_at_festival:
         
         if stall_name in source.food_stalls:
-            foods.extend(source.stalls[stall_name])
+            foods.extend(source.food_stalls[stall_name])
 
     return foods
 

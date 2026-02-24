@@ -169,7 +169,7 @@ def create_visitors(num_visitors, income, environment, available_foods, availabl
                                 
                                 #nedočkavost
                     qualities = {"impatience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
-                    state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : random.choice([True, False]) , "entry_bracelet" : False ,"plastic_cup": False, "tiredness": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "sociability" : 100}
+                    state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : random.choice([True, False]) , "entry_bracelet" : False , "plastic_cup": False, "tiredness": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "sociability" : 100}
                     preference = {"alcohol_consumer" : random.choice([True, False]), "smoker" : random.choice([True, False]), "favourite_food" : random.choice(available_foods), "favourite_soft_drink" : random.choice(available_soft_drinks)}
                     inventory = []
                     age_category = source.Age_category.ADULT

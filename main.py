@@ -26,7 +26,9 @@ num_bands = settings['num_bands']
 festival_env = simpy.Environment()
 tent_area = locations.create_tent_area(num_visitors)
 
+capacities["entrance"] = 4
 stalls = resources.create_resources(festival_env, capacities)
+resources.identify_entrances(stalls["FESTIVAL_AREA"])
 food_stalls_names = resources.find_all_type_stall_at_festival(stalls, "foods")
 drink_stalls_names = resources.find_all_type_stall_at_festival(stalls, "drinks")
 available_foods = foods.find_all_foods_at_festival(food_stalls_names)
@@ -39,7 +41,7 @@ people = bands.add_favorite_bands_to_visitor(people, lineup)
 bands.print_lineup(lineup)
 visitors.print_visitors(people)
 
-festival = fest.Festival(festival_env, people, groups_of_visitors, num_days, lineup, income, stalls, available_foods, available_soft_drinks, available_alcohol_drinks)
+festival = fest.Festival(festival_env, people, groups_of_visitors, num_days, lineup, income, stalls)
 festival_env.process(simulation_new.spawn_groups(festival_env, groups_of_visitors, festival))
 
 festival_env.run(until=(num_days * 1140))

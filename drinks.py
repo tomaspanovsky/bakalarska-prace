@@ -16,8 +16,8 @@ def find_all_drinks_at_festival(drink_stalls_at_festival):
         if stall_name in source.drink_stalls:
             drinks.extend(source.drink_stalls[stall_name])
 
-    soft_drinks = list(set(soft_drinks) & set(all_soft_drinks))
-    alcohol_drinks = list(set(alcohol_drinks) & set(all_alcohol_drinks))
+    soft_drinks = list(set(drinks) & set(all_soft_drinks))
+    alcohol_drinks = list(set(drinks) & set(all_alcohol_drinks))
     return soft_drinks, alcohol_drinks
 
 def is_my_favourite_drink_in_actual_zone(self, festival, drink_type):
@@ -40,7 +40,7 @@ def is_my_favourite_drink_in_actual_zone(self, festival, drink_type):
     return False, None
 
 def is_drink_in_stall(stall, drink):
-    drinks_in_stall = source.drinks_stalls[stall.stall_name]
+    drinks_in_stall = source.drink_stalls[stall.stall_name]
 
     if drink in drinks_in_stall:
         return True
@@ -92,7 +92,7 @@ def choose_random_drink_from_actual_zone(self, festival, drink_type):
 
     for stall in stalls:
 
-        drinks_in_stall = source.drinks_stalls[stall.stall_name]
+        drinks_in_stall = source.drink_stalls[stall.stall_name]
         available_drinks.extend(drinks_in_stall)
 
     drinks = list(set(available_drinks) & set(drink_type))
