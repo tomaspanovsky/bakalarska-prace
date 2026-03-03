@@ -4,39 +4,52 @@
             "SPAWN_ZONE": {},
             "ENTRANCE_ZONE": {
                 "bracelet_exchange": "BRACELET_EXCHANGE",
+                "smoking": "SMOKE",
                 "thirst": "GO_FOR_DRINK",
                 "sitting": "SIT",
                 "hunger": "GO_FOR_FOOD",
                 "wc": "GO_TO_TOILET",
-                "dirty": "WASH",
-                "low_money": "WITHDRAW"
+                "dirty_hand": "WASH",
+                "brushing_teeth": "BRUSH_TEETH",
+                "low_money": "WITHDRAW",
+                "cup_return": "RETURN_CUP"
             },
             "FESTIVAL_AREA": {
                 "hunger": "GO_FOR_FOOD",
+                "smoking": "SMOKE",
                 "thirst": "GO_FOR_DRINK",
                 "wc": "GO_TO_TOILET",
-                "dirty": "WASH",
+                "dirty_hand": "WASH",
+                "brushing_teeth": "BRUSH_TEETH",
                 "sitting": "SIT",
                 "low_money": "WITHDRAW",
                 "meet_band": "GO_TO_SIGNING_SESSION",
-                "phone_dead": "CHARGE_PHONE"
+                "phone_dead": "CHARGE_PHONE",
+                "cup_return": "RETURN_CUP"
             },
             "TENT_AREA": {
+                "living": "PITCH_TENT",
+                "energy": "SLEEP_IN_TENT",
+                "smoking": "SMOKE",
                 "wc": "GO_TO_TOILET",
                 "hygiene": "GO_TO_SHOWER",
-                "dirty": "WASH",
+                "dirty_hand": "WASH",
+                "brushing_teeth": "BRUSH_TEETH",
                 "phone_dead": "CHARGE_PHONE",
                 "thirst": "GO_FOR_DRINK"
             },
             "CHILL_ZONE": {
+                "smoking": "SMOKE",
                 "tiredness": "GO_CHILL",
                 "thirst": "GO_FOR_DRINK",
                 "wc": "GO_TO_TOILET",
-                "dirty": "WASH",
+                "dirty_hand": "WASH",
+                "brushing_teeth": "BRUSH_TEETH",
                 "phone_dead": "CHARGE_PHONE"
             },
             "FUN_ZONE": {
-                "atraction_desire": "GO_TO_ATRACTION"
+                "atraction_desire": "GO_TO_ATRACTION",
+                "smoking": "SMOKE"
             }
         },
         "STALLS_BY_LOCATIONS": {
@@ -185,6 +198,14 @@
                     "type": "drinks",
                     "cz_name": "stánek s míchanými drinky",
                     "from": null
+                },
+                {
+                    "name": "cup_return",
+                    "x": 523.0,
+                    "y": 442.0,
+                    "type": "cup_return",
+                    "cz_name": "výkup kelímků",
+                    "from": null
                 }
             ],
             "FESTIVAL_AREA": [
@@ -270,8 +291,8 @@
                 },
                 {
                     "name": "toitoi",
-                    "x": 1119.0,
-                    "y": 513.0,
+                    "x": 1118.0,
+                    "y": 519.0,
                     "type": "toitoi",
                     "cz_name": "toitoiky",
                     "from": null
@@ -405,14 +426,6 @@
                     "from": null
                 },
                 {
-                    "name": "entrance",
-                    "x": 1032.5,
-                    "y": 551.0,
-                    "type": "entrances",
-                    "cz_name": "vstup",
-                    "from": null
-                },
-                {
                     "name": "cocktail_stall",
                     "x": 1040.0,
                     "y": 243.0,
@@ -429,9 +442,25 @@
                     "from": null
                 },
                 {
+                    "name": "cup_return",
+                    "x": 866,
+                    "y": 519,
+                    "type": "cup_return",
+                    "cz_name": "výkup kelímků",
+                    "from": null
+                },
+                {
                     "name": "entrance",
                     "x": 730.0,
                     "y": 297.5,
+                    "type": "entrances",
+                    "cz_name": "vstup",
+                    "from": null
+                },
+                {
+                    "name": "entrance",
+                    "x": 1032.5,
+                    "y": 551.0,
                     "type": "entrances",
                     "cz_name": "vstup",
                     "from": null
@@ -440,8 +469,8 @@
             "TENT_AREA": [
                 {
                     "name": "meadow_for_living",
-                    "x": 493.0,
-                    "y": 742.0,
+                    "x": 490.0,
+                    "y": 741.0,
                     "type": "tent_area",
                     "cz_name": "louka na stanování",
                     "from": null
@@ -449,7 +478,7 @@
                 {
                     "name": "toitoi",
                     "x": 220.0,
-                    "y": 766.0,
+                    "y": 763.0,
                     "type": "toitoi",
                     "cz_name": "toitoiky",
                     "from": null
@@ -563,7 +592,7 @@
                 {
                     "name": "toitoi",
                     "x": 815.0,
-                    "y": 756.0,
+                    "y": 751.0,
                     "type": "toitoi",
                     "cz_name": "toitoiky",
                     "from": null
@@ -619,12 +648,12 @@
             "ENTRANCE_ZONE": [
                 "GO_TO_SPAWN_ZONE",
                 "GO_TO_FUN_ZONE",
-                "GO_TO_TENT_AREA",
-                "GO_TO_FESTIVAL_AREA"
+                "GO_TO_FESTIVAL_AREA",
+                "GO_TO_TENT_AREA"
             ],
             "FESTIVAL_AREA": [
-                "GO_TO_CHILL_ZONE",
-                "GO_TO_ENTRANCE_ZONE"
+                "GO_TO_ENTRANCE_ZONE",
+                "GO_TO_CHILL_ZONE"
             ],
             "TENT_AREA": [
                 "GO_TO_ENTRANCE_ZONE"
@@ -650,15 +679,15 @@
                     "objects": [],
                     "lines": [
                         {
-                            "id": 157,
+                            "id": 511,
                             "other_zone": "Vstupní zóna"
                         }
                     ],
-                    "rect_id": 1,
-                    "label_id": 2,
+                    "rect_id": 341,
+                    "label_id": 342,
                     "canvas_ids": [
-                        1,
-                        2
+                        341,
+                        342
                     ]
                 }
             ]
@@ -678,8 +707,8 @@
                             "x": 495.0,
                             "y": 227.0,
                             "canvas_ids": [
-                                5,
-                                6
+                                345,
+                                346
                             ],
                             "extra": []
                         },
@@ -688,8 +717,8 @@
                             "x": 434.0,
                             "y": 225.0,
                             "canvas_ids": [
-                                7,
-                                8
+                                347,
+                                348
                             ],
                             "extra": []
                         },
@@ -698,8 +727,8 @@
                             "x": 535.0,
                             "y": 314.0,
                             "canvas_ids": [
-                                9,
-                                10
+                                349,
+                                350
                             ],
                             "extra": []
                         },
@@ -708,8 +737,8 @@
                             "x": 376.0,
                             "y": 313.0,
                             "canvas_ids": [
-                                11,
-                                12
+                                351,
+                                352
                             ],
                             "extra": []
                         },
@@ -718,8 +747,8 @@
                             "x": 460.0,
                             "y": 313.0,
                             "canvas_ids": [
-                                13,
-                                14
+                                353,
+                                354
                             ],
                             "extra": []
                         },
@@ -728,8 +757,8 @@
                             "x": 225.0,
                             "y": 287.0,
                             "canvas_ids": [
-                                15,
-                                16
+                                355,
+                                356
                             ],
                             "extra": []
                         },
@@ -738,8 +767,8 @@
                             "x": 254.0,
                             "y": 243.0,
                             "canvas_ids": [
-                                17,
-                                18
+                                357,
+                                358
                             ],
                             "extra": []
                         },
@@ -748,8 +777,8 @@
                             "x": 182.0,
                             "y": 335.0,
                             "canvas_ids": [
-                                19,
-                                20
+                                359,
+                                360
                             ],
                             "extra": []
                         },
@@ -758,8 +787,8 @@
                             "x": 184.0,
                             "y": 241.0,
                             "canvas_ids": [
-                                21,
-                                22
+                                361,
+                                362
                             ],
                             "extra": []
                         },
@@ -768,8 +797,8 @@
                             "x": 259.0,
                             "y": 338.0,
                             "canvas_ids": [
-                                23,
-                                24
+                                363,
+                                364
                             ],
                             "extra": []
                         },
@@ -778,8 +807,8 @@
                             "x": 378.0,
                             "y": 223.0,
                             "canvas_ids": [
-                                25,
-                                26
+                                365,
+                                366
                             ],
                             "extra": []
                         },
@@ -788,8 +817,8 @@
                             "x": 220,
                             "y": 491,
                             "canvas_ids": [
-                                27,
-                                28
+                                367,
+                                368
                             ],
                             "extra": []
                         },
@@ -798,8 +827,8 @@
                             "x": 183.0,
                             "y": 444.0,
                             "canvas_ids": [
-                                29,
-                                30
+                                369,
+                                370
                             ],
                             "extra": []
                         },
@@ -808,8 +837,8 @@
                             "x": 246.0,
                             "y": 443.0,
                             "canvas_ids": [
-                                31,
-                                32
+                                371,
+                                372
                             ],
                             "extra": []
                         },
@@ -818,8 +847,8 @@
                             "x": 182.0,
                             "y": 286.0,
                             "canvas_ids": [
-                                33,
-                                34
+                                373,
+                                374
                             ],
                             "extra": []
                         },
@@ -828,8 +857,8 @@
                             "x": 266.0,
                             "y": 287.0,
                             "canvas_ids": [
-                                35,
-                                36
+                                375,
+                                376
                             ],
                             "extra": []
                         },
@@ -838,8 +867,8 @@
                             "x": 526.0,
                             "y": 519.0,
                             "canvas_ids": [
-                                37,
-                                38
+                                377,
+                                378
                             ],
                             "extra": []
                         },
@@ -852,35 +881,49 @@
                             "x2": null,
                             "y2": null,
                             "canvas_ids": [
-                                39,
-                                40
+                                379,
+                                380
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Výkup kelímků",
+                            "x": 523.0,
+                            "y": 442.0,
+                            "x1": null,
+                            "y1": null,
+                            "x2": null,
+                            "y2": null,
+                            "canvas_ids": [
+                                381,
+                                382
                             ],
                             "extra": []
                         }
                     ],
                     "lines": [
                         {
-                            "id": 158,
+                            "id": 511,
                             "other_zone": "Spawn zóna"
                         },
                         {
-                            "id": 159,
+                            "id": 512,
                             "other_zone": "Zábavní zóna"
                         },
                         {
-                            "id": 160,
-                            "other_zone": "Stanové městečko"
+                            "id": 513,
+                            "other_zone": "Festivalový areál"
                         },
                         {
-                            "id": 161,
-                            "other_zone": "Festivalový areál"
+                            "id": 519,
+                            "other_zone": "Stanové městečko"
                         }
                     ],
-                    "rect_id": 3,
-                    "label_id": 4,
+                    "rect_id": 343,
+                    "label_id": 344,
                     "canvas_ids": [
-                        3,
-                        4
+                        343,
+                        344
                     ],
                     "resize_info": {
                         "left": true,
@@ -906,8 +949,8 @@
                             "x": 791.0,
                             "y": 89.0,
                             "canvas_ids": [
-                                43,
-                                44
+                                385,
+                                386
                             ],
                             "extra": []
                         },
@@ -916,8 +959,8 @@
                             "x": 871.0,
                             "y": 88.0,
                             "canvas_ids": [
-                                45,
-                                46
+                                387,
+                                388
                             ],
                             "extra": []
                         },
@@ -926,8 +969,8 @@
                             "x": 957.0,
                             "y": 87.0,
                             "canvas_ids": [
-                                47,
-                                48
+                                389,
+                                390
                             ],
                             "extra": []
                         },
@@ -936,8 +979,8 @@
                             "x": 966.0,
                             "y": 206.0,
                             "canvas_ids": [
-                                49,
-                                50
+                                391,
+                                392
                             ],
                             "extra": []
                         },
@@ -946,8 +989,8 @@
                             "x": 790.0,
                             "y": 206.0,
                             "canvas_ids": [
-                                51,
-                                52
+                                393,
+                                394
                             ],
                             "extra": []
                         },
@@ -956,8 +999,8 @@
                             "x": 891.0,
                             "y": 207.0,
                             "canvas_ids": [
-                                53,
-                                54
+                                395,
+                                396
                             ],
                             "extra": []
                         },
@@ -966,8 +1009,8 @@
                             "x": 790.0,
                             "y": 344.0,
                             "canvas_ids": [
-                                55,
-                                56
+                                397,
+                                398
                             ],
                             "extra": []
                         },
@@ -976,8 +1019,8 @@
                             "x": 1038.0,
                             "y": 140.0,
                             "canvas_ids": [
-                                57,
-                                58
+                                399,
+                                400
                             ],
                             "extra": []
                         },
@@ -986,8 +1029,8 @@
                             "x": 1038.0,
                             "y": 191.0,
                             "canvas_ids": [
-                                59,
-                                60
+                                401,
+                                402
                             ],
                             "extra": []
                         },
@@ -996,18 +1039,18 @@
                             "x": 1037.0,
                             "y": 89.0,
                             "canvas_ids": [
-                                61,
-                                62
+                                403,
+                                404
                             ],
                             "extra": []
                         },
                         {
                             "object": "Toitoiky",
-                            "x": 1119.0,
-                            "y": 513.0,
+                            "x": 1118.0,
+                            "y": 519.0,
                             "canvas_ids": [
-                                63,
-                                64
+                                405,
+                                406
                             ],
                             "extra": []
                         },
@@ -1016,8 +1059,8 @@
                             "x": 1117.0,
                             "y": 438.0,
                             "canvas_ids": [
-                                65,
-                                66
+                                407,
+                                408
                             ],
                             "extra": []
                         },
@@ -1026,8 +1069,8 @@
                             "x": 827.0,
                             "y": 390.0,
                             "canvas_ids": [
-                                67,
-                                68
+                                409,
+                                410
                             ],
                             "extra": []
                         },
@@ -1036,8 +1079,8 @@
                             "x": 889.0,
                             "y": 147.0,
                             "canvas_ids": [
-                                69,
-                                70
+                                411,
+                                412
                             ],
                             "extra": []
                         },
@@ -1046,8 +1089,8 @@
                             "x": 827.0,
                             "y": 145.0,
                             "canvas_ids": [
-                                71,
-                                72
+                                413,
+                                414
                             ],
                             "extra": []
                         },
@@ -1056,8 +1099,8 @@
                             "x": 953.0,
                             "y": 147.0,
                             "canvas_ids": [
-                                73,
-                                74
+                                415,
+                                416
                             ],
                             "extra": []
                         },
@@ -1066,8 +1109,8 @@
                             "x": 771.0,
                             "y": 521.0,
                             "canvas_ids": [
-                                75,
-                                76
+                                417,
+                                418
                             ],
                             "extra": []
                         },
@@ -1076,8 +1119,8 @@
                             "x": 1281.0,
                             "y": 387.0,
                             "canvas_ids": [
-                                77,
-                                78
+                                419,
+                                420
                             ],
                             "extra": []
                         },
@@ -1086,8 +1129,8 @@
                             "x": 1277.0,
                             "y": 330.0,
                             "canvas_ids": [
-                                79,
-                                80
+                                421,
+                                422
                             ],
                             "extra": []
                         },
@@ -1096,8 +1139,8 @@
                             "x": 1284.0,
                             "y": 448.0,
                             "canvas_ids": [
-                                81,
-                                82
+                                423,
+                                424
                             ],
                             "extra": []
                         },
@@ -1106,8 +1149,8 @@
                             "x": 766.0,
                             "y": 256.0,
                             "canvas_ids": [
-                                83,
-                                84
+                                425,
+                                426
                             ],
                             "extra": []
                         },
@@ -1116,8 +1159,8 @@
                             "x": 863.0,
                             "y": 345.0,
                             "canvas_ids": [
-                                85,
-                                86
+                                427,
+                                428
                             ],
                             "extra": []
                         },
@@ -1126,8 +1169,8 @@
                             "x": 1286.0,
                             "y": 503.0,
                             "canvas_ids": [
-                                87,
-                                88
+                                429,
+                                430
                             ],
                             "extra": []
                         },
@@ -1136,8 +1179,8 @@
                             "x": 1097.0,
                             "y": 335.0,
                             "canvas_ids": [
-                                89,
-                                90
+                                431,
+                                432
                             ],
                             "extra": []
                         },
@@ -1146,8 +1189,8 @@
                             "x": 866.0,
                             "y": 430.0,
                             "canvas_ids": [
-                                91,
-                                92
+                                433,
+                                434
                             ],
                             "extra": []
                         },
@@ -1156,8 +1199,8 @@
                             "x": 1173.0,
                             "y": 335.0,
                             "canvas_ids": [
-                                93,
-                                94
+                                435,
+                                436
                             ],
                             "extra": []
                         },
@@ -1166,46 +1209,32 @@
                             "x": 789.0,
                             "y": 432.0,
                             "canvas_ids": [
-                                95,
-                                96
+                                437,
+                                438
                             ],
                             "extra": []
                         },
                         {
                             "object": "Podium",
-                            "x": 1215.0,
-                            "y": 101.0,
+                            "x": 1216.0,
+                            "y": 105.0,
                             "x1": 1137,
                             "y1": 231,
                             "x2": 1357,
                             "y2": 376,
                             "canvas_ids": [
-                                97,
-                                98
+                                439,
+                                440
                             ],
                             "extra": [
                                 {
                                     "object": "Stání u podia",
                                     "canvas_ids": [
-                                        100,
-                                        99
+                                        442,
+                                        441
                                     ]
                                 }
                             ]
-                        },
-                        {
-                            "object": "vstup",
-                            "x": 1032.5,
-                            "y": 551.0,
-                            "x1": null,
-                            "y1": null,
-                            "x2": null,
-                            "y2": null,
-                            "canvas_ids": [
-                                101,
-                                102
-                            ],
-                            "extra": []
                         },
                         {
                             "object": "Stánek s míchanými drinky",
@@ -1216,8 +1245,8 @@
                             "x2": null,
                             "y2": null,
                             "canvas_ids": [
-                                103,
-                                104
+                                445,
+                                446
                             ],
                             "extra": []
                         },
@@ -1230,8 +1259,22 @@
                             "x2": null,
                             "y2": null,
                             "canvas_ids": [
-                                105,
-                                106
+                                447,
+                                448
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "Výkup kelímků",
+                            "x": 866,
+                            "y": 519,
+                            "x1": null,
+                            "y1": null,
+                            "x2": null,
+                            "y2": null,
+                            "canvas_ids": [
+                                451,
+                                452
                             ],
                             "extra": []
                         },
@@ -1244,27 +1287,41 @@
                             "x2": null,
                             "y2": null,
                             "canvas_ids": [
-                                107,
-                                108
+                                514,
+                                515
+                            ],
+                            "extra": []
+                        },
+                        {
+                            "object": "vstup",
+                            "x": 1032.5,
+                            "y": 551.0,
+                            "x1": null,
+                            "y1": null,
+                            "x2": null,
+                            "y2": null,
+                            "canvas_ids": [
+                                517,
+                                518
                             ],
                             "extra": []
                         }
                     ],
                     "lines": [
                         {
-                            "id": 162,
-                            "other_zone": "Chill zóna"
+                            "id": 513,
+                            "other_zone": "Vstupní zóna"
                         },
                         {
-                            "id": 163,
-                            "other_zone": "Vstupní zóna"
+                            "id": 516,
+                            "other_zone": "Chill zóna"
                         }
                     ],
-                    "rect_id": 41,
-                    "label_id": 42,
+                    "rect_id": 383,
+                    "label_id": 384,
                     "canvas_ids": [
-                        41,
-                        42
+                        383,
+                        384
                     ],
                     "resize_info": {
                         "left": true,
@@ -1287,21 +1344,21 @@
                     "objects": [
                         {
                             "object": "Louka na stanování",
-                            "x": 493.0,
-                            "y": 742.0,
+                            "x": 490.0,
+                            "y": 741.0,
                             "canvas_ids": [
-                                111,
-                                112
+                                455,
+                                456
                             ],
                             "extra": []
                         },
                         {
                             "object": "Toitoiky",
                             "x": 220.0,
-                            "y": 766.0,
+                            "y": 763.0,
                             "canvas_ids": [
-                                113,
-                                114
+                                457,
+                                458
                             ],
                             "extra": []
                         },
@@ -1310,8 +1367,8 @@
                             "x": 187,
                             "y": 632,
                             "canvas_ids": [
-                                115,
-                                116
+                                459,
+                                460
                             ],
                             "extra": []
                         },
@@ -1320,8 +1377,8 @@
                             "x": 234,
                             "y": 631,
                             "canvas_ids": [
-                                117,
-                                118
+                                461,
+                                462
                             ],
                             "extra": []
                         },
@@ -1330,8 +1387,8 @@
                             "x": 187,
                             "y": 677,
                             "canvas_ids": [
-                                119,
-                                120
+                                463,
+                                464
                             ],
                             "extra": []
                         },
@@ -1340,8 +1397,8 @@
                             "x": 236.0,
                             "y": 678.0,
                             "canvas_ids": [
-                                121,
-                                122
+                                465,
+                                466
                             ],
                             "extra": []
                         },
@@ -1350,8 +1407,8 @@
                             "x": 560,
                             "y": 632,
                             "canvas_ids": [
-                                123,
-                                124
+                                467,
+                                468
                             ],
                             "extra": []
                         },
@@ -1360,8 +1417,8 @@
                             "x": 329,
                             "y": 632,
                             "canvas_ids": [
-                                125,
-                                126
+                                469,
+                                470
                             ],
                             "extra": []
                         },
@@ -1370,23 +1427,23 @@
                             "x": 405.0,
                             "y": 632.0,
                             "canvas_ids": [
-                                127,
-                                128
+                                471,
+                                472
                             ],
                             "extra": []
                         }
                     ],
                     "lines": [
                         {
-                            "id": 164,
+                            "id": 519,
                             "other_zone": "Vstupní zóna"
                         }
                     ],
-                    "rect_id": 109,
-                    "label_id": 110,
+                    "rect_id": 453,
+                    "label_id": 454,
                     "canvas_ids": [
-                        109,
-                        110
+                        453,
+                        454
                     ],
                     "resize_info": {
                         "left": false,
@@ -1412,8 +1469,8 @@
                             "x": 1027.0,
                             "y": 628.0,
                             "canvas_ids": [
-                                131,
-                                132
+                                475,
+                                476
                             ],
                             "extra": []
                         },
@@ -1422,8 +1479,8 @@
                             "x": 1028.0,
                             "y": 680.0,
                             "canvas_ids": [
-                                133,
-                                134
+                                477,
+                                478
                             ],
                             "extra": []
                         },
@@ -1432,8 +1489,8 @@
                             "x": 1028.0,
                             "y": 728.0,
                             "canvas_ids": [
-                                135,
-                                136
+                                479,
+                                480
                             ],
                             "extra": []
                         },
@@ -1442,8 +1499,8 @@
                             "x": 796.0,
                             "y": 626.0,
                             "canvas_ids": [
-                                137,
-                                138
+                                481,
+                                482
                             ],
                             "extra": []
                         },
@@ -1452,8 +1509,8 @@
                             "x": 872.0,
                             "y": 627.0,
                             "canvas_ids": [
-                                139,
-                                140
+                                483,
+                                484
                             ],
                             "extra": []
                         },
@@ -1462,18 +1519,18 @@
                             "x": 926.0,
                             "y": 679.0,
                             "canvas_ids": [
-                                141,
-                                142
+                                485,
+                                486
                             ],
                             "extra": []
                         },
                         {
                             "object": "Toitoiky",
                             "x": 815.0,
-                            "y": 756.0,
+                            "y": 751.0,
                             "canvas_ids": [
-                                143,
-                                144
+                                487,
+                                488
                             ],
                             "extra": []
                         },
@@ -1482,8 +1539,8 @@
                             "x": 815.0,
                             "y": 673.0,
                             "canvas_ids": [
-                                145,
-                                146
+                                489,
+                                490
                             ],
                             "extra": []
                         },
@@ -1492,23 +1549,23 @@
                             "x": 960.0,
                             "y": 755.0,
                             "canvas_ids": [
-                                147,
-                                148
+                                491,
+                                492
                             ],
                             "extra": []
                         }
                     ],
                     "lines": [
                         {
-                            "id": 165,
+                            "id": 516,
                             "other_zone": "Festivalový areál"
                         }
                     ],
-                    "rect_id": 129,
-                    "label_id": 130,
+                    "rect_id": 473,
+                    "label_id": 474,
                     "canvas_ids": [
-                        129,
-                        130
+                        473,
+                        474
                     ],
                     "resize_info": {
                         "left": false,
@@ -1534,8 +1591,8 @@
                             "x": 484.0,
                             "y": 72.0,
                             "canvas_ids": [
-                                151,
-                                152
+                                495,
+                                496
                             ],
                             "extra": []
                         },
@@ -1544,8 +1601,8 @@
                             "x": 637.0,
                             "y": 71.0,
                             "canvas_ids": [
-                                153,
-                                154
+                                497,
+                                498
                             ],
                             "extra": []
                         },
@@ -1554,23 +1611,23 @@
                             "x": 564.0,
                             "y": 118.0,
                             "canvas_ids": [
-                                155,
-                                156
+                                499,
+                                500
                             ],
                             "extra": []
                         }
                     ],
                     "lines": [
                         {
-                            "id": 166,
+                            "id": 512,
                             "other_zone": "Vstupní zóna"
                         }
                     ],
-                    "rect_id": 149,
-                    "label_id": 150,
+                    "rect_id": 493,
+                    "label_id": 494,
                     "canvas_ids": [
-                        149,
-                        150
+                        493,
+                        494
                     ],
                     "resize_info": {
                         "left": false,

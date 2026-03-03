@@ -23,7 +23,7 @@ def choose_food_with_great_satiety_in_actual_zone(self, festival):
 
     for stall in stalls:
 
-        foods_in_stall = source.stalls[stall.stall_name]
+        foods_in_stall = source.food_stalls[stall.stall_name]
         random.shuffle(foods_in_stall)
 
         for food in foods_in_stall:
@@ -50,7 +50,7 @@ def is_my_favourite_food_in_actual_zone(self, festival):
     return False, None
 
 def is_food_in_stall(stall, food):
-    foods_in_stall = source.stalls[stall.stall_name]
+    foods_in_stall = source.food_stalls[stall.stall_name]
 
     if food in foods_in_stall:
         return True
@@ -63,7 +63,7 @@ def choose_random_food_from_actual_zone(self, festival):
     stalls = resources.find_stalls_in_zone(self, festival, "foods")
     for stall in stalls:
 
-        foods_in_stall = source.stalls[stall.stall_name]
+        foods_in_stall = source.food_stalls[stall.stall_name]
         available_foods.extend(foods_in_stall)
 
     i = 1
@@ -79,7 +79,7 @@ def find_food_stall_with_shortest_queue_in_zone(self, festival):
     return resources.find_stall_with_shortest_queue_in_zone(self, festival, "foods")
 
 def choose_random_food_from_stall(self, stall):
-    foods = source.stalls[stall.stall_name]
+    foods = source.food_stalls[stall.stall_name]
 
     i = 1
     while i <= 3:

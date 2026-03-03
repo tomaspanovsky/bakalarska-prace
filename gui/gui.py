@@ -42,6 +42,9 @@ def get_user_settings():
         settings['num_days'] = int(entry_days.get())
         settings['budget_for_bands'] = int(entry_budget.get())
         settings['num_bands'] = int(entry_num_bands.get())
+        settings['pre_sale_price'] = int(pre_sale_price.get())
+        settings['on_site_price'] = int(on_site_price.get())
+        settings['camping_area_price'] = int(camping_area_price.get())
         get_capacities()
         root.destroy()
 
@@ -58,6 +61,11 @@ def get_user_settings():
         settings_frame.pack_forget()
         stall_settings_frame.place(relx=0.5, rely=0.5, anchor="center")
 
+    def open_price_settings():
+        main_frame.pack_forget()
+        settings_frame.pack_forget()
+        prices_settings_frame.place(relx=0.5, rely=0.5, anchor="center")
+
     def open_settings():
         main_frame.pack_forget()
         settings_frame.pack(fill="both", expand=True)
@@ -68,6 +76,10 @@ def get_user_settings():
             stall_settings_frame.place_forget()
             settings_frame.pack(fill="both", expand=True)
         
+        if prices_settings_frame.winfo_ismapped():
+            prices_settings_frame.place_forget()
+            settings_frame.pack(fill="both", expand=True) 
+
         if settings_frame.winfo_ismapped():
             settings_frame.pack_forget()
             main_frame.pack(fill="both", expand=True)
@@ -75,6 +87,7 @@ def get_user_settings():
         if editor_frame.winfo_ismapped():
             editor_frame.pack_forget()
             main_frame.pack(fill="both", expand=True)
+
 
 
 
@@ -127,10 +140,11 @@ def get_user_settings():
     entry_budget.grid(row=2, column=1, pady=10)
     entry_budget.insert(0, "10000000")
 
-    tk.Label(frame, text="Počet vystupujících kapel:", **label_style).grid(row=3, column=0, pady=10, sticky="w")
+    tk.Label(frame, text="Počet kapel na den:", **label_style).grid(row=3, column=0, pady=10, sticky="w")
     entry_num_bands = tk.Entry(frame, **entry_style)
     entry_num_bands.grid(row=3, column=1, pady=10)
     entry_num_bands.insert(0, "8")
+
 
     bottom_frame = tk.Frame(main_frame, bg='black')
     bottom_frame.pack(side="bottom", pady=30)
@@ -153,6 +167,9 @@ def get_user_settings():
 
     stall_settings_button = tk.Button(settings_frame, text="Kapacity objektů", command=open_stalls_settings, font=("Arial", 15), bg="blue", fg="white", padx=40, pady=15)
     stall_settings_button.pack() 
+
+    prices_settings_button = tk.Button(settings_frame, text="Ceny", command=open_price_settings, font=("Arial", 15), bg="blue", fg="white", padx=40, pady=15)
+    prices_settings_button.pack() 
 
     settings_bottom_frame = tk.Frame(settings_frame, bg='black')
     settings_bottom_frame.pack(side="bottom", pady=30, fill="x")
@@ -318,6 +335,11 @@ def get_user_settings():
     num_entrance_gate.grid(row=15, column=5, padx=20)
     num_entrance_gate.insert(0, "4")
 
+    tk.Label(stall_settings_frame, text="Výkup kelímků:", **label_style).grid(row=16, column=4, pady=5, sticky="w", padx=50)
+    cap_cup_return = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_cup_return.grid(row=16, column=5, padx=20)
+    cap_cup_return.insert(0, "4")
+
 
     bottom_settings_stalls_frame = tk.Frame(stall_settings_frame, bg="black") 
     bottom_settings_stalls_frame.grid(row=20, column=0, columnspan=6, pady=40) 
@@ -358,7 +380,34 @@ def get_user_settings():
         capacities["signing_stall"] = int(cap_signing_stall.get())
         capacities["meadow_for_living"] = int(cap_tents.get())
         capacities["atm"] = 1
+        capacities["cup_return"] = int(cap_cup_return.get())
 
+    # ---------- OBRAZOVKA4: Prices settings
+
+    prices_settings_frame = tk.Frame(root, bg="black")
+    prices_settings_frame.pack_forget()
+
+    tk.Label(prices_settings_frame, text="Ceny", font=("Arial", 32, "bold"), bg="black", fg="yellow").grid(row=0, column=0, columnspan=7, pady=(40, 40))
+
+    tk.Label(prices_settings_frame, text="Cena vstupenky na místě:", **label_style).grid(row=2, column=0, pady=10, sticky="w")
+    on_site_price = tk.Entry(prices_settings_frame, **entry_style)
+    on_site_price.grid(row=2, column=1, pady=10)
+    on_site_price.insert(0, "1500")
+
+    tk.Label(prices_settings_frame, text="Cena vstupenky v předprodeji:", **label_style).grid(row=3, column=0, pady=10, sticky="w")
+    pre_sale_price = tk.Entry(prices_settings_frame, **entry_style)
+    pre_sale_price.grid(row=3, column=1, pady=10)
+    pre_sale_price.insert(0, "1300")
+
+    tk.Label(prices_settings_frame, text="Cena stanového městečka:", **label_style).grid(row=4, column=0, pady=10, sticky="w")
+    camping_area_price = tk.Entry(prices_settings_frame, **entry_style)
+    camping_area_price.grid(row=4, column=1, pady=10)
+    camping_area_price.insert(0, "200")
+
+    bottom_settings_prices_frame = tk.Frame(prices_settings_frame, bg="black") 
+    bottom_settings_prices_frame.grid(row=20, column=0, columnspan=6, pady=40) 
+    back_button = tk.Button(bottom_settings_prices_frame, text="Zpět", command=go_back, font=("Arial", 20), bg="blue", fg="white", width=10) 
+    back_button.pack()
 
     # ---------- OBRAZOVKA5: Editor ----------
 
@@ -429,8 +478,8 @@ def get_user_settings():
 
     objects_for_zone = {
         "Spawn bod": [],
-        "Vstupní zóna": ["Pokladna", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek","Stánek s míchanými drinky", "Toitoiky", "Umývárna", "Stoly", "Bankomat"],
-        "Festivalový areál": ["Podium", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek","Stánek s míchanými drinky", "Toitoiky","Umývárna", "Stoly", "Bankomat", "Merch stan", "Stan na autogramiády", "Dobíjecí stan"],
+        "Vstupní zóna": ["Pokladna", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek","Stánek s míchanými drinky", "Toitoiky", "Umývárna", "Stoly", "Bankomat", "Výkup kelímků"],
+        "Festivalový areál": ["Podium", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek","Stánek s míchanými drinky", "Toitoiky","Umývárna", "Stoly", "Bankomat", "Merch stan", "Stan na autogramiády", "Dobíjecí stan", "Výkup kelímků"],
         "Stanové městečko": ["Nealko stánek", "Pivní stánek", "Red Bull stánek","Stánek s míchanými drinky", "Toitoiky", "Sprchy", "Umývárna", "Dobíjecí stan", "Louka na stanování"],
         "Chill zóna": ["Stánek s vodníma dýmkama", "Cigaretový stánek", "Chill stánek", "Nealko stánek","Stánek s míchanými drinky", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Umývárna", "Dobíjecí stan"],
         "Zábavní zóna": ["Bungee-jumping", "Horská dráha", "Lavice", "Kladivo", "Nealko stánek", "Pivní stánek","Stánek s míchanými drinky", "Red Bull stánek", "Bankomat"]

@@ -1,6 +1,6 @@
 import json
 import simpy
-import source
+import locations
 from data.load_data import load_data
 
 class Stall:
@@ -13,7 +13,6 @@ class Stall:
         self.id = id
         self.x = x
         self.y = y
-        self.queue_length = 0
         self.from_zone = None
 
 def create_resources(env, capacities):
@@ -35,25 +34,29 @@ def create_resources(env, capacities):
 
             previous_stall = stall["name"]
 
+
             if stall["name"] == "toitoi":
-                multiple_stall = multiple_resources(env, stall, capacities, location)
-                objected_stall.append(Stall(stall["type"],
-                                            stall["name"],
-                                            stall["cz_name"],
-                                            location,
-                                            multiple_stall,
-                                            i,
-                                            stall["x"],
-                                            stall["y"]))
+                resource = multiple_resources(env, stall, capacities, location)
+
+            elif stall["name"] == "meadow_for_living":
+                resource = locations.create_positions(capacities["meadow_for_living"])
+
+            elif stall["name"] == "charging_stall":
+                resource = locations.create_positions(capacities["charging_stall"])
+
             else:
-                objected_stall.append(Stall(stall["type"],
+                resource = simpy.Resource(env, capacity=capacities[stall["name"]])
+                
+            
+            objected_stall.append(Stall(stall["type"],
                                             stall["name"],
                                             stall["cz_name"],
                                             location,
-                                            simpy.Resource(env, capacity=capacities[stall["name"]]),
+                                            resource,
                                             i,
                                             stall["x"],
                                             stall["y"]))
+                
             i += 1
 
         stalls[location] = objected_stall
@@ -130,18 +133,30 @@ def get_name(stall):
     return stall["name"]
 
 def is_big_queue_at_stall(stall):
-    return stall.queue_length >= 10
+    return (stall.resource.count + len(stall.resource.queue)) >= 10
 
 def find_stall_with_shortest_queue_in_zone(self, festival, type, name=None):
     "Vrátí stánek s nejmenší frontou v dané zóně, při zadání name vrátí konkrétní stánek s nejmenší frontou"
     stalls = find_stalls_in_zone(self, festival, type, name)
-    stall_with_shortest_queue = stalls[0]
 
-    for stall in stalls:
-        if stall.queue_length < stall_with_shortest_queue.queue_length:
-            stall_with_shortest_queue = stall
+    if type == "tent_area" or type == "charging_stall":
+        return stalls
 
-    return stall_with_shortest_queue
+    if stalls == []:
+        return None
+
+    stall_with_least_people = stalls[0]
+
+    least_num_people = len(stall_with_least_people.resource.queue) + stall_with_least_people.resource.count
+
+    for stall in stalls[1:]:
+        stall_num_people = len(stall.resource.queue) + stall.resource.count
+
+        if stall_num_people < least_num_people:
+            stall_with_least_people = stall
+            least_num_people = stall_num_people
+
+    return stall_with_least_people
 
 
 def find_stalls_in_zone(self, festival, type, name=None):

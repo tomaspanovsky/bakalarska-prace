@@ -56,6 +56,14 @@ SELECTIONS_OF_STALLS = {
         }
     }
 
+class Weather(enum.Enum):
+    RAINING = "déšť"
+    HOT = "horko"
+    COLD = "chladno"
+    STORM = "bouřka"
+    PARTLY_CLOUDY = "polojasno"
+    SUNNY = "slunečno"
+    
 class Gender(enum.Enum):
     MALE = "muž"
     FEMALE = "žena"

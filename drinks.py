@@ -99,6 +99,9 @@ def choose_random_drink_from_actual_zone(self, festival, drink_type):
 
     i = 1
     while i <= 3:
+        if drinks == []:
+            print(f"Žádné soft drinky v zoně {self.state["location"]}")
+            return "Malinovka"
         drink = random.choice(drinks)
 
         if resources.can_afford(self, source.drinks[drink]):

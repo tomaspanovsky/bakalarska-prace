@@ -1,17 +1,16 @@
-def create_tent_area(num_visitors):
-
-    capacity = num_visitors // 3
+def create_positions(capacity):
     
-    if capacity < 1:
-        area = [[]]
-    else:
-        area = []
+    area = [capacity]
 
     for i in range(capacity):
         area.append([])
 
     return area
 
-def print_stany(area):
-    print(area)
-
+def print_camping_area(camping_area, width):
+    while len(camping_area) != 0:
+        for i in range(1, width):
+            if camping_area[i] == []:
+                print("🟩", end=" ")
+            else:
+                print("⛺", end=" ")

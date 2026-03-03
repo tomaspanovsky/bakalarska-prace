@@ -60,7 +60,8 @@ def save(zones_data):
                 elif "umývárna" in obj_name:
                     stall["name"] = "handwashing_station"
                     stall["type"] = "handwashing_station"
-                    action["dirty"] = "WASH"
+                    action["dirty_hand"] = "WASH"
+                    action["brushing_teeth"] = "BRUSH_TEETH"
 
                 elif "stoly" in obj_name:
                     stall["name"] = "tables"
@@ -95,6 +96,8 @@ def save(zones_data):
                 elif "louka na stanování" in obj_name:
                     stall["name"] = "meadow_for_living"
                     stall["type"] = "tent_area"
+                    action["living"] = "PITCH_TENT"
+                    action["energy"] = "SLEEP_IN_TENT"
 
                 elif "podium" in obj_name: 
                     action["band_playing"] = "GO_TO_CONCERT"
@@ -112,6 +115,16 @@ def save(zones_data):
                     stall["name"] = "chill_stall"
                     stall["type"] = "chill_stall"
                     action["tiredness"] = "GO_CHILL"
+                
+                elif "výkup" in obj_name:
+                    stall["name"] = "cup_return"
+                    stall["type"] = "cup_return"
+                    action["cup_return"] = "RETURN_CUP"
+                
+                elif "merch" in obj_name:
+                    stall["name"] = "merch"
+                    stall["type"] = "merch"
+                    action["want_merch"] = "BUY_MERCH"
 
                 elif any(food_stall.lower() in obj_name for food_stall in food_stalls):
                     stall["type"] = "foods"
@@ -160,6 +173,9 @@ def save(zones_data):
                         stall["name"] = "hammer_attraction"
  
                     action["atraction_desire"] = "GO_TO_ATRACTION"
+                
+                #akce, které jdou uskutečnit v jakékoliv zóně
+                action["smoking"] = "SMOKE"
 
                 stall["x"] = obj["x"]
                 stall["y"] = obj["y"]
@@ -187,10 +203,6 @@ def save(zones_data):
                         result["ACTIONS_MOVING"][location_key] = traces
 
                         line["other_zone"] = other["type"]
-
-                        if other["type"] == "Festivalový areál":
-                            pass
-                            #line["entrance"] =
                         
 
     file_path = filedialog.asksaveasfilename(

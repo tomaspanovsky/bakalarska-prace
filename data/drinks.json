@@ -1,34 +1,179 @@
 {
-  "drinks": {
-    "pivo Radegast": {"price": 70, "preparation_time": [10, 20], "hydration": 10, "drunkness": 15},
-    "pivo Plzeň": {"price": 75, "preparation_time": [10, 20], "hydration": 10, "drunkness": 15},
-    "pivo Gambrinus": {"price": 65, "preparation_time": [10, 20], "hydration": 10, "drunkness": 14},
-    "Birell": {"price": 60, "preparation_time": [8, 15], "hydration": 15, "drunkness": 0},
-    
-    "Red Bull": {"price": 80, "preparation_time": [5, 10], "energy": 30},
-    "Red Bull Vodka": {"price": 140, "preparation_time": [10, 20], "energy": 25, "drunkness": 20},
-    "Red Bull Jager": {"price": 150, "preparation_time": [10, 20], "energy": 20, "drunkness": 25},
-    
-    "Cuba Libre": {"price": 160, "preparation_time": [15, 30], "drunkness": 30},
-    "Piña Colada": {"price": 170, "preparation_time": [20, 40], "drunkness": 25},
-    "Sex on the Beach": {"price": 170, "preparation_time": [20, 40], "drunkness": 28},
-    "Mojito": {"price": 160, "preparation_time": [20, 35], "drunkness": 22},
-    "Gin Tonic": {"price": 150, "preparation_time": [15, 30], "drunkness": 25},
-    
-    "Zelená": {"price": 90, "preparation_time": [5, 10], "drunkness": 20},
-    "Rum": {"price": 90, "preparation_time": [5, 10], "drunkness": 22},
-    "Slivovice": {"price": 100, "preparation_time": [5, 10], "drunkness": 25},
-    "Vodka": {"price": 90, "preparation_time": [5, 10], "drunkness": 22},
-    "Fernet": {"price": 90, "preparation_time": [5, 10], "drunkness": 20},
-    "Jagermeister": {"price": 100, "preparation_time": [5, 10], "drunkness": 23},
-    
-    "Kofola": {"price": 60, "preparation_time": [5, 10], "hydration": 20},
-    "Malinovka": {"price": 55, "preparation_time": [5, 10], "hydration": 20},
-    "Jablečný džus": {"price": 65, "preparation_time": [5, 10], "hydration": 18},
-    "Pomerančový džus": {"price": 65, "preparation_time": [5, 10], "hydration": 18},
-    "Capri-Sun": {"price": 50, "preparation_time": [3, 6], "hydration": 15},
-    "Voda": {"price": 40, "preparation_time": [3, 6], "hydration": 30},
-    "Coca cola": {"price": 60, "preparation_time": [5, 10], "hydration": 20}
+"drinks": {
+    "pivo Radegast": {
+      "price": 70,
+      "preparation_time": [1, 2],
+      "drinking_time": [20, 30],
+      "hydration": 5,
+      "drunkness": 15
+    },
+    "pivo Plzeň": {
+      "price": 75,
+      "preparation_time": [1, 2],
+      "drinking_time": [20, 30],
+      "hydration": 5,
+      "drunkness": 15
+    },
+    "pivo Gambrinus": {
+      "price": 65,
+      "preparation_time": [1, 2],
+      "drinking_time": [20, 30],
+      "hydration": 5,
+      "drunkness": 14
+    },
+    "Birell": {
+      "price": 60,
+      "preparation_time": [1, 2],
+      "drinking_time": [20, 30],
+      "hydration": 15,
+      "drunkness": 0
+    },
+
+    "Red Bull": {
+      "price": 80,
+      "preparation_time": [1, 2],
+      "drinking_time": [10, 15],
+      "hydration": 8,
+      "energy": 30
+    },
+    "Red Bull Vodka": {
+      "price": 140,
+      "preparation_time": [2, 4],
+      "drinking_time": [15, 20],
+      "hydration": 4,
+      "energy": 25,
+      "drunkness": 20
+    },
+    "Red Bull Jager": {
+      "price": 150,
+      "preparation_time": [2, 4],
+      "drinking_time": [15, 20],
+      "hydration": 4,
+      "energy": 20,
+      "drunkness": 25
+    },
+
+    "Cuba Libre": {
+      "price": 160,
+      "preparation_time": [3, 6],
+      "drinking_time": [15, 25],
+      "hydration": 6,
+      "drunkness": 30
+    },
+    "Piña Colada": {
+      "price": 170,
+      "preparation_time": [4, 7],
+      "drinking_time": [20, 30],
+      "hydration": 8,
+      "drunkness": 25
+    },
+    "Sex on the Beach": {
+      "price": 170,
+      "preparation_time": [4, 7],
+      "drinking_time": [20, 30],
+      "hydration": 7,
+      "drunkness": 28
+    },
+    "Mojito": {
+      "price": 160,
+      "preparation_time": [3, 6],
+      "drinking_time": [15, 25],
+      "hydration": 7,
+      "drunkness": 22
+    },
+    "Gin Tonic": {
+      "price": 150,
+      "preparation_time": [3, 6],
+      "drinking_time": [15, 25],
+      "hydration": 6,
+      "drunkness": 25
+    },
+
+    "Zelená": {
+      "price": 90,
+      "preparation_time": [1, 1],
+      "drinking_time": [1, 2],
+      "hydration": 2,
+      "drunkness": 20
+    },
+    "Rum": {
+      "price": 90,
+      "preparation_time": [1, 1],
+      "drinking_time": [1, 2],
+      "hydration": 2,
+      "drunkness": 22
+    },
+    "Slivovice": {
+      "price": 100,
+      "preparation_time": [1, 1],
+      "drinking_time": [1, 2],
+      "hydration": 2,
+      "drunkness": 25
+    },
+    "Vodka": {
+      "price": 90,
+      "preparation_time": [1, 1],
+      "drinking_time": [1, 2],
+      "hydration": 2,
+      "drunkness": 22
+    },
+    "Fernet": {
+      "price": 90,
+      "preparation_time": [1, 1],
+      "drinking_time": [1, 2],
+      "hydration": 2,
+      "drunkness": 20
+    },
+    "Jagermeister": {
+      "price": 100,
+      "preparation_time": [1, 1],
+      "drinking_time": [1, 2],
+      "hydration": 2,
+      "drunkness": 23
+    },
+
+    "Kofola": {
+      "price": 60,
+      "preparation_time": [1, 2],
+      "drinking_time": [10, 20],
+      "hydration": 20
+    },
+    "Malinovka": {
+      "price": 55,
+      "preparation_time": [1, 2],
+      "drinking_time": [10, 20],
+      "hydration": 20
+    },
+    "Jablečný džus": {
+      "price": 65,
+      "preparation_time": [1, 2],
+      "drinking_time": [10, 20],
+      "hydration": 18
+    },
+    "Pomerančový džus": {
+      "price": 65,
+      "preparation_time": [1, 2],
+      "drinking_time": [10, 20],
+      "hydration": 18
+    },
+    "Capri-Sun": {
+      "price": 50,
+      "preparation_time": [1, 1],
+      "drinking_time": [5, 10],
+      "hydration": 15
+    },
+    "Voda": {
+      "price": 40,
+      "preparation_time": [1, 1],
+      "drinking_time": [5, 10],
+      "hydration": 30
+    },
+    "Coca cola": {
+      "price": 60,
+      "preparation_time": [1, 2],
+      "drinking_time": [10, 20],
+      "hydration": 20
+    }
   },
 
   "stalls": {

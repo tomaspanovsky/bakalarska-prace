@@ -6,16 +6,6 @@ import foods
 import drinks
 from data.load_data import load_data
 from collections import deque
-global income
-
-num_entrance = 5
-num_booths = 3
-occupied = [0] * num_entrance
-ticket_booths_occupied = [0] * num_booths
-cena_listku_predprodej = 1000
-on_site_ticket_price = cena_listku_predprodej + 200
-cena_stanoveho_mestecka = 200
-income = 0
 
 class Group:
     def __init__(self, festival, members, type, mode): #typ = rodina/skupina/jednotlivec, rezim(mode) = skupinove/individualne
@@ -36,12 +26,29 @@ class Group:
     def start_action(self, festival, member, action):
         """Tato funkce pro daného návštěvníka spustí zvolenou akci"""
 
-        if action == "GO_TO_SPAWN_ZONE" or action == "GO_TO_TEN_AREA" or action == "GO_TO_ENTRANCE_ZONE" or action == "GO_TO_CHILL_ZONE" or action == "GO_TO_FUN_ZONE":
+        if action == "GO_TO_SPAWN_ZONE" or action == "GO_TO_ENTRANCE_ZONE" or action == "GO_TO_CHILL_ZONE" or action == "GO_TO_FUN_ZONE":
             location = action.replace("GO_TO_", "")
             location = source.Locations[location]
             yield self.festival.process(member.go_to(location))
 
-        elif action == "SMOKING":
+        if action == "GO_TO_TENT_AREA":
+
+            if member.state["tent_area_ticket"] == False and self.state["money"] <= festival.prices["camping_area_price"]:
+                member.festival.process(member.withdraw())
+
+            yield self.festival.process(member.go_to_tent_area(festival))
+
+            if member.accommodation["built"] == False:
+                camping_area = member.choose_stall(festival, "tent_area")
+
+                if len(camping_area) > 1:
+                    camping_area = member.find_area_with_more_space(camping_area)
+                else:
+                    camping_area = camping_area[0]
+
+                yield self.festival.process(member.pitch_tent(camping_area))
+
+        elif action == "SMOKE":
             yield self.festival.process(member.smoke())
     
         elif action == "GO_TO_FESTIVAL_AREA": #vyřešit určení správného vstupu v resources
@@ -49,38 +56,126 @@ class Group:
             entrance = member.identify_entrance(entrances)
 
             if entrance == None:
-                print(f"ČAS {self.festival.now:.2f}: CHYBA!! {member.name} {member.surname} nemůže jít z {self.state["location"].value} do festivalového areálu!")
+                print(f"ČAS {self.festival.now:.2f}: CHYBA! {member.name} {member.surname} nemůže jít z {member.state["location"].value} do festivalového areálu!")
 
             yield self.festival.process(member.go_to_festival_area(entrance))
 
         elif action == "WITHDRAW":
-            yield self.festival.process(member.withdraw())
+            stall = member.choose_stall(festival, "atm")
+            yield self.festival.process(member.withdraw(stall))
 
         elif action == "GO_FOR_FOOD":
             food = member.choose_food(festival)
             
             if food is None:
-                yield self.festival.process(member.withdraw())
+                stall_atm = member.choose_stall(festival, "atm")
+                yield self.festival.process(member.withdraw(stall_atm))
+                food = member.choose_food(festival)
 
-            stall = member.choose_stall(festival, food, "foods")
+            stall = member.choose_stall(festival, "foods", food)
             yield self.festival.process(member.go_for_food(stall, food))
-            yield self.festival.process(member.eat(food))
+            
+            stall = resources.find_stall_with_shortest_queue_in_zone(member, festival, "tables")
+
+            if stall:
+                yield self.festival.process(member.sit(stall, food=food))
+            else:
+                print(f"ČAS {self.festival.now:.2f}: {member.name} {member.surname} si sní {food} za pochodu.")
+                yield self.festival.process(member.eat(food))
 
         elif action == "GO_FOR_DRINK":
-            drink = member.choose_drink(festival)
+            drink, alcohol_type = member.choose_drink(festival)
 
             if drink is None:
-                yield self.festival.process(member.withdraw())
+                stall_atm = member.choose_stall(festival, "atm")
+                yield self.festival.process(member.withdraw(stall_atm))
             
-            stall = member.choose_stall(festival, drink, "drinks")
-            yield self.festival.process(member.go_for_drink(stall, drink))
-            yield self.festival.process(member.drink(drink))
+            stall = member.choose_stall(festival, "drinks", drink)
+            yield self.festival.process(member.go_for_drink(festival, stall, drink, alcohol_type))
+
+            if member.state["free_time"] > 0:
+                stall = resources.find_stall_with_shortest_queue_in_zone(member, festival, "tables")
+
+                if stall:
+                    yield self.festival.process(member.sit(stall, drink=drink))
+                
+                else:
+                    print(f"ČAS {self.festival.now:.2f}: {member.name} {member.surname} si vypije {drink} za pochodu.")
+                    yield self.festival.process(member.drink(drink))
         
         elif action == "GO_TO_TOILET":
             need = member.decide_bathroom_action()
             toilet = member.choose_toilet(festival, need)
             yield self.festival.process(member.go_to_toilet(toilet, need))
-                
+            stall = member.choose_stall(festival, "handwashing_station")
+            yield self.festival.process(member.wash(stall))
+
+        elif action == "GO_TO_SHOWER":
+            shower_price = 50 #upravit přes gui
+
+            if member.state["money"] < shower_price:
+                print(f"ČAS {self.festival.now:2f}: {self.name} {self.surname} nemá dost peněz na sprchu a musí si jít vybrat peníze!")
+                stall = member.choose_stall(festival, "atm")
+                yield self.festival.process(member.withdraw(stall))
+
+            shower = member.choose_stall(festival, "showers")
+            yield self.festival.process(member.go_to_shower(shower))
+
+        elif action == "BRACELET_EXCHANGE":
+
+            if member.state["money"] <= festival.prices["on_site_price"] and member.state["pre_sale_ticket"] == False:
+                stall = member.choose_stall(festival, "atm")
+                yield self.festival.process(member.withdraw(stall))
+
+            booth = member.choose_stall(festival, "ticket_booth")
+            yield self.festival.process(member.bracelet_exchange(festival, booth))
+
+        elif action == "PITCH_TENT":
+
+            if member.state["money"] <= festival.get_price("camping_area_price"):
+                stall = member.choose_stall(festival, "atm")
+                yield self.festival.process(member.withdraw(stall))
+
+            camping_area = member.choose_stall(festival, "tent_area")
+
+            if len(camping_area) > 1:
+                camping_area = member.find_area_with_more_space(camping_area)
+            else:
+                camping_area = camping_area[0]
+
+            yield self.festival.process(member.pitch_tent(camping_area))
+
+        elif action == "CHARGE_PHONE":
+
+            if member.state["money"] <= festival.prices["charging_phone_price"]:
+                stall = member.choose_stall(festival, "atm")
+                yield self.festival.process(member.withdraw(stall))
+
+            stalls = member.choose_stall(festival, "charging_stall")
+
+            if len(stalls) > 1:
+                stall = member.find_area_with_more_space(stalls)
+            else:
+                stall = stalls[0]
+
+            yield self.festival.process(member.charge_phone(stall, festival))
+        
+        elif action == "RETURN_CUP":
+            stall = member.choose_stall(festival, "cup_return")
+            yield self.festival.process(member.return_cup(stall, festival))
+
+        elif action == "WASH":
+            stall = member.choose_stall(festival, "handwashing_station")
+            yield self.festival.process(member.wash(stall))
+        
+        elif action == "BRUSH_TEETH":
+            stall = member.choose_stall(festival, "handwashing_station")
+            yield self.festival.process(member.brush_teeth(stall))
+
+        elif action == "SIT":
+            stall = member.choose_stall(festival, "tables")
+            yield self.festival.process(member.sit(stall))
+
     def group_decision_making(self, festival):
         """Zvolí všem návštěvníkům skupiny akci a zavolá její spuštění"""
 
@@ -88,7 +183,7 @@ class Group:
             if self.mode == source.Groups_modes.INDIVIDUALLY: 
 
                 for member in self.members:
-                    member.update_stats()      
+                    member.update_stats(festival)      
                     member.state["sociability"] -= random.uniform(0.2, 0.5) 
                     action = member.next_move()
 
@@ -101,7 +196,7 @@ class Group:
                 action = parent.next_move()
 
                 for member in self.members:
-                    member.update_stats() 
+                    member.update_stats(festival) 
                     yield from self.start_action(festival, member, action)   
 
             elif self.mode == source.Groups_modes.IN_GROUP:
@@ -110,7 +205,7 @@ class Group:
                 action = leader.next_move()
 
                 for member in self.members:
-                    member.update_stats() 
+                    member.update_stats(festival) 
                     yield from self.start_action(festival, member, action)
     
 class Visitor:
@@ -130,19 +225,22 @@ class Visitor:
         self.fellows = fellows
         self.inventory = inventory
 
-    def update_stats(self):
+    def update_stats(self, festival):
         factor = 1
-        self.state["tiredness"] -= factor * random.uniform(0.1, 0.5)
-        self.state["hunger"] -= self.qualities["hunger_frequency"] * random.uniform(0.2, 0.5)
+        self.state["energy"] -= factor * random.uniform(0.1, 0.5)
+        self.state["hunger"] -= self.qualities["hunger_frequency"] * random.uniform(0.1, 0.5)
         self.state["thirst"] -= factor * random.uniform(0.1, 0.5)
         self.state["wc"] -= factor * random.uniform(0.1, 0.5)
         self.state["hygiene"] -= factor * random.uniform(0.1, 0.5)
-        self.state["drunkenness"] -= max(self.qualities["alcohol_tolerance"] * random.uniform(0.1, 0.5), 0)
+        self.state["drunkenness"] -= max(0, self.qualities["alcohol_tolerance"] * random.uniform(0.1, 0.5))
+
+        if self.inventory["phone"] != None:
+            self.inventory["phone"].battery -= random.uniform(0.1, 0.5)
 
         if self.preference["smoker"] == True:
             self.state["nicotine"] -= self.state["level_of_addiction"] * random.uniform(0.1, 0.5)
 
-        
+        self.charging(festival.charging_phones)
 
     def next_move(self):
         """funkce, která rozhodne následující krok návštěvníka"""
@@ -150,7 +248,40 @@ class Visitor:
         return self.resolve_need(need)
     
     def urgent_need(self):
-        return "wc"
+        #povinné kroky při příjezdu
+
+        if self.state["entry_bracelet"] == False and self.accommodation["built"] == False:
+            return random.choice(list(["living", "bracelet_exchange"]))
+
+        elif self.state["entry_bracelet"] == False:
+            return "bracelet_exchange"
+        
+        elif self.accommodation["built"] == False:
+            return "living"
+
+        needs_scores = {}
+
+        needs_scores["hunger"] = 100 - self.state["hunger"]
+        needs_scores["thirst"] = 100 - self.state["thirst"]
+        needs_scores["wc"] = 100 - self.state["wc"]
+        needs_scores["hygiene"] = 100 - self.state["hygiene"]
+        needs_scores["energy"] = 100 - self.state["energy"]
+        
+        if self.state["money"] < 1000:
+            low_money_score = 50 + ((1000 - self.state["money"]) / 100) * 5
+            needs_scores["low_money"] = low_money_score
+
+        if self.inventory["phone"] != None:
+            if self.inventory["phone"].battery < 50:
+                low_battery_score = 100 - self.inventory["phone"].battery
+                needs_scores["phone_dead"] = low_battery_score
+
+        # kouření řešíš zvlášť
+        smoke = self.deciding_smoking()
+        if smoke:
+            return smoke
+   
+        return max(needs_scores, key=needs_scores.get)
 
 
     def deciding_smoking(self):
@@ -160,10 +291,10 @@ class Visitor:
             craving_for_a_cigarette = random.randint(0, 12 - self.state["level_of_addiction"])
 
             if craving_for_a_cigarette <= 2 and self.state["nicotine"] != 100:
-                return "smoke"   
+                return "smoking"   
 
             elif self.state["nicotine"] < 30 or self.state["mood"] < 30:
-                return "smoke"
+                return "smoking"
         
         return None
 
@@ -176,29 +307,52 @@ class Visitor:
         yield self.festival.timeout(10)
         print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} dorazil do {location.value}")
         self.state["location"] = location
-
+    
     def go_to_festival_area(self, entrance):
-        """Funkce která obsluje návštěvníkův přesun do festivalového areálu včetně vstupní kontroly"""
-        
+
         yield self.festival.timeout(10)
-        print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} přišel ke vstupu {entrance.id}.")
+        print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} přišel ke vstupu.")
         start_waiting = self.festival.now
 
-        with entrance.request() as req:
+        with entrance.resource.request() as req:
 
-            if entrance.queue_length > 0:
-                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} čeká ve frontě u vstupu do areálu {entrance.id}.")
-                entrance.queue_length += 1
-                
-            yield req 
-            entrance.queue_length -= 1
-            entry_time = random.randint(1, 5)
+            will_wait = entrance.resource.count >= entrance.resource.capacity
+
+            yield req
+
+            if will_wait:
+                waiting_time = self.festival.now - start_waiting
+                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} čekal/a {waiting_time:.2f} ve frontě u vstupu.")
+            else:
+                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} prošel/a vstupem bez čekání.")
+
+            entry_time = random.uniform(1, 5)
             yield self.festival.timeout(entry_time)
+
             self.state["location"] = source.Locations.FESTIVAL_AREA
 
-            control_time = self.festival.now - start_waiting
-            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} prošel kontrolou {entrance.id}, čekal/a {control_time:.2f} a je ve Festivalovém areálu.")
-    
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} dorazil do festivalového areálu.")
+
+    def go_to_tent_area(self, festival):
+
+        print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} jde do stanového městečka.")
+        yield self.festival.timeout(10)
+
+        if self.state["tent_area_ticket"] == None:
+
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} dorazil/a ke stanovému městečku a nemá koupený lístek do stanového městečka.")
+            yield self.festival.timeout(random.uniform(2, 5))
+            self.state["money"] -= festival.prices["camping_area_price"]
+            self.state["tent_area_ticket"] = True
+            festival.income += festival.prices["camping_area_price"]
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} si koupil/a vstupenku do stanového městečka.")
+            self.state["location"] = source.Locations.TENT_AREA
+
+        else:
+            yield self.festival.timeout(random.uniform(0, 1))
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} již má vstupenku a dorazil do stanového městečka.")
+            self.state["location"] = source.Locations.TENT_AREA
+
     def identify_entrance(self, entrances):
         location = self.state["location"]
 
@@ -206,7 +360,7 @@ class Visitor:
             if location == entrance.from_zone:
                 return entrance
 
-        return None
+        return entrances[0] #opravit
 
     def smoke(self):
         #Funkce která obsluhuje návštěvníkovo kouření cigaret
@@ -225,7 +379,7 @@ class Visitor:
             self.state["nicotine"] = min(self.state["nicotine"] + 30, 100)
             self.state["mood"] += min(self.state["mood"] + 30, 100)
             
-            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} Dokouřil.")
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} dokouřil, stav nikotinu je: {self.state["nicotine"]}")
         else:
             print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} přestal čekat, až si člen skupiny zapálí.")
 
@@ -233,7 +387,7 @@ class Visitor:
 # -----------------------------------------------JÍDLO---------------------------------------------------------
 
     def choose_food(self, festival):
-        """Vybere návštěvníkovi jídlo, které si dá viz algoritmy/jidlo a pití.png"""
+        """Vybere návštěvníkovi jídlo, které si dá viz algoritmy/jidlo.png"""
 
         if self.state["hunger"] <= 30:
             return foods.choose_food_with_great_satiety_in_actual_zone(self, festival)
@@ -256,23 +410,27 @@ class Visitor:
             else:
                 return foods.choose_random_food_from_actual_zone(self, festival)
 
-    
-        
     def go_for_food(self, stall, food):
         """funkce která simuluje návštěvníkovo koupení jídla ve stánku"""
         
         price = source.foods[food]["price"]
         time_min, time_max = source.foods[food]["preparation_time"]
 
+        print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} přišel ke stánku {stall.stall_name}.")
+        start_waiting = self.festival.now
+
         # čekání na stánek
         with stall.resource.request() as req:
             
-            if stall.queue_length > 0:
-                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} začal čekat ve frontě u stánku {stall.stall_cz_name} v zóně {self.state["location"].value}")
+            will_wait = stall.resource.count >= stall.resource.capacity
 
             yield req
-            stall.queue_length += 1
+
             print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} přišel na řadu a je u stánku {stall.stall_cz_name}")
+            
+            if will_wait:
+                waiting_time = self.festival.now - start_waiting
+                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} čekal/a {waiting_time:.2f} ve frontě u stánku {stall.stall_cz_name}.")
 
             preparation_time = random.randint(time_min, time_max)
 
@@ -295,7 +453,58 @@ class Visitor:
 
 # -----------------------------------------------STOLY---------------------------------------------------------------
 
-# -----------------------------------------------PITÍ----------------------------------------------------------------
+    def sit(self, stall, food = None, drink = None, type_of_alcohol = None):
+        yield self.festival.timeout(random.uniform(0, 2))
+        print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} hledá místo u stolu k sednutí")
+        yield self.festival.timeout(random.uniform(0, 2))
+
+        if stall.resource.count >= stall.resource.capacity:
+            impatience_index = self.qualities["impatience"] * random.uniform(0.5, 1.5)
+
+            if impatience_index > 5:
+                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} si nemá kam sednout a jde pryč")
+                return None
+
+            else:
+                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} si nemá kam sednout ale počká než se uvolní místo u stolu.")
+        
+        start_waiting = self.festival.now
+        with stall.resource.request() as req:
+
+            yield req
+
+            waiting_time = self.festival.now - start_waiting
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} si sedl ke stolu.")
+
+
+            if waiting_time > 0:
+                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} čekal na volné místo u stolu {waiting_time}.")
+
+            start_sitting = self.festival.now
+
+            if food and drink:
+                yield self.festival.process(self.eat(food))
+                yield self.festival.process(self.drink(drink))
+                sitting_time = self.festival.now - start_sitting
+
+            elif food:
+                
+                yield self.festival.process(self.eat(food))
+                sitting_time = self.festival.now - start_sitting
+
+            elif drink:
+
+                yield self.festival.process(self.drink(drink))
+                sitting_time = self.festival.now - start_sitting
+
+            else:
+                sitting_time = random.uniform(0 , self.state["free_time"])
+                yield self.festival.timeout(sitting_time)
+                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} odchází od stolu.")
+
+            self.state["energy"] = min(100, self.state["energy"] + ((sitting_time / 60) * 20))
+
+# ------------------------------------------------PITÍ----------------------------------------------------------------
     def choose_drink(self, festival):
         """Vybere návštěvníkovi, které pití dá viz jidlo a pití.png"""
 
@@ -306,25 +515,25 @@ class Visitor:
                 if presence is True:
                     if resources.is_big_queue_at_stall(stall):
                         stall = drinks.find_drink_stall_with_shortest_queue_in_zone(self, festival)
-                        return drinks.choose_random_drink_from_stall(self, stall, "soft_drink")
+                        return drinks.choose_random_drink_from_stall(self, stall, "soft_drink"), None
                     else:
                         if resources.can_afford(self, source.drinks[self.preference["favourite_soft_drink"]]):
                             return self.preference["favourite_soft_drink"]
                         else:
                             return None
                 else:
-                    return drinks.choose_random_drink_from_actual_zone(self, festival, "soft_drink")
+                    return drinks.choose_random_drink_from_actual_zone(self, festival, "soft_drink"), None
             else:
                 kinds_of_alcohol = drinks.what_kind_of_alcohol_is_in_actual_zone(self, festival)
                 alcohol_type = self.choose_type_of_alcohol(kinds_of_alcohol)
 
                 if alcohol_type == "favourite_alcohol":
                     if resources.can_afford(self, source.drinks[self.preference["favourite_alcohol"]]):
-                        return self.preference["favourite_alcohol"]
+                        return self.preference["favourite_alcohol"], None
                     else:
                         return None 
                 else: 
-                    return drinks.choose_random_drink_from_actual_zone(self, festival, alcohol_type) 
+                    return drinks.choose_random_drink_from_actual_zone(self, festival, alcohol_type), alcohol_type 
                     
         else:
             presence, stall = drinks.is_my_favourite_drink_in_actual_zone(self, festival, "soft_drink")
@@ -333,16 +542,16 @@ class Visitor:
 
                 if resources.is_big_queue_at_stall(stall):
                     stall = drinks.find_drink_stall_with_shortest_queue_in_zone(self, festival)
-                    return drinks.choose_random_drink_from_stall(self, stall, "soft_drink")
+                    return drinks.choose_random_drink_from_stall(self, stall, "soft_drink"), None
                 
                 else:
                     if resources.can_afford(self, source.drinks[self.preference["favourite_soft_drink"]]):
-                        return self.preference["favourite_soft_drink"]
+                        return self.preference["favourite_soft_drink"], None
                     else:
                         return None
                         
             else:
-                return drinks.choose_random_drink_from_actual_zone(self, festival, "soft_drink")
+                return drinks.choose_random_drink_from_actual_zone(self, festival, "soft_drink"), None
         
     def is_visitor_drunk(self):
         return self.state["drunkenness"] >= 80
@@ -370,43 +579,82 @@ class Visitor:
         chosen_type_of_alcohol = random.choices(choices, weights=weights, k=1)[0]
         return chosen_type_of_alcohol
     
-    def go_for_drink(self, stall, drink):
+    def go_for_drink(self, festival, stall, drink, alcohol_type):
         """funkce která simuluje návštěvníkovo koupení jídla ve stánku"""
-        
+
+        plastic_cup_price = festival.prices["plastic_cup_price"]
         price = source.drinks[drink]["price"]
         time_min, time_max = source.drinks[drink]["preparation_time"]
+        start_waiting = self.festival.now
 
         # čekání na stánek
         with stall.resource.request() as req:
-            
-            if stall.queue_length > 0:
-                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} začal čekat ve frontě u stánku {stall.stall_cz_name} v zóně {self.state["location"].value}")
 
             yield req
-            stall.queue_length += 1
-            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} přišel na řadu a je u stánku {stall.stall_cz_name}")
+            will_wait = stall.resource.count >= stall.resource.capacity
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} přišel na řadu a je u stánku {stall.stall_cz_name} v zóně {self.state["location"].value}")
+
+            if will_wait:
+                waiting_time = self.festival.now - start_waiting
+                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} čekal u stánku {stall.stall_cz_name} {waiting_time}")
+            
 
             preparation_time = random.randint(time_min, time_max)
 
             print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} čeká na {drink} a příprava bude trvat {preparation_time:.2f}")
             yield self.festival.timeout(preparation_time)
+
+            if alcohol_type is not None:
+                if self.inventory["plastic_cup"] == None:
+                    self.inventory["plastic_cup"] == True
+                    self.state["money"] -= plastic_cup_price
+                    print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} neměl kelímek a musel si koupit nový")
+                
             print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} dostal {drink}")
 
         self.state["money"] -= price
 
-    def drink(self, drink):
-        pass
+    def drink(self, drink_name):
+        drink_data = source.drinks[drink_name]
+        drinking_time_min = drink_data["drinking_time"][0]
+        drinking_time_max = drink_data["drinking_time"][1]
+        drinking_time = random.uniform(drinking_time_min, drinking_time_max)
+
+        print(f"ČAS {self.festival.now:.2f}: {self.name} začal/a pít {drink_name}.")
+        yield self.festival.timeout(drinking_time)
+        print(f"ČAS {self.festival.now:.2f}: {self.name} dopil/a {drink_name}.")
+
+        if "hydration" in drink_data:
+            self.state["thirst"] += drink_data["hydration"]
+
+        if "drunkness" in drink_data:
+            self.state["drunkenness"] += drink_data["drunkness"]
+
+        if "energy" in drink_data:
+            self.state["energy"] += drink_data["energy"]
 # -----------------------------------------------VÝBĚR PENĚZ---------------------------------------------------------
 
-    def withdraw(self, festival):
-        actions = load_data("ACTIONS_BY_LOCATIONS")
-        print(actions)
+    def withdraw(self, atm):
+        yield self.festival.timeout(random.uniform(0, 2))
 
-        if actions[self.state["location"]]:
-            pass
-        self.state["money"] += random.randint(1000, 10000)
+        start_waiting = self.festival.now
+        print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} přišel k bankomatu.")
+        
+        with atm.resource.request() as req:
+            
+            yield req
+            waiting_time = self.festival.now - start_waiting
 
-# -----------------------------------------------TOITOIKY---------------------------------------------------------
+            if waiting_time > 0:
+                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} čekal/a ve frontě u bankomatu {waiting_time}.")
+            
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} přišel/a na řadu a začal/a vybírat peníze.")
+            yield self.festival.timeout(random.uniform(1, 5))
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} dokončil/a výběr peněz.")
+
+            self.state["money"] += random.randint(1000, 10000)
+
+# --------------------------------------------- WC & UMÝVÁRNA---------------------------------------------------------
     def decide_bathroom_action(self):
         
         need_index = random.uniform(0, 100 - self.state["wc"])
@@ -416,7 +664,6 @@ class Visitor:
             return "small"
         
     def choose_toilet(self, festival, need):
-        location = self.state["location"]
         toilets = resources.find_stalls_in_zone(self, festival, "toitoi")
         toilets = random.choice(list(toilets))
         urinals = toilets.resource[0]
@@ -425,7 +672,7 @@ class Visitor:
         free_toitois = []
 
         for toitoi in toitois:
-            if toitoi.queue_length == 0:
+            if toitoi.resource.count + len(toitoi.resource.queue) == 0:
                 free_toitois.append(toitoi)
                  
         if self.gender == source.Gender.FEMALE:
@@ -438,7 +685,7 @@ class Visitor:
         elif self.gender == source.Gender.MALE and need == "small":
 
             for urinal in urinals:
-                if urinal.queue_length == 0:
+                if urinal.resource.count + len(urinal.resource.queue) == 0:
                     free_urinals.append(urinal)
 
             if free_urinals != []:
@@ -449,14 +696,13 @@ class Visitor:
         
         else:
             return random.choice(list(toitois))
-            
-
+  
     def go_to_toilet(self, toilet, need):
         """Funkce která obsluje návštěvníka na wc"""
     
         # Velká potřeba
         if need == "big":
-            potreba = "srát"
+    
             self.state["wc"] = min(100, self.state["wc"] + random.uniform(50, 70))
 
             if self.gender == source.Gender.MALE:
@@ -475,51 +721,277 @@ class Visitor:
             else:
                 wc_time = random.uniform(1, 3)  
 
+        start_waiting = self.festival.now
+
         with toilet.resource.request() as req:
-
-            if toilet.queue_length > 0:
-                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} čeká na volnou {toilet.stall_cz_name}")
-
-            toilet.queue_length += 1
+            
+            will_wait = toilet.resource.count >= toilet.resource.capacity
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} přišel k {toilet.stall_cz_name}")
 
             yield req
 
-            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} vchází na {toilet.stall_cz_name} a jde .")
+            if will_wait:
+                waiting_time = self.festival.now - start_waiting
+                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} čekal na volnou {toilet.stall_cz_name} {waiting_time}")
+
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} vchází na {toilet.stall_cz_name}.")
+
             yield self.festival.timeout(wc_time)
-            toilet.queue_length -= 1
             print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} odchází z {toilet.stall_cz_name}.")
+
+    def wash(self, stall):
+        yield self.festival.timeout(random.uniform(0, 2))
+
+        start_waiting = self.festival.now
+        print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} přišel/a k umývárně.")
+        
+        with stall.resource.request() as req:
+            
+            yield req
+            waiting_time = self.festival.now - start_waiting
+
+            if waiting_time > 0:
+                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} čekal/a {waiting_time}, než se u umývárny uvolní místo.")
+            
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} si začal/a umývat ruce.")
+            yield self.festival.timeout(random.uniform(0, 1.5))
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} dokončil/a umytí rukou.")
+
+            self.state["hygiene"] += random.randint(10, 20)
+        
+    def brush_teeth(self, stall):
+        yield self.festival.timeout(random.uniform(0, 2))
+
+        start_waiting = self.festival.now
+        print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} přišel/a k umývárně.")
+        
+        with stall.resource.request() as req:
+            
+            yield req
+            waiting_time = self.festival.now - start_waiting
+
+            if waiting_time > 0:
+                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} čekal/a {waiting_time}, než se u umývárny uvolní místo.")
+            
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} si začal/a čistit zuby.")
+            yield self.festival.timeout(random.uniform(0, 1.5))
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} dokončil/a čištění zubů.")
+
+            self.state["hygiene"] += random.randint(15, 30)
+
+# -------------------------------------------------SPRCHY ---------------------------------------------------------
+            
+    def go_to_shower(self, shower):
+        """funkce obsluhjící návštěvníka ve sprše"""
+        
+        if self.gender == source.Gender.MALE:
+            shower_time = random.uniform(5, 15)
+        else:
+            shower_time = random.uniform(12, 20)
+
+        with shower.resource.request() as req:
+            start_waiting = self.festival.now
+            will_wait = shower.resource.count >= shower.resource.capacity
+
+            print(f"ČAS {self.festival.now:.2f} {self.name} {self.surname} přišel/la ke sprchám")
+            yield req
+
+            if will_wait:
+                waiting_time = self.festival.now - start_waiting
+                print(f"ČAS {self.festival.now:.2f} {self.name} {self.surname} čekal/a na volnou spruchu {waiting_time}")
+
+            print(f"ČAS: {self.festival.now:.2f} {self.name} {self.surname} vchází do sprchy.")
+            yield self.festival.timeout(shower_time)
+            print(f"ČAS: {self.festival.now:.2f} {self.name} {self.surname} odchází ze sprchy.")
+
+        self.state["hygiene"] = 100
+
+# --------------------------------------------STANOVÉ MĚSTEČKO------------------------------------------------------
+
+    def pitch_tent(self, camping_area):
+            #funkce která obsluhuje návštěvníkovo stavění stanu
+            
+            yield self.festival.timeout(random.uniform(0, 2))
+
+            num_fellows = len(self.fellows)
+            pitch_time = random.uniform(15, 20) - num_fellows * 1.5
+            free_space = False
+            i = 0
+
+            for position in camping_area.resource:
+                i += 1
+
+                if position == []:
+                    free_space = True
+
+                    if self.accommodation["owner"] == False:
+                        
+                        print(f"ČAS: {self.festival.now:.2f}: {self.name} {self.surname} pomáhá kolegovi postavit stan.")
+                        yield self.festival.timeout(pitch_time)
+                        print(f"ČAS: {self.festival.now:.2f}: {self.name} {self.surname} s kolegou dostavěli stan.")
+
+                    else:        
+                        position.append(self.inventory["tent"])
+                        print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} staví stan.")
+                        yield self.festival.timeout(pitch_time)
+                        print(f"ČAS: {self.festival.now:.2f}: {self.name} {self.surname} dostavěl stan.")
+                    
+                    self.accommodation["i"] = i
+                    self.accommodation["built"] = True
+                    self.accommodation["camping_area"] = camping_area
+                    break
+                
+            if not free_space:
+                print(f"ČAS: {self.festival.now:.2f}: Došlo místo ve stanovém městečku!")
+
+    def find_area_with_more_space(self, areas):
+        if len(areas) > 1:
+
+            camping_area = areas[0]
+            free_spaces = camping_area.resource[0]
+
+            for area in areas:
+                if free_spaces < area.resource[0]:
+                    free_spaces = area.resource[0]
+                    camping_area = area
+            
+            return camping_area
+        else:
+            return areas
+
+    def sleep_in_tent(self, time):
+        
+        yield self.festival.timeout(random.uniform(0, 2))
+
+        print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} došel/a do stanu.")
+        
+        with self.accommodation["camping_area"].request() as req:
+            
+            yield req
+            
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} jde spát.")
+            yield self.festival.timeout(time)
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} se vzbudil/a.")
+
+            self.state["energy"] += (time / 60) * 10
+
+# ------------------------------------------------POKLADNY ---------------------------------------------------------
+    def bracelet_exchange(self, festival, ticket_booth):
+        #funkce, která simuluje návštěvníkovo ukázání lístku u pokladny, výměnou za pásek na ruku umožňující vstup do arálu.
+        #Případně si návštěvník může lístek koupit v pokladně na místě, pokud ho nemá z předprodeje
+        
+        with ticket_booth.resource.request() as req:
+
+            print(f"ČAS: {self.festival.now:.2f}: {self.name} {self.surname} přišel/la k pokladnám.")
+            start_waiting = self.festival.now
+            will_wait = ticket_booth.resource.count >= ticket_booth.resource.capacity
+
+            yield req
+            
+            if will_wait:
+                waiting_time = self.festival.now - start_waiting
+                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} čekal ve frontě u pokladny {waiting_time}")
+
+            if self.state["pre_sale_ticket"] == True:
+                bracelet_exchange_time = random.uniform(1,2)
+            else:
+                bracelet_exchange_time = random.uniform(2, 3)
+
+            yield self.festival.timeout(bracelet_exchange_time)
+            
+            self.state["entry_bracelet"] = True
+
+            if self.state["pre_sale_ticket"] == False and self.age > 14:
+                self.state["money"] -= festival.prices["on_site_price"]
+                festival.income += festival.prices["on_site_price"]
+
+                print(f"ČAS {self.festival.now:2f} {self.name} {self.surname} si koupil lístek na místě, dostal pásek, a odešel z pokladny.")
+            
+            else:
+                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} měl lístek koupený z předprodeje, dostal pásek, a odešel z pokladny.")
+
+# ----------------------------------------------NABÍJECÍ STÁNEK ---------------------------------------------------------
+
+    def charge_phone(self, stall, festival):
+        """Funkce na nabití najení telefonů návštěvníků"""
+
+        yield self.festival.timeout(random.uniform(0, 2))
+
+        i = -1
+
+        print(f"ČAS: {self.festival.now:.2f}: {self.name} {self.surname} přišel/la k nabíjecímu stánku.")    
+
+        free_space = False
+
+        for position in stall.resource:
+            i += 1
+
+            if position == []:
+                free_space = True
+
+                stall.resource[i] = self.inventory["phone"]
+                    
+                print(f"ČAS: {self.festival.now:.2f}: {self.name} {self.surname} si dává nabít mobil do nabíjecího stánku.")
+                yield self.festival.timeout(random.uniform(1,5))
+                print(f"ČAS: {self.festival.now:.2f}: {self.name} {self.surname} si dal mobil do nabíjecího stánku.")
+                self.state["money"] -= festival.prices["charging_phone_price"]
+                festival.income += festival.prices["charging_phone_price"]
+                festival.add_phone(self.inventory["phone"])
+                self.inventory["phone"] = None
+                break
+            
+        if not free_space:
+            print(f"ČAS: {self.festival.now:.2f}: Došly pozice na nabíjení v nabíjecím stánku!")
+
+    def charging(self, phones):
+        for phone in phones:
+            phone.charging()
+
+# ----------------------------------------------NABÍJECÍ STÁNEK ---------------------------------------------------------
+
+    def return_cup(self, stall, festival):
+        yield self.festival.timeout(random.uniform(0, 2))
+
+        start_waiting = self.festival.now
+        print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} přišel/a k výkupu kelímků.")
+        
+        with stall.resource.request() as req:
+            
+            yield req
+            waiting_time = self.festival.now - start_waiting
+
+            if waiting_time > 0:
+                print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} čekal/a ve frontě {waiting_time}.")
+            
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} přišel/a na řadu a začal/a vracet kelímek.")
+            yield self.festival.timeout(random.uniform(1, 5))
+            print(f"ČAS {self.festival.now:.2f}: {self.name} {self.surname} vrátil/a kelímek.")
+
+            self.state["money"] += festival.prices["plastic_cup_price"]
+            self.inventory["plastic_cup"] = None
 
 # ----------------------------------------------OBECNÉ FUNKCE ---------------------------------------------------------
 
-    def choose_stall(self, festival, item, type_of_item):
-        #funkce která návštěvníkovi přiřadí stánek, ke kterému si půjde pro jídlo
+    def choose_stall(self, festival, type_of_item, item = None):
+        #funkce která návštěvníkovi přiřadí stánek, ke kterému si půjde chtěnou věc/akci
 
-        if type_of_item == "foods":
-            stalls = source.food_stalls
-        elif type_of_item == "drinks":
-            stalls = source.drink_stalls
+        if item:
+            if type_of_item == "foods":
+                stalls = source.food_stalls
+            elif type_of_item == "drinks":
+                stalls = source.drink_stalls
 
-        for key, value in stalls.items():
-            if item in value:
-                stall_name = key
-                break
+            for key, value in stalls.items():
+                if item in value:
+                    stall_name = key
+                    break
             
-        stalls = resources.find_stalls_in_zone(self, festival, type_of_item, stall_name)
-            
-        if len(stalls) == 1:
-            return stalls[0]
-        
+            return resources.find_stall_with_shortest_queue_in_zone(self, festival, type_of_item, stall_name)
         else:
-            shortest_queue_stall = stalls[0]
+            return resources.find_stall_with_shortest_queue_in_zone(self, festival, type_of_item)
 
-            for stall in stalls:
-                if stall.queue_length < shortest_queue_stall.queue_length:
-                    shortest_queue_stall = stall
-            
-            return shortest_queue_stall
-        
     def resolve_need(self, need):
-        """Pokud lze potřebu vyřešit v aktuální zóně, vrátí akci. Jinak najde nejkratší cestu do zóny, kde to možné je."""
+        """Pokud lze potřebu vyřešit v aktuální zóně, vrátí akci. Jinak najde nejkratší cestu do zóny, kde to možné je, a vrátí první zónu v této cestě."""
 
         actual_zone = self.state["location"]
         actions_by_locations = load_data("ACTIONS_BY_LOCATIONS")
@@ -536,7 +1008,6 @@ class Visitor:
             print(f"ERROR: K zóně {actual_zone.value} není připojená žádná zóna, která by uspokojila potřebu {need}")
             return None
 
-        #BFS hledání cesty
         queue = deque([(actual_zone, [])])
         visited = set() #vytvoří práznou množinu
 

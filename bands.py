@@ -5,6 +5,7 @@ import operator
 global income
 
 def choose_bands(budget, num, remaining_money = 0, bands = source.BANDS.copy()):
+
     #Vybere kapely do programu jednoho dne podle budgetu
     random.shuffle(bands)  # zamícháme pořadí
 
@@ -47,25 +48,25 @@ def choose_bands(budget, num, remaining_money = 0, bands = source.BANDS.copy()):
 
     return chosen, total_price, remaining_money, bands
 
-def create_lineup(num_days, budget_for_bands, total_num_of_bands):
+def create_lineup(num_days, budget_for_bands, num_of_bands):
     #funkce, která vytvoří program na všechny dny festivalu
 
     budget_for_day = budget_for_bands / num_days
-    num_bands_per_day = total_num_of_bands / num_days
-    total_price_za_kapely = 0
+    num_of_bands 
+    total_price_for_bands = 0
     lineup = []
 
     for i in range(num_days):
 
         if i == 0:
-            bands, price, remaining_money, redukovane_kapely = choose_bands(budget_for_day, num_bands_per_day)
+            bands, price, remaining_money, reduced_bands = choose_bands(budget_for_day, num_of_bands)
         else:
-            bands, price, remaining_money, redukovane_kapely = choose_bands(budget_for_day, num_bands_per_day, remaining_money, redukovane_kapely)
+            bands, price, remaining_money, reduced_bands = choose_bands(budget_for_day, num_of_bands, remaining_money, reduced_bands)
         
-        total_price_za_kapely += price
+        total_price_for_bands += price
         lineup.append(bands)
 
-    return lineup, total_price_za_kapely  
+    return lineup, total_price_for_bands  
 
 def print_lineup(lineup):
     #vypis kapel
@@ -108,7 +109,7 @@ def add_favorite_bands_to_visitor(visitors, bands):
     return visitors
 
 def merge_bands(lineup):
-    #funkce, která z vícedenního lineupu udělá jeden seznam se všema kapelama
+    #z vícedenního lineupu udělá jeden seznam se všema kapelama
 
     bands_list = []
 
@@ -121,3 +122,9 @@ def merge_bands(lineup):
 
     return bands_list
 
+def create_schedule(line_up):
+    headliner_time_min = 90
+    headliner_time_max = 120
+    band_time_min = 45
+    band_time_max = 75
+    last_show_ends = "00:00"
