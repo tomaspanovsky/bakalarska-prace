@@ -1,6 +1,8 @@
 import json
 import simpy
 import locations
+import source
+import random
 from data.load_data import load_data
 
 class Stall:
@@ -15,7 +17,7 @@ class Stall:
         self.y = y
         self.from_zone = None
 
-def create_resources(env, capacities):
+def create_resources(env, capacities, num_visitors):
     stalls = {"ENTRANCE_ZONE" : [], "TENT_AREA" : [], "FESTIVAL_AREA" : [], "CHILL_ZONE" : [], "ATRACTION_ZONE" : []}
 
     stalls_in_locations = load_data("STALLS_BY_LOCATIONS")
@@ -42,7 +44,32 @@ def create_resources(env, capacities):
                 resource = locations.create_positions(capacities["meadow_for_living"])
 
             elif stall["name"] == "charging_stall":
-                resource = locations.create_positions(capacities["charging_stall"])
+                resource = locations.create_positions(capacities["charging_stall_mobile"])
+
+            elif stall["name"] == "stage":
+                resource = simpy.Resource(env, capacity=1)
+                
+            elif stall["name"] == "standing_at_stage":
+                resource = []
+                
+                if num_visitors < 100:
+                    cap_sectors = [33,33,34]
+                else:
+                    cap_sectors = [num_visitors//3] * 3
+
+                    if (cap_sectors[0] + cap_sectors[1] + cap_sectors[2]) != num_visitors:
+                        cap_sectors[2] += num_visitors - ((num_visitors // 3) * 3) 
+
+                resource.append(["first_lines", simpy.Resource(env, capacity=cap_sectors[0])])
+                resource.append(["middle", simpy.Resource(env, capacity=cap_sectors[1])])
+                resource.append(["back", simpy.Resource(env, capacity=cap_sectors[2])])
+
+            elif stall["name"] == "signing_stall":
+                resource = [[],[],[],[]]
+                resource[0] = simpy.Resource(env, capacity=1)
+                resource[1] = simpy.Resource(env, capacity=5)
+                resource[2] = simpy.Resource(env, capacity=(capacities[stall["name"]] - 5))
+                resource[3] = None
 
             else:
                 resource = simpy.Resource(env, capacity=capacities[stall["name"]])
@@ -132,31 +159,37 @@ def identify_entrances(stalls):
 def get_name(stall):
     return stall["name"]
 
-def is_big_queue_at_stall(stall):
-    return (stall.resource.count + len(stall.resource.queue)) >= 10
+def is_big_queue_at_stall(visitor, stall):
+    return (stall.resource.count + len(stall.resource.queue)) >= visitor.qualities["patience"] * random.uniform(0.5, 1.5)
 
-def find_stall_with_shortest_queue_in_zone(self, festival, type, name=None):
+def find_stall_with_shortest_queue_in_zone(self, festival, type, name=None, stalls=None):
     "Vrátí stánek s nejmenší frontou v dané zóně, při zadání name vrátí konkrétní stánek s nejmenší frontou"
-    stalls = find_stalls_in_zone(self, festival, type, name)
+    
+    if not stalls:
+        stalls = find_stalls_in_zone(self, festival, type, name)
 
-    if type == "tent_area" or type == "charging_stall":
+    if type == "tent_area" or type == "charging_stall" or type == "standing_at_stage" or type == "signing_stall" or type == "merch_stall":
         return stalls
 
     if stalls == []:
         return None
 
-    stall_with_least_people = stalls[0]
+    if len(stalls) == 1:
+        return stalls[0]
+    
+    else:
+        stall_with_least_people = stalls[0]
 
-    least_num_people = len(stall_with_least_people.resource.queue) + stall_with_least_people.resource.count
+        least_num_people = len(stall_with_least_people.resource.queue) + stall_with_least_people.resource.count
 
-    for stall in stalls[1:]:
-        stall_num_people = len(stall.resource.queue) + stall.resource.count
+        for stall in stalls[1:]:
+            stall_num_people = len(stall.resource.queue) + stall.resource.count
 
-        if stall_num_people < least_num_people:
-            stall_with_least_people = stall
-            least_num_people = stall_num_people
+            if stall_num_people < least_num_people:
+                stall_with_least_people = stall
+                least_num_people = stall_num_people
 
-    return stall_with_least_people
+        return stall_with_least_people
 
 
 def find_stalls_in_zone(self, festival, type, name=None):
@@ -164,7 +197,10 @@ def find_stalls_in_zone(self, festival, type, name=None):
 
     stalls = []
     
-    if type == "entrances":
+    if type == "entrances" or type == "stage" or type == "signing_stall":
+        location = "FESTIVAL_AREA"
+
+    elif self.state["location"] == source.Locations.SIGNING_STALL or self.state["location"] == source.Locations.STAGE_STANDING:
         location = "FESTIVAL_AREA"
     else:
         location = self.state["location"].name
@@ -177,6 +213,7 @@ def find_stalls_in_zone(self, festival, type, name=None):
                     stalls.append(stall)
             else:
                 stalls.append(stall)
+
     return stalls
 
 def find_all_type_stall_at_festival(all_stalls, type):
@@ -190,4 +227,7 @@ def find_all_type_stall_at_festival(all_stalls, type):
     return all_food_stalls_at_festival
 
 def can_afford(self, what):
-    return self.state["money"] > what["price"]
+    if isinstance(what, (int, float)):
+        return self.state["money"] > what
+    else:
+        return self.state["money"] > what["price"]

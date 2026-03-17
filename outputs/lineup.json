@@ -1,0 +1,76 @@
+[
+    [
+        {
+            "band_name": "Bastard",
+            "price": 70000,
+            "popularity": 27,
+            "start_playing_time": 180,
+            "end_playing_time": 240,
+            "start_signing_session": 270,
+            "end_signing_session": 300
+        },
+        {
+            "band_name": "Harlej",
+            "price": 150000,
+            "popularity": 73,
+            "start_playing_time": 260.0,
+            "end_playing_time": 320.0,
+            "start_signing_session": 170.0,
+            "end_signing_session": 200.0
+        },
+        {
+            "band_name": "Jelen",
+            "price": 200000,
+            "popularity": 75,
+            "start_playing_time": 340.0,
+            "end_playing_time": 400.0,
+            "start_signing_session": 430.0,
+            "end_signing_session": 460.0
+        },
+        {
+            "band_name": "Horkýže Sliže",
+            "price": 130000,
+            "popularity": 75,
+            "start_playing_time": 420.0,
+            "end_playing_time": 480.0,
+            "start_signing_session": 330.0,
+            "end_signing_session": 360.0
+        },
+        {
+            "band_name": "Daniel Landa",
+            "price": 400000,
+            "popularity": 78,
+            "start_playing_time": 500.0,
+            "end_playing_time": 560.0,
+            "start_signing_session": 590.0,
+            "end_signing_session": 620.0
+        },
+        {
+            "band_name": "Dymytry",
+            "price": 250000,
+            "popularity": 78,
+            "start_playing_time": 580.0,
+            "end_playing_time": 640.0,
+            "start_signing_session": 490.0,
+            "end_signing_session": 520.0
+        },
+        {
+            "band_name": "Eluveitie",
+            "price": 3000000,
+            "popularity": 87,
+            "start_playing_time": 660.0,
+            "end_playing_time": 720.0,
+            "start_signing_session": 750.0,
+            "end_signing_session": 780.0
+        },
+        {
+            "band_name": "Sabaton",
+            "price": 5000000,
+            "popularity": 95,
+            "start_playing_time": 740.0,
+            "end_playing_time": 840.0,
+            "start_signing_session": 650.0,
+            "end_signing_session": 680.0
+        }
+    ]
+]

@@ -1,38 +1,38 @@
 {
   "foods": {
-    "pizza": {"price": 250, "preparation_time": [90, 150], "satiety": 90, "eating_time": [15, 25]},
-    "trojuhelnicek pizzy": {"price": 100, "preparation_time": [60, 100], "satiety": 30, "eating_time": [5, 10]},
+    "pizza": {"price": 250, "preparation_time": [4, 7], "satiety": 90, "eating_time": [5, 8]},
+    "trojuhelnicek pizzy": {"price": 100, "preparation_time": [2, 4], "satiety": 30, "eating_time": [2, 4]},
 
-    "hamburger": {"price": 200, "preparation_time": [90, 150], "satiety": 80, "eating_time": [10, 20]},
-    "cheeseburger": {"price": 220, "preparation_time": [100, 160], "satiety": 80, "eating_time": [10, 20]},
-    "chickenburger": {"price": 210, "preparation_time": [100, 160], "satiety": 80, "eating_time": [10, 20]},
-    "hotdog": {"price": 150, "preparation_time": [40, 70], "satiety": 55, "eating_time": [5, 10]},
-    "párek v rohlíku": {"price": 80, "preparation_time": [20, 50], "satiety": 35, "eating_time": [3, 7]},
+    "hamburger": {"price": 200, "preparation_time": [5, 8], "satiety": 80, "eating_time": [4, 7]},
+    "cheeseburger": {"price": 220, "preparation_time": [5, 8], "satiety": 80, "eating_time": [4, 7]},
+    "chickenburger": {"price": 210, "preparation_time": [5, 8], "satiety": 80, "eating_time": [4, 7]},
+    "hotdog": {"price": 150, "preparation_time": [2, 4], "satiety": 55, "eating_time": [2, 4]},
+    "párek v rohlíku": {"price": 80, "preparation_time": [1, 3], "satiety": 35, "eating_time": [1, 3]},
 
-    "gyros v tortile": {"price": 220, "preparation_time": [120, 180], "satiety": 90, "eating_time": [12, 20]},
-    "nudle se zeleninou": {"price": 160, "preparation_time": [100, 160], "satiety": 70, "eating_time": [10, 15]},
-    "nudle s gyrosem": {"price": 200, "preparation_time": [120, 180], "satiety": 85, "eating_time": [12, 18]},
-    "tacos": {"price": 180, "preparation_time": [80, 140], "satiety": 65, "eating_time": [8, 12]},
-    "burrito": {"price": 220, "preparation_time": [100, 160], "satiety": 85, "eating_time": [12, 18]},
+    "gyros v tortile": {"price": 220, "preparation_time": [6, 10], "satiety": 90, "eating_time": [5, 8]},
+    "nudle se zeleninou": {"price": 160, "preparation_time": [5, 9], "satiety": 70, "eating_time": [4, 7]},
+    "nudle s gyrosem": {"price": 200, "preparation_time": [6, 10], "satiety": 85, "eating_time": [5, 8]},
+    "tacos": {"price": 180, "preparation_time": [4, 7], "satiety": 65, "eating_time": [3, 5]},
+    "burrito": {"price": 220, "preparation_time": [5, 9], "satiety": 85, "eating_time": [5, 8]},
 
-    "klobása s chlebem": {"price": 140, "preparation_time": [80, 120], "satiety": 65, "eating_time": [8, 12]},
-    "vepřový steak s chlebem": {"price": 190, "preparation_time": [180, 240], "satiety": 85, "eating_time": [15, 25]},
-    "kuřecí steak s chlebem": {"price": 170, "preparation_time": [150, 200], "satiety": 85, "eating_time": [12, 20]},
-    "kukuřice": {"price": 100, "preparation_time": [60, 120], "satiety": 40, "eating_time": [5, 8]},
-    "grilovaný hermelín s chlebem": {"price": 150, "preparation_time": [120, 180], "satiety": 55, "eating_time": [10, 15]},
+    "klobása s chlebem": {"price": 140, "preparation_time": [4, 7], "satiety": 65, "eating_time": [4, 6]},
+    "vepřový steak s chlebem": {"price": 190, "preparation_time": [7, 12], "satiety": 85, "eating_time": [6, 10]},
+    "kuřecí steak s chlebem": {"price": 170, "preparation_time": [6, 10], "satiety": 85, "eating_time": [6, 10]},
+    "kukuřice": {"price": 100, "preparation_time": [3, 6], "satiety": 40, "eating_time": [3, 5]},
+    "grilovaný hermelín s chlebem": {"price": 150, "preparation_time": [5, 8], "satiety": 55, "eating_time": [4, 7]},
 
-    "belgické hranolky": {"price": 160, "preparation_time": [60, 90], "satiety": 50, "eating_time": [7, 12]},
+    "belgické hranolky": {"price": 160, "preparation_time": [3, 5], "satiety": 50, "eating_time": [3, 6]},
 
-    "langoš": {"price": 150, "preparation_time": [60, 100], "satiety": 80, "eating_time": [10, 15]},
-    "bramborák": {"price": 130, "preparation_time": [80, 120], "satiety": 70, "eating_time": [8, 12]},
-    "halušky": {"price": 160, "preparation_time": [120, 180], "satiety": 85, "eating_time": [12, 20]},
-    "masová směs se zeleninou": {"price": 150, "preparation_time": [120, 180], "satiety": 80, "eating_time": [10, 18]},
+    "langoš": {"price": 150, "preparation_time": [4, 7], "satiety": 80, "eating_time": [4, 7]},
+    "bramborák": {"price": 130, "preparation_time": [4, 7], "satiety": 70, "eating_time": [3, 6]},
+    "halušky": {"price": 160, "preparation_time": [6, 10], "satiety": 85, "eating_time": [5, 8]},
+    "masová směs se zeleninou": {"price": 150, "preparation_time": [6, 10], "satiety": 80, "eating_time": [5, 8]},
 
-    "palačinky": {"price": 100, "preparation_time": [90, 150], "satiety": 50, "eating_time": [8, 12]},
-    "trdelník": {"price": 120, "preparation_time": [120, 180], "satiety": 55, "eating_time": [10, 15]},
-    "wafle": {"price": 110, "preparation_time": [80, 130], "satiety": 45, "eating_time": [7, 12]},
-    "donuty": {"price": 120, "preparation_time": [80, 130], "satiety": 50, "eating_time": [8, 12]}
-},
+    "palačinky": {"price": 100, "preparation_time": [4, 7], "satiety": 50, "eating_time": [3, 6]},
+    "trdelník": {"price": 120, "preparation_time": [5, 8], "satiety": 55, "eating_time": [4, 6]},
+    "wafle": {"price": 110, "preparation_time": [4, 6], "satiety": 45, "eating_time": [3, 5]},
+    "donuty": {"price": 120, "preparation_time": [3, 6], "satiety": 50, "eating_time": [2, 4]}
+  },
   
   "stalls": {
     "gyros_stall": ["gyros v tortile", "nudle se zeleninou", "nudle s gyrosem", "tacos", "burrito"],

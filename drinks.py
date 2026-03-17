@@ -20,10 +20,8 @@ def find_all_drinks_at_festival(drink_stalls_at_festival):
     alcohol_drinks = list(set(drinks) & set(all_alcohol_drinks))
     return soft_drinks, alcohol_drinks
 
-def is_my_favourite_drink_in_actual_zone(self, festival, drink_type):
+def is_my_favourite_drink_in_actual_zone(self, festival, drink_type, stalls):
 
-    stalls = resources.find_stalls_in_zone(self, festival, "drinks")
-    
     if drink_type == "soft_drink":
         pref_drink = self.preference["favourite_soft_drink"]
 
@@ -74,7 +72,7 @@ def choose_random_drink_from_stall(self, stall, drink_type):
         i += 1
     return None
 
-def choose_random_drink_from_actual_zone(self, festival, drink_type):
+def choose_random_drink_from_actual_zone(self, festival, drink_type, stalls):
     available_drinks = []
 
     if drink_type == "soft_drinks":
@@ -88,7 +86,6 @@ def choose_random_drink_from_actual_zone(self, festival, drink_type):
     elif drink_type == "cocktails":
         drink_type = source.cocktails
     
-    stalls = resources.find_stalls_in_zone(self, festival, "drinks")
 
     for stall in stalls:
 
@@ -109,12 +106,12 @@ def choose_random_drink_from_actual_zone(self, festival, drink_type):
         i += 1
     return None
 
-def what_kind_of_alcohol_is_in_actual_zone(self, festival):
+def what_kind_of_alcohol_is_in_actual_zone(self, festival, stalls):
     types_stalls = {"favourite_alcohol": False, "beers": False, "hard_alcohol": False, "cocktails": False}
 
-    stalls = resources.find_stalls_in_zone(self, festival, "drinks")
+    favourite_drink = is_my_favourite_drink_in_actual_zone(self, festival, "alcohol", stalls)
 
-    if is_my_favourite_drink_in_actual_zone(self, festival, "alcohol"):
+    if favourite_drink[0]:
         types_stalls["favourite_alcohol"] = True
 
     for stall in stalls:

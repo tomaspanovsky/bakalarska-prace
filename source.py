@@ -8,6 +8,7 @@ file_path_drinks = os.path.join(here, "data", "drinks.json")
 file_path_names = os.path.join(here, "data", "names.json")
 file_path_surnames = os.path.join(here, "data", "surnames.json")
 file_path_bands = os.path.join(here, "data", "bands.json")
+file_path_merch = os.path.join(here, "data", "merch.json")
 
 class Groups(enum.Enum):
     GROUP = "skupina"
@@ -26,6 +27,13 @@ class Locations(enum.Enum):
     CHILL_ZONE = "chill zóna"
     STAGE_STANDING = "stání u podia"
     FUN_ZONE = "zábavní zóna"
+    SIGNING_STALL = "autogramiády stánek"
+
+with open(file_path_merch, "r", encoding="utf-8") as f:
+    merch_data = json.load(f)
+
+bands_merch = merch_data["bands_merch"]
+festival_merch = merch_data["festival_merch"]
 
 with open(file_path_foods, "r", encoding="utf-8") as f:
     foods_data = json.load(f)

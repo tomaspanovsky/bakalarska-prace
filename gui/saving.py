@@ -36,19 +36,25 @@ def save(zones_data):
             for obj in instance.get("objects", []):
                 obj_name = obj["object"].lower()
                 stall = {"name": None, "x": None, "y": None, "type": None, "cz_name": None, "from": None}
+                stall_extra = None
+
+                if obj["extra"]:
+                    obj_extra = obj["extra"]
+
+                    if obj_extra[0]["object"] == "Stání u podia":
+                        stall_extra = {"name": "standing_at_stage", "type": "standing_at_stage",  "x": None, "y": None, "cz_name": None, "from": None}
+                        action["band_playing"] = "GO_TO_CONCERT"
 
                 if "podium" in obj_name:
-                    continue
+                    stall["type"] = "stage"
+                    stall["name"] = "stage"
 
-                if "cammel" in obj_name:
-                    stall["name"] = "cigars_tent"
-                    stall["type"] = "smoking"
-
-                if "autogramiády" in obj_name:
+                elif "autogramiády" in obj_name:
                     stall["name"] = "signing_stall"
-                    stall["type"] = "festival"
+                    stall["type"] = "signing_stall"
+                    action["meet_band"] = "GO_TO_SIGNING_SESSION"
 
-                if "toitoiky" in obj_name:
+                elif "toitoiky" in obj_name:
                     stall["name"] = "toitoi"
                     stall["type"] = "toitoi"
                     action["wc"] = "GO_TO_TOILET"
@@ -81,7 +87,7 @@ def save(zones_data):
                 elif "merch" in obj_name:
                     stall["name"] = "merch_stall"
                     stall["type"] = "merch_stall"
-                    action["meet_band"] = "GO_TO_SIGNING_SESSION"
+                    action["want_merch"] = "BUY_MERCH"
 
                 elif "dobíjecí" in obj_name:
                     stall["name"] = "charging_stall"
@@ -104,7 +110,8 @@ def save(zones_data):
 
                 elif "vodníma" in obj_name:
                     stall["name"] = "water_pipe_stall"
-                    stall["type"] = "smoking"
+                    stall["type"] = "water_pipe_stall"
+                    stall["action"] = "GO_SMOKE_WATER_PIPE"
 
                 elif "cigaretový" in obj_name:
                     stall["name"] = "cigaret_stall"
@@ -185,6 +192,12 @@ def save(zones_data):
                     stall["type"] = "Others"
 
                 stalls.append(stall)
+                
+                if stall_extra:
+                    stall_extra["x"] = obj["x"]
+                    stall_extra["y"] = obj["y"]
+                    stall_extra["cz_name"] = obj["extra"][0]["object"]
+                    stalls.append(stall_extra)
                 
             result["ACTIONS_BY_LOCATIONS"][location_key] = action
             result["STALLS_BY_LOCATIONS"][location_key] = stalls

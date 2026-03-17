@@ -4,6 +4,7 @@ from . import saving
 from . import loading 
 import os
 import copy
+import source
 
 # Stav aplikace
 current_zone = None         
@@ -21,7 +22,6 @@ selected_line = None
 is_dragging_object = False
 is_dragging_zone = False
 connect_start_zone = None
-capacities = {}
 
 zones_data = {
     "Spawn zóna": {"multiple": False, "instances": []},
@@ -38,14 +38,24 @@ def get_user_settings():
     settings = {}
 
     def start():
+        merch = get_merch(bands_entries)
+        capacities = get_capacities()
+        prices = get_prices()
+
         settings['num_visitors'] = int(entry_visitors.get())
         settings['num_days'] = int(entry_days.get())
         settings['budget_for_bands'] = int(entry_budget.get())
         settings['num_bands'] = int(entry_num_bands.get())
-        settings['pre_sale_price'] = int(pre_sale_price.get())
-        settings['on_site_price'] = int(on_site_price.get())
-        settings['camping_area_price'] = int(camping_area_price.get())
-        get_capacities()
+        settings['simulation_start_time'] = simulation_start_time.get()
+        settings['headliner_time'] = int(headliner_time.get())
+        settings['band_time'] = int(band_time.get())
+        settings['first_show_starts'] = first_show_starts.get()
+        settings['last_show_ends'] = last_show_ends.get()
+        settings['signing_time'] = signing_time.get()
+        settings['prices'] = prices
+        settings['merch'] = merch
+        settings['capacities'] = capacities
+        
         root.destroy()
 
     def exit_app():
@@ -61,30 +71,47 @@ def get_user_settings():
         settings_frame.pack_forget()
         stall_settings_frame.place(relx=0.5, rely=0.5, anchor="center")
 
-    def open_price_settings():
+    def open_times_settings():
+        main_frame.pack_forget()
+        settings_frame.pack_forget()
+        times_settings_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+    def open_prices_settings():
         main_frame.pack_forget()
         settings_frame.pack_forget()
         prices_settings_frame.place(relx=0.5, rely=0.5, anchor="center")
 
+    def open_merch_settings():
+        main_frame.pack_forget()
+        settings_frame.pack_forget()
+        merch_frame.place(relx=0.5, rely=0.5, anchor="center")
+    
     def open_settings():
         main_frame.pack_forget()
         settings_frame.pack(fill="both", expand=True)
 
     def go_back():
         if stall_settings_frame.winfo_ismapped():
-            get_capacities()
             stall_settings_frame.place_forget()
             settings_frame.pack(fill="both", expand=True)
         
-        if prices_settings_frame.winfo_ismapped():
+        elif prices_settings_frame.winfo_ismapped():
             prices_settings_frame.place_forget()
             settings_frame.pack(fill="both", expand=True) 
 
-        if settings_frame.winfo_ismapped():
+        elif settings_frame.winfo_ismapped():
             settings_frame.pack_forget()
             main_frame.pack(fill="both", expand=True)
+
+        elif times_settings_frame.winfo_ismapped():
+            times_settings_frame.place_forget()
+            settings_frame.pack(fill="both", expand=True)
         
-        if editor_frame.winfo_ismapped():
+        elif merch_frame.winfo_ismapped():
+            merch_frame.place_forget()
+            settings_frame.pack(fill="both", expand=True)
+
+        elif editor_frame.winfo_ismapped():
             editor_frame.pack_forget()
             main_frame.pack(fill="both", expand=True)
 
@@ -145,6 +172,10 @@ def get_user_settings():
     entry_num_bands.grid(row=3, column=1, pady=10)
     entry_num_bands.insert(0, "8")
 
+    tk.Label(frame, text="Čas začátku simulace:", **label_style).grid(row=4, column=0, pady=10, sticky="w")
+    simulation_start_time = tk.Entry(frame, **entry_style)
+    simulation_start_time.grid(row=4, column=1, pady=10)
+    simulation_start_time.insert(0, "09:00")
 
     bottom_frame = tk.Frame(main_frame, bg='black')
     bottom_frame.pack(side="bottom", pady=30)
@@ -168,8 +199,14 @@ def get_user_settings():
     stall_settings_button = tk.Button(settings_frame, text="Kapacity objektů", command=open_stalls_settings, font=("Arial", 15), bg="blue", fg="white", padx=40, pady=15)
     stall_settings_button.pack() 
 
-    prices_settings_button = tk.Button(settings_frame, text="Ceny", command=open_price_settings, font=("Arial", 15), bg="blue", fg="white", padx=40, pady=15)
+    prices_settings_button = tk.Button(settings_frame, text="Festivalové ceny", command=open_prices_settings, font=("Arial", 15), bg="blue", fg="white", padx=40, pady=15)
     prices_settings_button.pack() 
+
+    merch_settings_button = tk.Button(settings_frame, text="Ceny merche", command=open_merch_settings, font=("Arial", 15), bg="blue", fg="white", padx=40, pady=15)
+    merch_settings_button.pack() 
+
+    times_settings_button = tk.Button(settings_frame, text="Časy", command=open_times_settings, font=("Arial", 15), bg="blue", fg="white", padx=40, pady=15)
+    times_settings_button.pack() 
 
     settings_bottom_frame = tk.Frame(settings_frame, bg='black')
     settings_bottom_frame.pack(side="bottom", pady=30, fill="x")
@@ -347,6 +384,7 @@ def get_user_settings():
     back_button.pack()
 
     def get_capacities():
+        capacities = {}
         capacities["pizza_stall"] = int(cap_pizza_stall.get())
         capacities["burger_stall"] = int(cap_burger_stall.get())
         capacities["gyros_stall"] = int(cap_gyros_stall.get())
@@ -360,12 +398,11 @@ def get_user_settings():
         capacities["tables"] = int(cap_tables.get())
         capacities["standing"] = int(cap_standing.get())
         capacities["merch_stall"] = int(cap_merch_stall.get())
-        capacities["sigining_stall"] = int(cap_signing_stall.get())
+        capacities["signing_stall"] = int(cap_signing_stall.get())
         capacities["charging_stall"] = int(cap_charging_stall.get())
         capacities["charging_stall_mobile"] = int(cap_charging_stall_mobile.get())
         capacities["showers"] = int(cap_showers.get())
-        capacities["tents"] = int(cap_tents.get())
-        capacities["cigars_tent"] = int(cap_cigars_tent.get())
+        capacities["cigaret_stall"] = int(cap_cigars_tent.get())
         capacities["water_pipe_stall"] = int(cap_water_pipe_stall.get())
         capacities["chill_stall"] = int(cap_charging_stall.get())
         capacities["bungee_jumping"] = int(cap_bungee_jumping.get())
@@ -382,6 +419,8 @@ def get_user_settings():
         capacities["atm"] = 1
         capacities["cup_return"] = int(cap_cup_return.get())
 
+        return capacities
+    
     # ---------- OBRAZOVKA4: Prices settings
 
     prices_settings_frame = tk.Frame(root, bg="black")
@@ -404,12 +443,208 @@ def get_user_settings():
     camping_area_price.grid(row=4, column=1, pady=10)
     camping_area_price.insert(0, "200")
 
+    tk.Label(prices_settings_frame, text="Cena za kelímek na pití:", **label_style).grid(row=5, column=0, pady=10, sticky="w")
+    plastic_cup_price = tk.Entry(prices_settings_frame, **entry_style)
+    plastic_cup_price.grid(row=5, column=1, pady=10)
+    plastic_cup_price.insert(0, "50")
+
+    tk.Label(prices_settings_frame, text="Cena za nabití telefonu:", **label_style).grid(row=6, column=0, pady=10, sticky="w")
+    charging_phone_price = tk.Entry(prices_settings_frame, **entry_style)
+    charging_phone_price.grid(row=6, column=1, pady=10)
+    charging_phone_price.insert(0, "80")
+
+    tk.Label(prices_settings_frame, text="Cena sprch:", **label_style).grid(row=7, column=0, pady=10, sticky="w")
+    shower_price = tk.Entry(prices_settings_frame, **entry_style)
+    shower_price.grid(row=7, column=1, pady=10)
+    shower_price.insert(0, "50")
+
+    tk.Label(prices_settings_frame, text="Cena za krabičku cigaret:", **label_style).grid(row=8, column=0, pady=10, sticky="w")
+    cigars_price = tk.Entry(prices_settings_frame, **entry_style)
+    cigars_price.grid(row=8, column=1, pady=10)
+    cigars_price.insert(0, "140")
+
+    tk.Label(prices_settings_frame, text="Cena za vodní dýmku:", **label_style).grid(row=9, column=0, pady=10, sticky="w")
+    water_pipe_price = tk.Entry(prices_settings_frame, **entry_style)
+    water_pipe_price.grid(row=9, column=1, pady=10)
+    water_pipe_price.insert(0, "200")
+
     bottom_settings_prices_frame = tk.Frame(prices_settings_frame, bg="black") 
     bottom_settings_prices_frame.grid(row=20, column=0, columnspan=6, pady=40) 
     back_button = tk.Button(bottom_settings_prices_frame, text="Zpět", command=go_back, font=("Arial", 20), bg="blue", fg="white", width=10) 
     back_button.pack()
 
-    # ---------- OBRAZOVKA5: Editor ----------
+    def get_prices():
+        prices = {}
+        prices['pre_sale_price'] = int(pre_sale_price.get())
+        prices['on_site_price'] = int(on_site_price.get())
+        prices['camping_area_price'] = int(camping_area_price.get())
+        prices['plastic_cup_price'] = int(plastic_cup_price.get())
+        prices['charging_phone_price'] = int(plastic_cup_price.get())
+        prices['shower_price'] = int(shower_price.get())
+        prices['cigars_price'] = int(cigars_price.get())
+        prices['water_pipe_price'] = int(water_pipe_price.get())
+        
+        return prices
+
+    # ---------- OBRAZOVKA5: Merch settings
+
+    bands_merch = source.bands_merch
+    festival_merch = source.festival_merch
+
+    merch_frame = tk.Frame(root, bg="black")
+    merch_frame.pack_forget()
+
+    tk.Label(merch_frame,text="Ceny v merch stánku", font=("Arial", 32, "bold"), bg="black", fg="yellow").grid(row=0, column=0, columnspan=6, pady=(40, 40))
+
+    tk.Label(merch_frame, text="Merch kapel", **label_style).grid(row=1, column=0, columnspan=3, pady=10)
+    tk.Label(merch_frame, text="Merch", **label_style).grid(row=2, column=0, padx=50)
+    tk.Label(merch_frame, text="Cena", **label_style).grid(row=2, column=1)
+    tk.Label(merch_frame, text="Kusů", **label_style).grid(row=2, column=2, padx=(10,0))
+
+    bands_entries = {}
+    row_index = 3
+
+    for item in bands_merch:
+
+        tk.Label(merch_frame, text=item, **label_style).grid(
+            row=row_index, column=0, sticky="w", padx=50, pady=5
+        )
+
+        price_entry = tk.Entry(merch_frame, **entry_style2)
+        price_entry.grid(row=row_index, column=1)
+
+        quantity_entry = tk.Entry(merch_frame, **entry_style2)
+        quantity_entry.grid(row=row_index, column=2, padx=(10,0))
+
+        default_price = bands_merch[item].get("default_price", 0)
+        default_quantity = bands_merch[item].get("default_quantity", 0)
+
+        price_entry.insert(0, str(default_price))
+        quantity_entry.insert(0, str(default_quantity))
+
+        bands_entries[item] = {"price": price_entry, "quantity": quantity_entry}
+        row_index += 1
+
+    tk.Label(merch_frame, text="Festivalový merch", **label_style).grid(row=1, column=3, columnspan=3, pady=10)
+    tk.Label(merch_frame, text="Merch", **label_style).grid(row=2, column=3)
+    tk.Label(merch_frame, text="Cena", **label_style).grid(row=2, column=4)
+    tk.Label(merch_frame, text="Kusů", **label_style).grid(row=2, column=5, padx=(10,0))
+
+    festival_entries = {}
+    row_index = 3
+
+    for item in festival_merch:
+
+        tk.Label(merch_frame, text=item, **label_style).grid(
+            row=row_index, column=3, sticky="w", padx=50, pady=5
+        )
+
+        price_entry = tk.Entry(merch_frame, **entry_style2)
+        price_entry.grid(row=row_index, column=4)
+
+        quantity_entry = tk.Entry(merch_frame, **entry_style2)
+        quantity_entry.grid(row=row_index, column=5, padx=(10,0))
+
+        default_price = festival_merch[item].get("default_price", 0)
+        default_quantity = festival_merch[item].get("default_quantity", 0)
+
+        price_entry.insert(0, str(default_price))
+        quantity_entry.insert(0, str(default_quantity))
+
+        festival_entries[item] = {"price": price_entry, "quantity": quantity_entry}
+
+        row_index += 1
+
+        bottom_merch_frame = tk.Frame(merch_frame, bg="black")
+        bottom_merch_frame.grid(row=50, column=0, columnspan=6, pady=40)
+
+        back_button = tk.Button(bottom_merch_frame, text="Zpět", command=go_back, font=("Arial", 20), bg="blue", fg="white", width=10)
+        back_button.pack()
+
+    def get_merch(bands_entries):
+
+        merch = {
+            "bands_merch": {},
+            "festival_merch": {}
+        }
+
+        for item, entries in bands_entries.items():
+
+            try:
+                price = int(entries["price"].get())
+            except ValueError:
+                price = 0
+
+            try:
+                quantity = int(entries["quantity"].get())
+            except ValueError:
+                quantity = 0
+
+            merch["bands_merch"][item] = {
+                "price": price,
+                "quantity": quantity
+            }
+
+        for item, entries in festival_entries.items():
+
+            try:
+                price = int(entries["price"].get())
+            except ValueError:
+                price = 0
+
+            try:
+                quantity = int(entries["quantity"].get())
+            except ValueError:
+                quantity = 0
+
+            merch["festival_merch"][item] = {
+                "price": price,
+                "quantity": quantity
+            }
+
+        return merch
+
+    # ---------- OBRAZOVKA6: Times settings
+    times_settings_frame = tk.Frame(root, bg="black")
+    times_settings_frame.pack_forget()
+
+    tk.Label(times_settings_frame, text="Časy", font=("Arial", 32, "bold"), bg="black", fg="yellow").grid(row=0, column=0, columnspan=7, pady=(40, 40))
+
+    tk.Label(times_settings_frame, text="Délka vystoupení kapely: ", **label_style).grid(row=2, column=0, pady=10, sticky="w")
+    tk.Label(times_settings_frame, text=" min.", **label_style).grid(row=2, column=2, pady=10, sticky="w")
+    band_time = tk.Entry(times_settings_frame, **entry_style2)
+    band_time.grid(row=2, column=1, pady=10)
+    band_time.insert(0, "60")
+
+    tk.Label(times_settings_frame, text="Délka vystoupení headlinera: ", **label_style).grid(row=3, column=0, pady=10, sticky="w")
+    tk.Label(times_settings_frame, text=" min.", **label_style).grid(row=3, column=2, pady=10, sticky="w")
+    headliner_time = tk.Entry(times_settings_frame, **entry_style2)
+    headliner_time.grid(row=3, column=1, pady=10)
+    headliner_time.insert(0, "90")
+
+    tk.Label(times_settings_frame, text="Délka trvání autogramiád: ", **label_style).grid(row=4, column=0, pady=10, sticky="w")
+    tk.Label(times_settings_frame, text=" min.", **label_style).grid(row=4, column=2, pady=10, sticky="w")
+    signing_time = tk.Entry(times_settings_frame, **entry_style2)
+    signing_time.grid(row=4, column=1, pady=10)
+    signing_time.insert(0, "30")
+
+    tk.Label(times_settings_frame, text="Čas prvního koncertu dne: ", **label_style).grid(row=5, column=0, pady=10, sticky="w")
+    first_show_starts = tk.Entry(times_settings_frame, **entry_style2)
+    first_show_starts.grid(row=5, column=1, pady=10)
+    first_show_starts.insert(0, "12:00")
+
+    tk.Label(times_settings_frame, text="Konec posledního koncertu dne: ", **label_style).grid(row=6, column=0, pady=10, sticky="w")
+    last_show_ends = tk.Entry(times_settings_frame, **entry_style2)
+    last_show_ends.grid(row=6, column=1, pady=10)
+    last_show_ends.insert(0, "23:00")
+
+    bottom_settings_times_frame = tk.Frame(times_settings_frame, bg="black") 
+    bottom_settings_times_frame.grid(row=7, column=0, columnspan=6, pady=40) 
+    back_button = tk.Button(bottom_settings_times_frame, text="Zpět", command=go_back, font=("Arial", 20), bg="blue", fg="white", width=10) 
+    back_button.pack()
+
+
+    # ---------- OBRAZOVKA7: Editor ----------
 
     editor_frame = tk.Frame(root, bg="black")
 
@@ -1319,6 +1554,7 @@ def get_user_settings():
     root.bind("<Delete>", delete_selected)
 
     root.mainloop()
-    return settings, capacities
+    
+    return settings
             
                     
