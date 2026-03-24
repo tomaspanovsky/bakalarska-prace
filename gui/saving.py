@@ -57,7 +57,7 @@ def save(zones_data):
                         case "bungee-jumping":
                             stall["name"] = "bungee_jumping"
                         case "horská dráha":
-                            stall["name"] = "roller_coaster"
+                            stall["name"] = "rollercoaster"
                         case "lavice":
                             stall["name"] = "bench"
                         case "kladivo":
@@ -131,7 +131,7 @@ def save(zones_data):
                 elif "vodníma" in obj_name:
                     stall["name"] = "water_pipe_stall"
                     stall["type"] = "water_pipe_stall"
-                    stall["action"] = "GO_SMOKE_WATER_PIPE"
+                    action["smoking_water_pipe"] = "GO_SMOKE_WATER_PIPE"
 
                 elif "cigaretový" in obj_name:
                     stall["name"] = "cigaret_stall"

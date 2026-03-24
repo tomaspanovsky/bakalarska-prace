@@ -186,5 +186,6 @@
   "soft_drinks" : ["Birell", "Red Bull", "Kofola", "Malinovka", "Jablečný džus", "Pomerančový džus", "Capri-Sun", "Voda", "Coca cola"],
   "beers" : ["pivo Radegast", "pivo Plzeň", "pivo Gambrinus"],
   "hard_alcohol" : ["Zelená", "Rum", "Slivovice", "Vodka", "Fernet", "Jagermeister"],
-  "cocktails" : ["Cuba Libre", "Piña Colada", "Sex on the Beach", "Mojito", "Gin Tonic", "Red Bull Vodka", "Red Bull Jager"]
+  "cocktails" : ["Cuba Libre", "Piña Colada", "Sex on the Beach", "Mojito", "Gin Tonic", "Red Bull Vodka", "Red Bull Jager"],
+  "cup_requirement" : ["pivo Radegast", "pivo Plzeň", "pivo Gambrinus", "Birell", "Kofola", "Malinovka"]
 }

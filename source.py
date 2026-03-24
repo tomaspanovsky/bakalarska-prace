@@ -52,6 +52,7 @@ hard_alcohol = drinks_data["hard_alcohol"]
 cocktails = drinks_data["cocktails"]
 drink_stalls = drinks_data["stalls"]
 drinks = drinks_data["drinks"]
+cup_requirement = drinks_data["cup_requirement"]
 
 class Weather(enum.Enum):
     RAINING = "déšť"

@@ -3,7 +3,7 @@ from outputs.code import logs
 class Festival:
     def __init__(self, env, visitors, groups, num_days, line_up, income, stalls, prices, times, weather, merch):
         self.env = env
-        self.visitor = visitors
+        self.visitors = visitors
         self.groups = groups
         self.num_days = num_days
         self.line_up = line_up
@@ -73,3 +73,6 @@ class Festival:
                 attraction_stalls.append(stall)
 
         return attraction_stalls
+    
+    def get_num_visitors(self):
+        return len(self.visitors)

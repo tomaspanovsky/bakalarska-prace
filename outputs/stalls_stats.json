@@ -288,8 +288,8 @@
             "id": 1,
             "stall_name": "entrance",
             "stall_cz_name": "vstup",
-            "max_queue_length": 0,
-            "max_waiting_time": 0
+            "max_queue_length": 8,
+            "max_waiting_time": 3.8836371597481048
         },
         {
             "id": 2,
@@ -309,8 +309,8 @@
             "id": 1,
             "stall_name": "gyros_stall",
             "stall_cz_name": "gyros stánek",
-            "max_queue_length": 0,
-            "max_waiting_time": 0
+            "max_queue_length": 1,
+            "max_waiting_time": 4.008340422288029
         },
         {
             "id": 1,

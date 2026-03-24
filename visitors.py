@@ -62,7 +62,7 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                     preference = {"alcohol_consumer" : False, "smoker" : False, "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_soft_drinks else None}
 
                 qualities = {"patience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
-                state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : random.choice([True, False]), "tent_area_ticket": False, "entry_bracelet" : False, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "sociability" : 100, "free_time" : 10}                
+                state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : random.choice([True, False]), "tent_area_ticket": False, "entry_bracelet" : False, "group_sync_timer": 120, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "sociability" : 100, "free_time" : 10}                
                 fellows = [id_group_members, group] # první parametr je seznam id lidi ze stejné skupiny, druhý parametr je v jakém uskupení je na festivalu (jednotlivec/skupina/rodina) 
                 inventory = {"tent": None, "phone" : items.Phone(random.randint(50,100)), "plastic_cup": None, "autographs": [], "merch": []}
 
@@ -166,7 +166,7 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                                 
                                 #nedočkavost
                     qualities = {"patience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
-                    state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : random.choice([True, False]), "tent_area_ticket": False, "entry_bracelet" : False, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "sociability" : 100, "free_time" : 10}
+                    state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : random.choice([True, False]), "tent_area_ticket": False, "entry_bracelet" : False, "group_sync_timer": 120,  "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "sociability" : 100, "free_time" : 10}
                     preference = {"alcohol_consumer" : random.choice([True, False]), "smoker" : random.choice([True, False]), "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_soft_drinks else None}
                     inventory = {"tent": None, "phone" : items.Phone(random.randint(50,100)), "plastic_cup": None, "autographs": [], "merch": []}
                     age_category = source.Age_category.ADULT
@@ -212,7 +212,7 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                 else:
                     gender = random.choice(list(source.Gender))
                     qualities = {"patience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
-                    state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : random.choice([True, False]), "tent_area_ticket": False, "entry_bracelet" : False, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "sociability" : 100, "free_time" : 10}
+                    state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : random.choice([True, False]), "tent_area_ticket": False, "entry_bracelet" : False, "group_sync_timer": 120, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "sociability" : 100, "free_time" : 10}
                     preference = {"alcohol_consumer" : False, "smoker" : False, "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_soft_drinks else None}
                     inventory = {"tent": None, "phone": items.Phone(random.randint(50,100)), "plastic_cup": None, "autographs": [], "merch": []}
                     age_category = source.Age_category.CHILD
