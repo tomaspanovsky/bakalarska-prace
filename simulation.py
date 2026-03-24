@@ -5,6 +5,7 @@ import resources
 import foods
 import drinks
 import times
+import copy
 from data.load_data import load_data
 from outputs.code import logs
 from collections import deque
@@ -28,7 +29,7 @@ class Group:
     def start_action(self, festival, member, action):
         #if self.festival.now >= 840:
         #    breakpoint()
-
+        
         """Tato funkce pro daného návštěvníka spustí zvolenou akci"""
         if action != "GO_TO_CONCERT" and member.state["location"] == source.Locations.STAGE_STANDING:
             member.state["location"] = source.Locations.FESTIVAL_AREA
@@ -74,29 +75,36 @@ class Group:
             if food is None:
                 action = member.next_move(festival, "low_money")
                 yield self.festival.process(self.start_action(festival, member, action))
-
-            stall = member.choose_stall(festival, "foods", food)
-            yield self.festival.process(member.go_for_food(stall, food, festival))
-
-            stall = resources.find_stall_with_shortest_queue_in_zone(member, festival, "tables")
-
-            if stall:
-                yield self.festival.process(member.sit(stall, festival, food=food))
+            
             else:
-                message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {member.name} {member.surname} si sní {food} za pochodu."
-                print(message)
-                logs.log_visitor(member, message)
-                yield self.festival.process(member.eat(food, festival))
+                stall = member.choose_stall(festival, "foods", food)
+                yield self.festival.process(member.go_for_food(stall, food, festival))
+
+                stall = resources.find_stall_with_shortest_queue_in_zone(member, festival, "tables")
+
+                if stall:
+                    yield self.festival.process(member.sit(stall, festival, food=food))
+                else:
+                    message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {member.name} {member.surname} si sní {food} za pochodu."
+                    print(message)
+                    logs.log_visitor(member, message)
+                    yield self.festival.process(member.eat(food, festival))
 
         elif action == "GO_FOR_DRINK":
 
             drink, alcohol_type = member.choose_drink(festival)
-            print(drink)
-            print(alcohol_type)
+           
             if drink == None:
-                action = member.next_move(festival, "low_money")
-                yield self.festival.process(self.start_action(festival, member, action))
 
+                if member.state["money"] < 1000:
+                    action = member.next_move(festival, "low_money")
+                    yield self.festival.process(self.start_action(festival, member, action))
+
+                else:
+                    action = member.next_move(festival)
+                    yield self.festival.process(self.start_action(festival, member, action))
+                
+                return
             
             stall = member.choose_stall(festival, "drinks", drink)
 
@@ -112,7 +120,6 @@ class Group:
                     yield self.festival.process(member.sit(stall, festival, drink=drink))
                 
                 else:
-
                     message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {member.name} {member.surname} si vypije {drink} za pochodu."
                     print(message)
                     logs.log_visitor(member, message)
@@ -219,7 +226,7 @@ class Group:
                 signing_stall = signing_stall[0]
             yield self.festival.process(member.go_to_signing_session(signing_stall, festival))
 
-        elif action == "BUY_MERCHE":
+        elif action == "BUY_MERCH":
             merch_stall = member.choose_stall(festival, "merch_stall")
             yield self.festival.process(member.buy_merch(merch_stall, festival))
 
@@ -256,9 +263,27 @@ class Group:
                 yield self.festival.process(self.start_action(festival, member, action))
         
         elif action == "SLEEP_IN_TENT":
+            action = member.next_move(festival, "brushing_teeth")
+            yield self.festival.process(self.start_action(festival, member, action))
+
             sleeping_time = random.uniform(240, 480)
             yield self.festival.process(member.sleep_in_tent(sleeping_time, festival))
 
+            action = member.next_move(festival, "brushing_teeth")
+            yield self.festival.process(self.start_action(festival, member, action))
+
+        elif action == "GO_TO_ATTRACTION":
+            attraction = member.choose_attraction(festival)
+
+            if attraction is None:
+                message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: Na festivalu bohužel není žádná vhodná atrakce pro {member.age_category.value}, takže {member.name} {member.surname} nemůže jít na žádnou atrakci."
+                print(message)
+                logs.log_visitor(member, message)
+                action = member.next_move(festival)
+                yield self.festival.process(self.start_action(festival, member, action))
+
+            else:
+                yield self.festival.process(member.go_to_attraction(attraction, festival))
 
     def group_decision_making(self, festival):
         """Zvolí všem návštěvníkům skupiny akci a zavolá její spuštění"""
@@ -322,7 +347,7 @@ class Visitor:
         if self.festival.now >= ((festival.get_actual_day() * 1440) - festival.get_start_time()):
             festival.next_day()
 
-        factor = 1
+        factor = 5
 
         self.state["energy"] = min(100, max(0, self.state["energy"] - factor * random.uniform(0.1, 0.5)))
         self.state["hunger"] = min(100, max(0, self.state["hunger"] - self.qualities["hunger_frequency"] * random.uniform(0.1, 0.5)))
@@ -330,6 +355,9 @@ class Visitor:
         self.state["wc"] = min(100, max(0, self.state["wc"] - factor * random.uniform(0.1, 0.5)))
         self.state["hygiene"] = min(100, max(0, self.state["hygiene"] - factor * random.uniform(0.1, 0.5)))
         self.state["drunkenness"] = min(100, max(0, self.state["drunkenness"] - self.qualities["alcohol_tolerance"] * random.uniform(0.1, 0.5)))
+        
+        mood_penalty = self.get_mood_penalty()
+        self.state["mood"] -= mood_penalty 
 
         if self.inventory["phone"] != None:
             self.inventory["phone"].battery = min(100, max(0, self.inventory["phone"].battery - random.uniform(0.1, 0.5)))
@@ -343,7 +371,9 @@ class Visitor:
         return self.resolve_need(need)
     
     def urgent_need(self, festival):
-        #povinné kroky při příjezdu
+        """needs
+            sitting
+            """
         
         if self.state["entry_bracelet"] == False and self.accommodation["built"] == False:
             return random.choice(["living", "bracelet_exchange"])
@@ -362,6 +392,7 @@ class Visitor:
         needs_scores["hygiene"] = 100 - self.state["hygiene"]
         needs_scores["energy"] = 100 - self.state["energy"]
         
+
         if self.state["money"] < 1000:
             low_money_score = 50 + ((1000 - self.state["money"]) / 100) * 5
             needs_scores["low_money"] = low_money_score
@@ -371,6 +402,22 @@ class Visitor:
                 low_battery_score = 100 - self.inventory["phone"].battery
                 needs_scores["phone_dead"] = low_battery_score
         
+        if self.preference["smoker"] is True:
+
+            if self.state["cigarettes"] <= 10:
+                buy_cigars_index = self.state["cigarettes"] * random.uniform(0.5, 1.5)
+
+                if buy_cigars_index <= 8:
+                    return "low_cigars"
+                
+        end_of_festival = festival.get_start_time() + festival.get_festival_length() + 1440
+
+        if (end_of_festival - self.festival.now < 180) and self.inventory["plastic_cup"] is True:
+            returning_index = random.randint(1,5)
+
+            if returning_index <= 3:
+                return "cup_return"
+
         if self.my_band_playing(festival) and self.state["location"] != source.Locations.STAGE_STANDING:
             return "band_playing"            
 
@@ -378,14 +425,83 @@ class Visitor:
             return "meet_band"
         
         if self.deciding_smoking():
-            return "smoke"
+            return "smoking"
     
         need, value = max(needs_scores.items(), key=lambda x: x[1])
 
+        merch_score = self.do_i_want_merch(festival)
+
+        if random.randint(0, 100) < merch_score:
+            return "want_merch"
+
+        attraction_score = self.do_i_want_go_to_attraction(festival)  
+
+        if random.randint(0, 100) < attraction_score:
+            return "attraction_desire"
+        
         if value <= 40 and self.some_band_playing(festival):
             return "band_playing"
         else:
             return need
+    
+    def get_mood_penalty(self):
+        mood_penalty = 0
+
+        if self.state["hunger"] < 50:
+            mood_penalty += (50 - self.state["hunger"]) * 0.2
+
+        if self.state["thirst"] < 50:
+            mood_penalty += (50 - self.state["thirst"]) * 0.3
+
+        if self.state["energy"] < 50:
+            mood_penalty += (50 - self.state["energy"]) * 0.25
+
+        if self.state["hygiene"] < 50:
+            mood_penalty += (50 - self.state["hygiene"]) * 0.15
+
+        if self.state["wc"] < 50:
+            mood_penalty += (50 - self.state["wc"]) * 0.2
+
+        if self.state["drunkenness"] > 70:
+            mood_penalty += (self.state["drunkenness"] - 70) * 0.3
+
+        return mood_penalty
+
+    def do_i_want_merch(self, festival):
+        merch_score = 0
+
+        if self.state["money"] > 1500:
+            merch_score += 10
+
+        if self.state["mood"] > 50:
+            merch_score += 10
+
+        if not self.my_band_playing(festival):
+            merch_score += 10
+        
+        if not self.my_band_has_signing_session():
+            merch_score += 10
+        
+        merch_score += self.qualities["tendency_to_spend"]
+
+        return merch_score
+
+    def do_i_want_go_to_attraction(self, festival):
+        score = 0
+
+        score += max(0, self.state["mood"] - 50) / 2
+
+        score += max(0, self.state["energy"] - 40) / 2
+
+        urgent = min(self.state["hunger"], self.state["thirst"], self.state["wc"], self.state["hygiene"])
+        score += urgent / 5
+
+        if self.state["money"] > 500:
+            score += 10
+
+        score += self.qualities["tendency_to_spend"]
+
+        return score
 
     def my_band_playing(self, festival):
         my_bands = self.preference["favourite_bands"]
@@ -442,7 +558,7 @@ class Visitor:
         if self.preference["smoker"] == True:
             craving_for_a_cigarette = random.randint(0, 12 - self.state["level_of_addiction"])
 
-            if craving_for_a_cigarette <= 2 and self.state["nicotine"] != 100:
+            if craving_for_a_cigarette <= 4 and self.state["nicotine"] != 100:
                 return True 
 
             elif self.state["nicotine"] < 30 or self.state["mood"] < 30:
@@ -488,6 +604,8 @@ class Visitor:
                 message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} čekal/a {waiting_time} ve frontě u vstupu."
                 print(message)
                 logs.log_visitor(self, message)
+                logs.log_stalls_stats(entrance, "FESTIVAL_AREA", waiting_time)
+
             else:
                 message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} prošel/a vstupem bez čekání."
                 print(message)
@@ -590,7 +708,7 @@ class Visitor:
 
                 if resources.is_big_queue_at_stall(self, stall):
                     stall = foods.find_food_stall_with_shortest_queue_in_zone(self, festival)
-                    return foods.choose_random_food_from_stall(self, stall)
+                    return foods.choose_random_food_from_stall(self, stall, festival)
 
                 else:
                     if resources.can_afford(self, source.foods[self.preference["favourite_food"]]):
@@ -630,7 +748,8 @@ class Visitor:
                 message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} čekal/a {waiting_time} ve frontě u stánku {stall.stall_cz_name} minut."
                 print(message)
                 logs.log_visitor(self, message)
-            
+                logs.log_stalls_stats(stall, self.state["location"].name, waiting_time)
+
             preparation_time = random.randint(time_min, time_max)
 
             message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} čeká na {food} a příprava bude trvat {preparation_time}"
@@ -730,57 +849,109 @@ class Visitor:
     def choose_drink(self, festival):
         """Vybere návštěvníkovi, které pití dá viz jidlo a pití.png"""
 
+        available_soft_drinks = []
+        available_beers = []
+        available_hard_alcohol = []
+        available_cocktails = []
+        available_alcohol = {}
+
         drink_stalls_in_zone = resources.find_stalls_in_zone(self, festival, "drinks")
 
-        if self.preference["alcohol_consumer"] == True:
+        for stall in drink_stalls_in_zone:
+            drinks_in_stall = source.drinks_data["stalls"][stall.stall_name]
 
-            if self.is_visitor_drunk():
-                presence, stall = drinks.is_my_favourite_drink_in_actual_zone(self, festival, "soft_drink", drink_stalls_in_zone)
+            for drink in drinks_in_stall:
 
-                if presence is True:
-                    if resources.is_big_queue_at_stall(stall):
-                        stall = drinks.find_drink_stall_with_shortest_queue_in_zone(self, festival)
-                        return drinks.choose_random_drink_from_stall(self, stall, "soft_drink"), None
-                    else:
-                        if resources.can_afford(self, source.drinks[self.preference["favourite_soft_drink"]]):
-                            return self.preference["favourite_soft_drink"]
-                        else:
-                            return None, None
-                else:
-                    return drinks.choose_random_drink_from_actual_zone(self, festival, "soft_drink", drink_stalls_in_zone), None
-            
+                if drink in source.soft_drinks and drink not in available_soft_drinks:
+                    available_soft_drinks.append(drink)
+
+                elif drink in source.beers and drink not in available_beers:
+                    available_beers.append(drink)
+                    available_alcohol["beers"] = available_beers
+
+                elif drink in source.hard_alcohol and drink not in available_hard_alcohol:
+                    available_hard_alcohol.append(drink)
+                    available_alcohol["hard_alcohol"] = available_hard_alcohol
+
+                elif drink in source.cocktails and drink not in available_cocktails:
+                    available_cocktails.append(drink)
+                    available_alcohol["cocktails"] = available_cocktails
+
+        if available_soft_drinks == {} and self.preference["alcohol_consumer"] is False:
+            message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} si chce dát nealkoholické pití, ale bohužel se v {self.state["location"].value} žádné nealkoholické pití neprodává, {self.name} {self.surname} si tedy koupí pití později."
+            print(message)
+            logs.log_visitor(self, message)
+
+        if self.preference["alcohol_consumer"] is True:
+
+            if available_alcohol == {} or self.is_visitor_drunk():
+
+                if available_soft_drinks != {}:
+                    drink = self.choose_soft_drink(festival, available_soft_drinks)
+                    alcohol_type = None
+
             else:
-                kinds_of_alcohol = drinks.what_kind_of_alcohol_is_in_actual_zone(self, festival, drink_stalls_in_zone)
-                alcohol_type = self.choose_type_of_alcohol(kinds_of_alcohol)
+                drink, alcohol_type = self.choose_alcohol(festival, available_alcohol)
+        
+        return drink, alcohol_type
+    
+    def choose_soft_drink(self, festival, available_soft_drinks):
+        
+        fav_soft_drink = self.preference["favourite_soft_drink"]
 
-                if alcohol_type == "favourite_alcohol":
-                    if resources.can_afford(self, source.drinks[self.preference["favourite_alcohol"]]):
-                        return self.preference["favourite_alcohol"], None
+        if fav_soft_drink in available_soft_drinks:
+            stall = resources.find_stalls_in_zone(self, festival, "drinks", fav_soft_drink)
+
+            if resources.is_big_queue_at_stall(self, stall):
+                drink = random.choice(available_soft_drinks)
+                for i in range(3):
+                    if resources.can_afford(self, drink):
+                        return drink
                     else:
-                        return None, None
-                else: 
-                    return drinks.choose_random_drink_from_actual_zone(self, festival, alcohol_type, drink_stalls_in_zone), alcohol_type 
+                        return None
                     
-        else:
-            presence, stall = drinks.is_my_favourite_drink_in_actual_zone(self, festival, "soft_drink", drink_stalls_in_zone)
-
-            if presence is True:
-
-                if resources.is_big_queue_at_stall(stall):
-                    stall = drinks.find_drink_stall_with_shortest_queue_in_zone(self, festival)
-                    return drinks.choose_random_drink_from_stall(self, stall, "soft_drink"), None
-                
-                else:
-                    if resources.can_afford(self, source.drinks[self.preference["favourite_soft_drink"]]):
-                        return self.preference["favourite_soft_drink"], None
-                    else:
-                        return None, None
-                        
             else:
-                return drinks.choose_random_drink_from_actual_zone(self, festival, "soft_drink", drink_stalls_in_zone), None
+                if resources.can_afford(self, source.drinks[self.preference["favourite_soft_drink"]]):
+                    return self.preference["favourite_soft_drink"]
+                
+        else:
+            drink = random.choice(available_soft_drinks)
+            for i in range(3):
+                if resources.can_afford(self, drink):
+                    return drink
+            
+            return None
+
+
+    def choose_alcohol(self, festival, available_alcohol):
+
+        kinds_of_alcohol = {"favourite_alcohol": False, "beers": False, "hard_alcohol": False, "cocktails": False}
+
+        if self.preference["favourite_alcohol"] in available_alcohol:
+            available_alcohol["favourite_alcohol"] = True
+        
+        for kind in kinds_of_alcohol:
+            for available_kind in available_alcohol:
+                if available_alcohol[kind] != []:
+                    kinds_of_alcohol[kind] = True
+
+        alcohol_type = self.choose_type_of_alcohol(kinds_of_alcohol)
+
+        if alcohol_type == "favourite_alcohol":
+            if resources.can_afford(self, source.drinks[self.preference["favourite_alcohol"]]):
+                return self.preference["favourite_alcohol"], alcohol_type
+
+        else:
+            drink = random.choice(available_alcohol[alcohol_type])
+            for i in range(3):
+                if resources.can_afford(self, drink):
+                    return drink
+
+            return None
+
         
     def is_visitor_drunk(self):
-        return self.state["drunkenness"] >= 80
+        return self.state["drunkenness"] >= 75
     
     def choose_type_of_alcohol(self, kinds_of_alcohol):
 
@@ -827,6 +998,7 @@ class Visitor:
                 message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} čekal u stánku {stall.stall_cz_name} {waiting_time}"
                 print(message)
                 logs.log_visitor(self, message)
+                logs.log_stalls_stats(stall, self.state["location"].name, waiting_time)
 
             preparation_time = random.randint(time_min, time_max)
 
@@ -989,6 +1161,7 @@ class Visitor:
                 print(message)
                 logs.log_visitor(self, message)
 
+
             message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} vchází na {toilet.stall_cz_name}."
             print(message)
             logs.log_visitor(self, message)
@@ -1082,6 +1255,7 @@ class Visitor:
                 message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} čekal/a na volnou spruchu {waiting_time}"
                 print(message)
                 logs.log_visitor(self, message)
+                logs.log_stalls_stats(shower, self.state["location"].name, waiting_time)
 
             message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} vchází do sprchy."
             print(message)
@@ -1184,6 +1358,7 @@ class Visitor:
             self.state["energy"] += (time / 60) * 12.5
 
 # ------------------------------------------------POKLADNY ---------------------------------------------------------
+
     def bracelet_exchange(self, festival, ticket_booth):
         #funkce, která simuluje návštěvníkovo ukázání lístku u pokladny, výměnou za pásek na ruku umožňující vstup do arálu.
         #Případně si návštěvník může lístek koupit v pokladně na místě, pokud ho nemá z předprodeje
@@ -1204,6 +1379,8 @@ class Visitor:
                 message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} čekal ve frontě u pokladny {waiting_time}"
                 print(message)
                 logs.log_visitor(self, message)
+                logs.log_stalls_stats(ticket_booth, self.state["location"].name, waiting_time)
+
 
             if self.state["pre_sale_ticket"] == True:
                 bracelet_exchange_time = random.uniform(1,2)
@@ -1302,7 +1479,7 @@ class Visitor:
             print(message)
             logs.log_visitor(self, message)
 
-            self.state["money"] += festival.price("plastic_cup_price")
+            self.state["money"] += festival.get_price("plastic_cup_price")
             self.inventory["plastic_cup"] = None
 
 # ----------------------------------------------OBECNÉ FUNKCE ---------------------------------------------------------
@@ -1321,7 +1498,7 @@ class Visitor:
                     stall_name = key
                     break
             
-            return resources.find_stall_with_shortest_queue_in_zone(self, festival, type_of_item, stall_name)
+            return resources.find_stall_with_shortest_queue_in_zone(self, festival, type_of_item, name=stall_name)
         else:
             return resources.find_stall_with_shortest_queue_in_zone(self, festival, type_of_item)
 
@@ -1385,18 +1562,31 @@ class Visitor:
             if self.festival.now >= (band["start_playing_time"] - pause_time) and (self.festival.now < band["end_playing_time"]):
                 actual_band = band
                 break
+        
+        if actual_band:
 
-        if self.state["location"] != source.Locations.STAGE_STANDING:
-            self.state["location"] = source.Locations.STAGE_STANDING
+            reimaining_time = actual_band["end_playing_time"] - self.festival.now 
 
-            message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} jde k podiu na koncert kapely {actual_band["band_name"]}."
-            print(message)
-            logs.log_visitor(self, message)
+            if self.state["location"] != source.Locations.STAGE_STANDING:
+                self.state["location"] = source.Locations.STAGE_STANDING
 
-            yield self.festival.timeout(random.uniform(1, 3))
+                message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} jde k podiu na koncert kapely {actual_band["band_name"]}."
+                print(message)
+                logs.log_visitor(self, message)
+                
+                time_to_get_by_stage = random.uniform(1, 3)
 
-        else:
-            if actual_band:
+                if time_to_get_by_stage > reimaining_time:
+                    message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} už bohužel koncert kapely {actual_band["band_name"]} nestíhá a tak jde dělat něco jiného."
+                    print(message)
+                    logs.log_visitor(self, message)
+                    yield self.festival.timeout(1)
+                    return
+
+                yield self.festival.timeout(random.uniform(1, 3))
+
+            else:
+                
                 resource = self.state["location_stage"]
                 position = self.state["location_stage_position"]
                 time_to_start = actual_band["start_playing_time"] - self.festival.now
@@ -1410,50 +1600,52 @@ class Visitor:
                 print(message)
                 logs.log_visitor(self, message)
                 return
+
+            if position:
+                if position == "first_lines":
+                    position = position_map[standing_by_stage.resource[0][0]]
+                    resource = standing_by_stage.resource[0][1]
+
+                elif position == "middle":
+                    position = position_map[standing_by_stage.resource[1][0]]
+                    resource = standing_by_stage.resource[1][1]
+
+                else:
+                    position = position_map[standing_by_stage.resource[2][0]]
+                    resource = standing_by_stage.resource[2][1]
             
             else:
-                return
-
-        if position:
-            if position == "first_lines":
-                position = position_map[standing_by_stage.resource[0][0]]
-                resource = standing_by_stage.resource[0][1]
-
-            elif position == "middle":
-                position = position_map[standing_by_stage.resource[1][0]]
-                resource = standing_by_stage.resource[1][1]
-
-            else:
-                position = position_map[standing_by_stage.resource[2][0]]
-                resource = standing_by_stage.resource[2][1]
         
+                if standing_by_stage.resource[0][1].count < standing_by_stage.resource[0][1].capacity:
+                    position = position_map[standing_by_stage.resource[0][0]]
+                    resource = standing_by_stage.resource[0][1]
+                elif standing_by_stage.resource[1][1].count < standing_by_stage.resource[1][1].capacity:
+                    position = position_map[standing_by_stage.resource[1][0]]
+                    resource = standing_by_stage.resource[1][1]
+                else:
+                    position = position_map[standing_by_stage.resource[2][0]]
+                    resource = standing_by_stage.resource[2][1]
+            
+            self.state["location_stage"] = resource
+            self.state["location_stage_position"] = position
+
+            with resource.request() as req:
+                
+                yield req
+
+                message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} je u podia v {position} na koncertě kapely {actual_band["band_name"]}."
+                print(message)
+                logs.log_visitor(self, message)
+                
+                yield self.festival.timeout(actual_band["end_playing_time"] - self.festival.now)
+
+                message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: Koncert skončil a {self.name} {self.surname} přemýšlí, co bude dělat dál."
+                print(message)
+                logs.log_visitor(self, message)
+            
         else:
-    
-            if standing_by_stage.resource[0][1].count < standing_by_stage.resource[0][1].capacity:
-                position = position_map[standing_by_stage.resource[0][0]]
-                resource = standing_by_stage.resource[0][1]
-            elif standing_by_stage.resource[1][1].count < standing_by_stage.resource[1][1].capacity:
-                position = position_map[standing_by_stage.resource[1][0]]
-                resource = standing_by_stage.resource[1][1]
-            else:
-                position = position_map[standing_by_stage.resource[2][0]]
-                resource = standing_by_stage.resource[2][1]
-        
-        self.state["location_stage"] = resource
-        self.state["location_stage_position"] = position
-        with resource.request() as req:
+            yield self.festival.timeout(0.0001)
             
-            yield req
-    
-            message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} je u podia v {position} na koncertě kapely {actual_band["band_name"]}."
-            print(message)
-            logs.log_visitor(self, message)
-            
-            yield self.festival.timeout(actual_band["end_playing_time"] - self.festival.now)
-
-            message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: Koncert skončil a {self.name} {self.surname} přemýšlí, co bude dělat dál."
-            print(message)
-            logs.log_visitor(self, message)
 # ---------------------------------------------AUTOGRAMIÁDY------------------------------------------------------------
 
     def go_to_signing_session(self, stall, festival):
@@ -1519,7 +1711,7 @@ class Visitor:
             message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} čeká, než si jeho kolega koupí cigarety."
             print(message)
             logs.log_visitor(self, message)
-            yield self.timeout(random.uniform(0,2)) #dodělat aby čekal stejně dlouho jako ten co kupuje cigára
+            yield self.festival.timeout(random.uniform(0,2)) #dodělat aby čekal stejně dlouho jako ten co kupuje cigára
             return
         
         how_many_cigars = (self.state["level_of_addiction"] // 2) * 20
@@ -1529,7 +1721,7 @@ class Visitor:
         print(message)
         logs.log_visitor(self, message)
 
-        with stall.resource.request as req:
+        with stall.resource.request() as req:
 
             start_waiting = self.festival.now
 
@@ -1609,10 +1801,293 @@ class Visitor:
                 self.state["energy"] += smoking_time * 0.5
                 self.state["nicotine"] += smoking_time * 1.5
 
-#-------------------------------------------------MERCHE---------------------------------------------------------------
+#-------------------------------------------------MERCH---------------------------------------------------------------
 
-    def buy_merche(self, festival):
-        pass
+    def buy_merch(self, merch_stall, festival):
+        """SimPy proces: návštěvník kupuje merch u stánku."""
+        
+        merch_data = festival.get_merch()
+        festival_merch = merch_data["festival_merch"]
+        bands_merch = merch_data["bands_merch"]
+        favourite_bands = self.preference["favourite_bands"]
+        available_bands_items = {}
+
+        message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} se jde podívat k merch stánku."
+        print(message)
+        logs.log_visitor(self, message)
+
+        self.festival.timeout(random.uniform(1,3))
+
+        # 1) Vyber, jestli chce festivalový merch nebo merch kapely
+        # (např. 70 % šance na kapelní merch)
+
+        start_waiting = self.festival.now
+
+        with merch_stall.resource.request() as req:
+
+            yield req
+
+            waiting_time = self.festival.now - start_waiting
+            will_wait = self.festival.now != start_waiting
+
+            if will_wait:
+                message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} je na řadě u merch stánku a čekal/a ve frontě {waiting_time} minut."
+            else:
+                message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} je na řadě u merch stánku a nemusel/a čekat než přijde na řadu."
+            
+            print(message)
+            logs.log_visitor(self, message)
+
+            for name, merch in bands_merch.items():
+                for band in favourite_bands:
+                    if name == band["band_name"]:
+                        available_bands_items[name] = merch
+                        break
+            
+            had_enough = False
+            
+            while not had_enough:
+
+                filtered_festival_merch = self.filter_festival_merch(copy.deepcopy(festival_merch))
+                filtered_bands_merch = self.filter_band_merch(copy.deepcopy(available_bands_items))
+
+                if filtered_bands_merch == {} and filtered_festival_merch == {}:            
+                    message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} si již koupil/a úplně všechen merch, o který měl zájem, a tak odchází z merch stánku."
+                    print(message)
+                    logs.log_visitor(self, message)
+                    return
+
+                elif filtered_bands_merch == {}:
+                    message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} si již koupil/a všechen merch od kapel, které má rád, koupí si tedy něco z festivalového merche."
+                    print(message)
+                    logs.log_visitor(self, message)
+                    available_items = filtered_festival_merch
+
+                elif filtered_festival_merch == {}:
+                    message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} si již koupil/a všechen festivalový merch, koupí si tedy merch od nějaké kapely."
+                    print(message)
+                    logs.log_visitor(self, message)
+                    available_items = filtered_bands_merch
+
+                else:
+                    if random.random() < 0.5:
+                        available_items = filtered_bands_merch
+                    else:
+                        available_items = filtered_festival_merch
+
+                item_name, item_info = random.choice(list(available_items.items()))
+                band = None
+
+                if item_name in available_bands_items:
+                    band = item_name
+                    item_name, item_info = random.choice(list(item_info.items()))
+
+                if item_name.endswith(":"):
+                    item_name = item_name[:-1]
+                    item_name = item_name.lower()
+                
+                if band:
+                    message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} si chce koupit {item_name} od kapely {band}."
+                    print(message)
+                    logs.log_visitor(self, message)
+                else:
+
+                    message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} si chce koupit {item_name}."
+                    print(message)
+                    logs.log_visitor(self, message)
+
+
+                if item_info["quantity"] <= 0:
+                    message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} si nemůže koupit {item_name}, protože {item_name} už jsou vyprodané."
+                    print(message)
+                    logs.log_visitor(self, message)
+                    return
+                
+                if self.state["money"] < item_info["price"]:
+                    message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} si nemůže koupit {item_name}, protože na {item_name} nemá dost peněz a musí si jít vybrat."
+                    print(message)
+                    logs.log_visitor(self, message)
+                    self.next_move(festival, "low_money")
+                    return
+                    
+                service_time = random.uniform(0.5, 2.0)
+                yield self.festival.timeout(service_time)
+
+                if band:
+                    message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} si koupil/a {item_name} od kapely {band}."
+                    print(message)
+                    logs.log_visitor(self, message)
+
+                else:
+                    message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} si koupil/a {item_name}."
+                    print(message)
+                    logs.log_visitor(self, message)
+
+                item_info["quantity"] -= 1
+                self.state["money"] -= item_info["price"]
+
+                if band:
+                    item_name = band + "-" + item_name
+                    self.inventory["merch"].append(item_name)
+                else:
+                    self.inventory["merch"].append(item_name)
+
+                # Logování
+                sold_dict = merch_data["sold"][0]   # vezmeme první slovník v seznamu
+
+                if item_name not in sold_dict:
+
+                    sold_dict[item_name] = {
+                        "sell": 1,
+                        "gain": item_info["price"]
+                    }
+                else:
+                    sold_dict[item_name]["sell"] += 1
+                    sold_dict[item_name]["gain"] += item_info["price"]
+
+                had_enough = random.random() <= 0.5 
+    
+    def filter_festival_merch(self, festival_merch):
+
+        if self.inventory["merch"] == []:
+            return festival_merch
+        
+        for owned_merch in self.inventory["merch"]:
+            first_letter = owned_merch[0]
+            owned_merch = chr(ord(first_letter) - 32) + owned_merch[1:] + ":"
+
+            if owned_merch in festival_merch:
+                del festival_merch[owned_merch]
+
+        return festival_merch
+
+    def filter_band_merch(self, bands_merch):
+
+        if self.inventory["merch"] == []:
+            return bands_merch
+        
+        for owned_merch in self.inventory["merch"]:
+
+            if "-" in owned_merch:
+                band, merch = owned_merch.split("-")
+
+                if merch == "cd":
+                    merch = merch[0].upper() + merch[1].upper() + merch[2:] + ":"
+
+                else:
+                    merch = merch[0].upper() + merch[1:] + ":"
+                
+                del bands_merch[band][merch]
+
+                if bands_merch[band] == {}:
+                    del bands_merch[band]
+
+        return bands_merch
+
+
+#-------------------------------------------------ATRAKCE---------------------------------------------------------------
+    
+    def choose_attraction(self, festival):
+
+        attraction_data = source.ATTRACTIONS["attractions"]
+        available_attraction = festival.get_attractions()
+
+        available = [attr.stall_name for attr in available_attraction]
+
+        weighted_choices = []
+
+        for name in available:
+
+            data = attraction_data[name]
+
+            # věkový filtr
+            match self.age_category:
+                case source.Age_category.CHILD:
+                    if data["for"] not in ["all", "kids"]:
+                        continue
+                case source.Age_category.YOUTH:
+                    if data["for"] not in ["all", "youth"]:
+                        continue
+                case source.Age_category.ADULT:
+                    if data["for"] not in ["all","youth", "adults"]:
+                        continue
+
+            weight = 10
+
+            weight -= data["adrenaline"]
+
+            # nálada ovlivňuje chuť na adrenalin
+            # dobrá nálada → adrenalin nevadí tolik
+            # špatná nálada → adrenalin je odpuzující
+
+            mood_factor = (self.state["mood"] - 50) / 10
+            weight += mood_factor
+
+            # váha nesmí být záporná
+            weight = max(1, int(weight))
+
+            weighted_choices.extend([(name, data)] * weight)
+
+        if not weighted_choices:
+            return None
+
+        attraction_name, attraction_data = random.choice(weighted_choices)
+
+        for attr in available_attraction:
+            if attraction_name == attr.stall_name:
+                attraction = attr
+                break
+        
+        return attraction
+
+
+    def go_to_attraction(self, attraction, festival):
+
+        attraction_data = attraction.attraction.attraction_data
+
+        yield self.festival.timeout(random.uniform(1, 2))
+
+        message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} jde na atrakci {attraction.stall_cz_name}."
+        print(message)
+        logs.log_visitor(self, message)
+
+        # čekání ve frontě
+        with attraction.resource.request() as req:
+            
+            start_waiting = self.festival.now
+            yield req
+
+            will_wait = self.festival.now - start_waiting
+
+            if will_wait:
+                waiting_time = self.festival.now - start_waiting
+                message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} je na atrakci {attraction.stall_cz_name}, čekal {waiting_time} minut, než se dostal na řadu, a teď čeká, než začne jízda."
+                print(message)
+                logs.log_visitor(self, message)
+
+            else:
+                message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} je na atrakci {attraction.stall_cz_name} a čeká než začne jízda."
+                print(message)
+                logs.log_visitor(self, message)
+
+            attraction.attraction.add_rider()
+
+            yield attraction.attraction.get_ride_start()
+
+            message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} si užívá jízdu na atrakci {attraction.stall_cz_name}."
+            print(message)
+            logs.log_visitor(self, message)
+
+            yield attraction.attraction.get_ride_end()
+
+            message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: Jízda na atrakci {attraction.stall_cz_name} a {self.name} {self.surname} odchází z atrakce."
+            print(message)
+            logs.log_visitor(self, message)
+
+            attraction.attraction.sub_rider()
+
+        self.state["mood"] += attraction_data["fun_gain"]
+        self.state["money"] -= festival.get_price(attraction.stall_name)
 
 # ------------------------------------------PŘÍJEZD NÁVŠTĚVNÍKŮ--------------------------------------------------------
 

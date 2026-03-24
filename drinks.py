@@ -20,7 +20,7 @@ def find_all_drinks_at_festival(drink_stalls_at_festival):
     alcohol_drinks = list(set(drinks) & set(all_alcohol_drinks))
     return soft_drinks, alcohol_drinks
 
-def is_my_favourite_drink_in_actual_zone(self, festival, drink_type, stalls):
+def is_my_favourite_drink_in_actual_zone(self, drink_type, stalls):
 
     if drink_type == "soft_drink":
         pref_drink = self.preference["favourite_soft_drink"]
@@ -45,11 +45,11 @@ def is_drink_in_stall(stall, drink):
     else:
         return False
 
-def find_drink_stall_with_shortest_queue_in_zone(self, festival):
-    return resources.find_stall_with_shortest_queue_in_zone(self, festival, "drinks")
+def find_drink_stall_with_shortest_queue_in_zone(self, festival, alco_nonalco, drink_stalls_in_zone):
+    return resources.find_stall_with_shortest_queue_in_zone(self, festival, "drinks", alco_nonalco=alco_nonalco, stalls_to_reduce=drink_stalls_in_zone)
 
 def choose_random_drink_from_stall(self, stall, drink_type):
-    drinks = source.stalls[stall.stall_name]
+    drinks = source.drink_stalls[stall.stall_name]
 
     if drink_type == "soft_drinks":
         drink_type = source.soft_drinks
@@ -62,65 +62,51 @@ def choose_random_drink_from_stall(self, stall, drink_type):
     elif drink_type == "cocktails":
         drink_type = source.cocktails
 
-    drinks = list(set(drinks) & set(drink_type))
+    drink_list = list(set(drinks) & set(drink_type))
     
     i = 1
     while i <= 3:
-        drinks = random.choice(drinks)
-        if resources.can_afford(self, source.drinks[drinks]):
+        drink = random.choice(drink_list)
+        if resources.can_afford(self, source.drinks[drink]):
             return drinks
         i += 1
     return None
+
+def is_soft_drinks_in_stall(stall):
+    drinks = source.drink_stalls[stall.stall_name]
+    drink_type = source.soft_drinks
+    drinks = list(set(drinks) & set(drink_type))
+    return len(drinks) > 0
 
 def choose_random_drink_from_actual_zone(self, festival, drink_type, stalls):
     available_drinks = []
 
     if drink_type == "soft_drinks":
-        drink_type = source.soft_drinks
+        drink_type_list = source.soft_drinks
     elif drink_type == "alcohol":
-        drink_type = source.alcohol
+        drink_type_list = source.alcohol
     elif drink_type == "beers":
-        drink_type = source.beers
+        drink_type_list = source.beers
     elif drink_type == "hard_alcohol":
-        drink_type = source.hard_alcohol
+        drink_type_list = source.hard_alcohol
     elif drink_type == "cocktails":
-        drink_type = source.cocktails
+        drink_type_list = source.cocktails
     
 
     for stall in stalls:
-
         drinks_in_stall = source.drink_stalls[stall.stall_name]
         available_drinks.extend(drinks_in_stall)
 
-    drinks = list(set(available_drinks) & set(drink_type))
+    drinks = list(set(available_drinks) & set(drink_type_list))
 
-    i = 1
-    while i <= 3:
-        if drinks == []:
-            print(f"Žádné soft drinky v zoně {self.state["location"]}")
-            return "Malinovka"
+    if not drinks:
+        print(f"V zóně {self.state["location"]} není možné koupit drink typu {drink_type}")
+    
+    for i in range(3):
         drink = random.choice(drinks)
 
         if resources.can_afford(self, source.drinks[drink]):
             return drink
-        i += 1
+
     return None
 
-def what_kind_of_alcohol_is_in_actual_zone(self, festival, stalls):
-    types_stalls = {"favourite_alcohol": False, "beers": False, "hard_alcohol": False, "cocktails": False}
-
-    favourite_drink = is_my_favourite_drink_in_actual_zone(self, festival, "alcohol", stalls)
-
-    if favourite_drink[0]:
-        types_stalls["favourite_alcohol"] = True
-
-    for stall in stalls:
-
-        if stall.stall_name == "beer_stall":
-            types_stalls["beers"] = True
-        elif stall.stall_name == "redbull_stall":
-            types_stalls["hard_alcohol"] = True
-        elif stall.stall_name == "cocktail_stall":
-            types_stalls["cocktails"] = True
-
-    return types_stalls

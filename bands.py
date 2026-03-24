@@ -181,9 +181,9 @@ def create_schedule(line_up, festival):
     return line_up
 
 def create_merch(festival):
-    """Čím slavnější kapela, tím víc si vozí merche -> nejméně známé kapely 1/3 možných položek merche,
-    středně známé kapely 2/3 merche,
-    a nejslavnější kapely všechny možné položky merche"""
+    """Čím slavnější kapela, tím víc si vozí merch -> nejméně známé kapely 1/3 možných položek merch,
+    středně známé kapely 2/3 merch,
+    a nejslavnější kapely všechny možné položky merch"""
 
     line_up = festival.get_lineup()
     merch = festival.get_merch()
@@ -209,6 +209,8 @@ def create_merch(festival):
             bands_merch[band["band_name"]] = band_merch
     
     merch["bands_merch"] = bands_merch
+    merch["sold"] = [{}]
+
     return merch
 
 def band_play(env, band, stage, festival, i):

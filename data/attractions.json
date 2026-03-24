@@ -1,0 +1,40 @@
+{
+  "attractions": {
+    "bungee_jumping": {
+      "duration": 5,
+      "for": "adult",
+      "adrenaline": 10,
+      "fun_gain": 100
+    },
+    "rollercoaster": {
+      "duration": 2,
+      "for": "youth",
+      "adrenaline": 5,
+      "fun_gain": 30
+    },
+    "bench": {
+      "duration": 3,
+      "for": "youth",
+      "adrenaline": 4,
+      "fun_gain": 15
+    },
+    "hammer": {
+      "duration": 3,
+      "for": "youth",
+      "adrenaline": 6,
+      "fun_gain": 35
+    },
+    "carousel": {
+      "duration": 2.5,
+      "for": "all",
+      "adrenaline": 3,
+      "fun_gain": 10
+    },
+    "jumping_castle": {
+      "duration": 5,
+      "for": "child",
+      "adrenaline": 0,
+      "fun_gain": 30
+    }
+  }
+}

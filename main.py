@@ -30,7 +30,7 @@ capacities = settings["capacities"]
 
 festival_env = simpy.Environment()
 capacities["entrance"] = 4
-stalls = resources.create_resources(festival_env, capacities, num_visitors)
+stalls = resources.create_resources(festival_env, capacities, num_visitors, festival_times["simulation_start_time"])
 logs.add_stalls_to_logs(stalls)
 resources.identify_entrances(stalls["FESTIVAL_AREA"])
 

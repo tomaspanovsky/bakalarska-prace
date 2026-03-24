@@ -30,7 +30,7 @@ def save(zones_data):
 
             food_stalls = ["Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek"]
             drink_stalls = ["Nealko stánek", "Pivní stánek", "Red Bull stánek", "Stánek s míchanými drinky"]
-            atractions = ["Bungee-jumping", "Horská dráha", "Lavice", "Kladivo"]
+            attractions = ["bungee-jumping", "horská dráha", "lavice", "kladivo", "řetizkáč", "skákací hrad"]
 
             # seznam objektů v dané zóně
             for obj in instance.get("objects", []):
@@ -48,7 +48,27 @@ def save(zones_data):
                 if "podium" in obj_name:
                     stall["type"] = "stage"
                     stall["name"] = "stage"
+                
+                elif obj_name in attractions:
 
+                    stall["type"] = "attraction"
+
+                    match obj_name:
+                        case "bungee-jumping":
+                            stall["name"] = "bungee_jumping"
+                        case "horská dráha":
+                            stall["name"] = "roller_coaster"
+                        case "lavice":
+                            stall["name"] = "bench"
+                        case "kladivo":
+                            stall["name"] = "hammer"
+                        case "řetizkáč":
+                            stall["name"] = "carousel"
+                        case "skákací hrad":
+                            stall["name"] = "jumping_castle"
+                        
+                    action["attraction_desire"] = "GO_TO_ATTRACTION"
+                
                 elif "autogramiády" in obj_name:
                     stall["name"] = "signing_stall"
                     stall["type"] = "signing_stall"
@@ -167,19 +187,6 @@ def save(zones_data):
                         stall["name"] = "cocktail_stall"
 
                     action["thirst"] = "GO_FOR_DRINK"
-
-                elif any(atraction.lower() in obj_name for atraction in atractions):
-
-                    if "bungee" in obj_name:
-                        stall["name"] = "bungee_jumping"
-
-                    elif "horská" in obj_name:
-                        stall["name"] = "roallercoaster"
-                    
-                    elif "lavice" in obj_name:
-                        stall["name"] = "hammer_attraction"
- 
-                    action["atraction_desire"] = "GO_TO_ATRACTION"
                 
                 #akce, které jdou uskutečnit v jakékoliv zóně
                 action["smoking"] = "SMOKE"

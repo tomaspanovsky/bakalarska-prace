@@ -3,6 +3,8 @@ import simpy
 import locations
 import source
 import random
+import drinks
+import attractions
 from data.load_data import load_data
 
 class Stall:
@@ -16,9 +18,10 @@ class Stall:
         self.x = x
         self.y = y
         self.from_zone = None
+        self.attraction = None
 
-def create_resources(env, capacities, num_visitors):
-    stalls = {"ENTRANCE_ZONE" : [], "TENT_AREA" : [], "FESTIVAL_AREA" : [], "CHILL_ZONE" : [], "ATRACTION_ZONE" : []}
+def create_resources(env, capacities, num_visitors, simulation_start_time):
+    stalls = {"ENTRANCE_ZONE" : [], "TENT_AREA" : [], "FESTIVAL_AREA" : [], "CHILL_ZONE" : [], "FUN_ZONE" : []}
 
     stalls_in_locations = load_data("STALLS_BY_LOCATIONS")
 
@@ -36,9 +39,8 @@ def create_resources(env, capacities, num_visitors):
 
             previous_stall = stall["name"]
 
-
             if stall["name"] == "toitoi":
-                resource = multiple_resources(env, stall, capacities, location)
+                resource = create_toitois(env, stall, capacities, location)
 
             elif stall["name"] == "meadow_for_living":
                 resource = locations.create_positions(capacities["meadow_for_living"])
@@ -73,23 +75,29 @@ def create_resources(env, capacities, num_visitors):
 
             else:
                 resource = simpy.Resource(env, capacity=capacities[stall["name"]])
-                
             
-            objected_stall.append(Stall(stall["type"],
-                                            stall["name"],
-                                            stall["cz_name"],
-                                            location,
-                                            resource,
-                                            i,
-                                            stall["x"],
-                                            stall["y"]))
+            new_stall = Stall(stall["type"],
+                            stall["name"],
+                            stall["cz_name"],
+                            location,
+                            resource,
+                            i,
+                            stall["x"],
+                            stall["y"])
+            
+            
+            if stall["type"] == "attraction":
+                attraction_data = source.ATTRACTIONS["attractions"][stall["name"]]
+                new_stall.attraction = attractions.Attraction(env, resource, stall["cz_name"], attraction_data, 0.5, 10, simulation_start_time)
                 
             i += 1
+
+            objected_stall.append(new_stall)
 
         stalls[location] = objected_stall
     return stalls
 
-def multiple_resources(env, stall, capacities, location):
+def create_toitois(env, stall, capacities, location):
     urinals = []
     toitois = []
     stalls = []
@@ -162,13 +170,13 @@ def get_name(stall):
 def is_big_queue_at_stall(visitor, stall):
     return (stall.resource.count + len(stall.resource.queue)) >= visitor.qualities["patience"] * random.uniform(0.5, 1.5)
 
-def find_stall_with_shortest_queue_in_zone(self, festival, type, name=None, stalls=None):
+def find_stall_with_shortest_queue_in_zone(self, festival, type, name=None, stalls=None, alco_nonalco = None, stalls_to_reduce = None):
     "Vrátí stánek s nejmenší frontou v dané zóně, při zadání name vrátí konkrétní stánek s nejmenší frontou"
     
     if not stalls:
-        stalls = find_stalls_in_zone(self, festival, type, name)
+        stalls = find_stalls_in_zone(self, festival, type, name, alco_nonalco, stalls_to_reduce=stalls_to_reduce)
 
-    if type == "tent_area" or type == "charging_stall" or type == "standing_at_stage" or type == "signing_stall" or type == "merch_stall":
+    if type == "tent_area" or type == "charging_stall" or type == "standing_at_stage" or type == "signing_stall":
         return stalls
 
     if stalls == []:
@@ -192,7 +200,7 @@ def find_stall_with_shortest_queue_in_zone(self, festival, type, name=None, stal
         return stall_with_least_people
 
 
-def find_stalls_in_zone(self, festival, type, name=None):
+def find_stalls_in_zone(self, festival, type, name=None, alco_nonalco = None, stalls_to_reduce = None):
     """Vrátí stánky konkrétního typu v dané zóně, případně i stánky daného jména"""
 
     stalls = []
@@ -205,12 +213,22 @@ def find_stalls_in_zone(self, festival, type, name=None):
     else:
         location = self.state["location"].name
 
-    for stall in festival.stalls[location]:
-        
+    if stalls_to_reduce:
+        where = stalls_to_reduce
+    else:
+        where = festival.stalls[location]
+
+    for stall in where:
+
         if stall.stall_type == type:
             if name:
                 if stall.stall_name == name:            
                     stalls.append(stall)
+
+            elif alco_nonalco and alco_nonalco == "soft_drinks":
+                if drinks.is_soft_drinks_in_stall(stall):
+                    stalls.append(stall)
+                    
             else:
                 stalls.append(stall)
 

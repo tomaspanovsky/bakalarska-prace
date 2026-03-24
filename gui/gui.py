@@ -122,7 +122,7 @@ def get_user_settings():
 
     root = tk.Tk()
     root.title("Nastavení festivalu")
-    root.attributes('-fullscreen', True)
+    root.attributes("-fullscreen", True)
     root.configure(bg='black')
 
 
@@ -295,7 +295,17 @@ def get_user_settings():
     tk.Label(stall_settings_frame, text="Stánek s vodníma dýmkama", **label_style).grid(row=15, column=1, pady=5, sticky="w", padx=50)
     cap_water_pipe_stall = tk.Entry(stall_settings_frame, **entry_style2)
     cap_water_pipe_stall.grid(row=15, column=2, padx=20)
-    cap_water_pipe_stall.insert(0, "20")    
+    cap_water_pipe_stall.insert(0, "20")
+
+    tk.Label(stall_settings_frame, text="Počet turniketů u vstupu:", **label_style).grid(row=16, column=1, pady=5, sticky="w", padx=50)
+    num_entrance_gate = tk.Entry(stall_settings_frame, **entry_style2)
+    num_entrance_gate.grid(row=16, column=2, padx=20)
+    num_entrance_gate.insert(0, "4")
+
+    tk.Label(stall_settings_frame, text="Výkup kelímků:", **label_style).grid(row=17, column=1, pady=5, sticky="w", padx=50)
+    cap_cup_return = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_cup_return.grid(row=17, column=2, padx=20)
+    cap_cup_return.insert(0, "4")    
 
     tk.Label(stall_settings_frame, text="Chill stánek", **label_style).grid(row=1, column=4, pady=5, sticky="w", padx=50)
     cap_chill_stall = tk.Entry(stall_settings_frame, **entry_style2)
@@ -347,35 +357,35 @@ def get_user_settings():
     cap_charging_stall_mobile.grid(row=10, column=5, padx=20)
     cap_charging_stall_mobile.insert(0, "20")
 
-    tk.Label(stall_settings_frame, text="Lidí na Bungee-jumping:", **label_style).grid(row=11, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Bungee-jumping:", **label_style).grid(row=11, column=4, pady=5, sticky="w", padx=50)
     cap_bungee_jumping = tk.Entry(stall_settings_frame, **entry_style2)
     cap_bungee_jumping.grid(row=11, column=5, padx=20)
     cap_bungee_jumping.insert(0, "1")
 
-    tk.Label(stall_settings_frame, text="Lidí horské dráze:", **label_style).grid(row=12, column=4, pady=5, sticky="w", padx=50)
-    cap_roallercoaster = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_roallercoaster.grid(row=12, column=5, padx=20)
-    cap_roallercoaster.insert(0, "24")
+    tk.Label(stall_settings_frame, text="Horská dráze:", **label_style).grid(row=12, column=4, pady=5, sticky="w", padx=50)
+    cap_rollercoaster = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_rollercoaster.grid(row=12, column=5, padx=20)
+    cap_rollercoaster.insert(0, "24")
 
-    tk.Label(stall_settings_frame, text="Lidí na lavici:", **label_style).grid(row=13, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Lavice (atrakce):", **label_style).grid(row=13, column=4, pady=5, sticky="w", padx=50)
     cap_bench_attraction = tk.Entry(stall_settings_frame, **entry_style2)
     cap_bench_attraction.grid(row=13, column=5, padx=20)
     cap_bench_attraction.insert(0, "20")
 
-    tk.Label(stall_settings_frame, text="Lidí na kladivu:", **label_style).grid(row=14, column=4, pady=5, sticky="w", padx=50)
+    tk.Label(stall_settings_frame, text="Kladivo (atrakce):", **label_style).grid(row=14, column=4, pady=5, sticky="w", padx=50)
     cap_hammer_attraction = tk.Entry(stall_settings_frame, **entry_style2)
     cap_hammer_attraction.grid(row=14, column=5, padx=20)
     cap_hammer_attraction.insert(0, "32")
 
-    tk.Label(stall_settings_frame, text="Počet turniketů u vstupu:", **label_style).grid(row=15, column=4, pady=5, sticky="w", padx=50)
-    num_entrance_gate = tk.Entry(stall_settings_frame, **entry_style2)
-    num_entrance_gate.grid(row=15, column=5, padx=20)
-    num_entrance_gate.insert(0, "4")
+    tk.Label(stall_settings_frame, text="Řetizkáč:", **label_style).grid(row=15, column=4, pady=5, sticky="w", padx=50)
+    cap_carousel = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_carousel.grid(row=15, column=5, padx=20)
+    cap_carousel.insert(0, "32")
 
-    tk.Label(stall_settings_frame, text="Výkup kelímků:", **label_style).grid(row=16, column=4, pady=5, sticky="w", padx=50)
-    cap_cup_return = tk.Entry(stall_settings_frame, **entry_style2)
-    cap_cup_return.grid(row=16, column=5, padx=20)
-    cap_cup_return.insert(0, "4")
+    tk.Label(stall_settings_frame, text="Skákací hrad:", **label_style).grid(row=16, column=4, pady=5, sticky="w", padx=50)
+    cap_jumping_castle = tk.Entry(stall_settings_frame, **entry_style2)
+    cap_jumping_castle.grid(row=16, column=5, padx=20)
+    cap_jumping_castle.insert(0, "8")
 
 
     bottom_settings_stalls_frame = tk.Frame(stall_settings_frame, bg="black") 
@@ -406,9 +416,9 @@ def get_user_settings():
         capacities["water_pipe_stall"] = int(cap_water_pipe_stall.get())
         capacities["chill_stall"] = int(cap_charging_stall.get())
         capacities["bungee_jumping"] = int(cap_bungee_jumping.get())
-        capacities["roallercoaster"] = int(cap_roallercoaster.get())
-        capacities["bench_attraction"] = int(cap_bench_attraction.get())
-        capacities["hammer_attraction"] = int(cap_hammer_attraction.get())
+        capacities["rollercoaster"] = int(cap_rollercoaster.get())
+        capacities["bench"] = int(cap_bench_attraction.get())
+        capacities["hammer"] = int(cap_hammer_attraction.get())
         capacities["nonalcohol_stall"] = int(cap_nonalcohol_stall.get())
         capacities["beer_stall"] = int(cap_beer_stall.get())
         capacities["redbull_stall"] = int(cap_redbull_stall.get())
@@ -418,6 +428,8 @@ def get_user_settings():
         capacities["meadow_for_living"] = int(cap_tents.get())
         capacities["atm"] = 1
         capacities["cup_return"] = int(cap_cup_return.get())
+        capacities["carousel"] = int(cap_carousel.get())
+        capacities["jumping_castle"] = int(cap_jumping_castle.get())
 
         return capacities
     
@@ -429,47 +441,91 @@ def get_user_settings():
     tk.Label(prices_settings_frame, text="Ceny", font=("Arial", 32, "bold"), bg="black", fg="yellow").grid(row=0, column=0, columnspan=7, pady=(40, 40))
 
     tk.Label(prices_settings_frame, text="Cena vstupenky na místě:", **label_style).grid(row=2, column=0, pady=10, sticky="w")
+    tk.Label(prices_settings_frame, text=" Kč", **label_style).grid(row=2, column=2, pady=10, sticky="w")
     on_site_price = tk.Entry(prices_settings_frame, **entry_style)
     on_site_price.grid(row=2, column=1, pady=10)
     on_site_price.insert(0, "1500")
 
-    tk.Label(prices_settings_frame, text="Cena vstupenky v předprodeji:", **label_style).grid(row=3, column=0, pady=10, sticky="w")
+    tk.Label(prices_settings_frame, text="Cena vstupenky v předprodeji:  ", **label_style).grid(row=3, column=0, pady=10, sticky="w")
+    tk.Label(prices_settings_frame, text=" Kč", **label_style).grid(row=3, column=2, pady=10, sticky="w")
     pre_sale_price = tk.Entry(prices_settings_frame, **entry_style)
     pre_sale_price.grid(row=3, column=1, pady=10)
     pre_sale_price.insert(0, "1300")
 
     tk.Label(prices_settings_frame, text="Cena stanového městečka:", **label_style).grid(row=4, column=0, pady=10, sticky="w")
+    tk.Label(prices_settings_frame, text=" Kč", **label_style).grid(row=4, column=2, pady=10, sticky="w")
     camping_area_price = tk.Entry(prices_settings_frame, **entry_style)
     camping_area_price.grid(row=4, column=1, pady=10)
     camping_area_price.insert(0, "200")
 
     tk.Label(prices_settings_frame, text="Cena za kelímek na pití:", **label_style).grid(row=5, column=0, pady=10, sticky="w")
+    tk.Label(prices_settings_frame, text=" Kč", **label_style).grid(row=5, column=2, pady=10, sticky="w")
     plastic_cup_price = tk.Entry(prices_settings_frame, **entry_style)
     plastic_cup_price.grid(row=5, column=1, pady=10)
     plastic_cup_price.insert(0, "50")
 
     tk.Label(prices_settings_frame, text="Cena za nabití telefonu:", **label_style).grid(row=6, column=0, pady=10, sticky="w")
+    tk.Label(prices_settings_frame, text=" Kč", **label_style).grid(row=6, column=2, pady=10, sticky="w")
     charging_phone_price = tk.Entry(prices_settings_frame, **entry_style)
     charging_phone_price.grid(row=6, column=1, pady=10)
     charging_phone_price.insert(0, "80")
 
     tk.Label(prices_settings_frame, text="Cena sprch:", **label_style).grid(row=7, column=0, pady=10, sticky="w")
+    tk.Label(prices_settings_frame, text=" Kč", **label_style).grid(row=7, column=2, pady=10, sticky="w")
     shower_price = tk.Entry(prices_settings_frame, **entry_style)
     shower_price.grid(row=7, column=1, pady=10)
     shower_price.insert(0, "50")
 
     tk.Label(prices_settings_frame, text="Cena za krabičku cigaret:", **label_style).grid(row=8, column=0, pady=10, sticky="w")
+    tk.Label(prices_settings_frame, text=" Kč", **label_style).grid(row=8, column=2, pady=10, sticky="w")
     cigars_price = tk.Entry(prices_settings_frame, **entry_style)
     cigars_price.grid(row=8, column=1, pady=10)
     cigars_price.insert(0, "140")
 
     tk.Label(prices_settings_frame, text="Cena za vodní dýmku:", **label_style).grid(row=9, column=0, pady=10, sticky="w")
+    tk.Label(prices_settings_frame, text=" Kč", **label_style).grid(row=9, column=2, pady=10, sticky="w")
     water_pipe_price = tk.Entry(prices_settings_frame, **entry_style)
     water_pipe_price.grid(row=9, column=1, pady=10)
     water_pipe_price.insert(0, "200")
 
+    tk.Label(prices_settings_frame, text="Bungee jumping:", **label_style).grid(row=10, column=0, pady=10, sticky="w")
+    tk.Label(prices_settings_frame, text=" Kč", **label_style).grid(row=10, column=2, pady=10, sticky="w")
+    bungee_jumping_price = tk.Entry(prices_settings_frame, **entry_style)
+    bungee_jumping_price.grid(row=10, column=1, pady=10)
+    bungee_jumping_price.insert(0, "200")
+
+    tk.Label(prices_settings_frame, text="Horská dráha:", **label_style).grid(row=11, column=0, pady=10, sticky="w")
+    tk.Label(prices_settings_frame, text=" Kč", **label_style).grid(row=11, column=2, pady=10, sticky="w")
+    rollercoaster_price = tk.Entry(prices_settings_frame, **entry_style)
+    rollercoaster_price.grid(row=11, column=1, pady=10)
+    rollercoaster_price.insert(0, "200")
+
+    tk.Label(prices_settings_frame, text="Lavice:", **label_style).grid(row=12, column=0, pady=10, sticky="w")
+    tk.Label(prices_settings_frame, text=" Kč", **label_style).grid(row=12, column=2, pady=10, sticky="w")
+    bench_price = tk.Entry(prices_settings_frame, **entry_style)
+    bench_price.grid(row=12, column=1, pady=10)
+    bench_price.insert(0, "200")
+
+    tk.Label(prices_settings_frame, text="Kladivo:", **label_style).grid(row=13, column=0, pady=10, sticky="w")
+    tk.Label(prices_settings_frame, text=" Kč", **label_style).grid(row=13, column=2, pady=10, sticky="w")
+    hammer_price = tk.Entry(prices_settings_frame, **entry_style)
+    hammer_price.grid(row=13, column=1, pady=10)
+    hammer_price.insert(0, "200")
+
+    tk.Label(prices_settings_frame, text="Řetízkový kolotoč:", **label_style).grid(row=14, column=0, pady=10, sticky="w")
+    tk.Label(prices_settings_frame, text=" Kč", **label_style).grid(row=14, column=2, pady=10, sticky="w")
+    carousel_price = tk.Entry(prices_settings_frame, **entry_style)
+    carousel_price.grid(row=14, column=1, pady=10)
+    carousel_price.insert(0, "200")
+
+    tk.Label(prices_settings_frame, text="Skákací hrad:", **label_style).grid(row=15, column=0, pady=10, sticky="w")
+    tk.Label(prices_settings_frame, text=" Kč", **label_style).grid(row=15, column=2, pady=10, sticky="w")
+    jumping_castle_price = tk.Entry(prices_settings_frame, **entry_style)
+    jumping_castle_price.grid(row=15, column=1, pady=10)
+    jumping_castle_price.insert(0, "200")
+
     bottom_settings_prices_frame = tk.Frame(prices_settings_frame, bg="black") 
-    bottom_settings_prices_frame.grid(row=20, column=0, columnspan=6, pady=40) 
+    bottom_settings_prices_frame.grid(row=16, column=0, columnspan=6, pady=40) 
     back_button = tk.Button(bottom_settings_prices_frame, text="Zpět", command=go_back, font=("Arial", 20), bg="blue", fg="white", width=10) 
     back_button.pack()
 
@@ -483,6 +539,12 @@ def get_user_settings():
         prices['shower_price'] = int(shower_price.get())
         prices['cigars_price'] = int(cigars_price.get())
         prices['water_pipe_price'] = int(water_pipe_price.get())
+        prices['bungee_jumping'] = int(bungee_jumping_price.get())
+        prices['rollercoaster'] = int(rollercoaster_price.get())
+        prices['bench'] = int(bench_price.get())
+        prices['hammer'] = int(hammer_price.get())
+        prices['carousel'] = int(carousel_price.get())
+        prices['jumping_castle'] = int(jumping_castle_price.get())
         
         return prices
 
@@ -717,7 +779,7 @@ def get_user_settings():
         "Festivalový areál": ["Podium", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek","Stánek s míchanými drinky", "Toitoiky","Umývárna", "Stoly", "Bankomat", "Merch stan", "Stan na autogramiády", "Dobíjecí stan", "Výkup kelímků"],
         "Stanové městečko": ["Nealko stánek", "Pivní stánek", "Red Bull stánek","Stánek s míchanými drinky", "Toitoiky", "Sprchy", "Umývárna", "Dobíjecí stan", "Louka na stanování"],
         "Chill zóna": ["Stánek s vodníma dýmkama", "Cigaretový stánek", "Chill stánek", "Nealko stánek","Stánek s míchanými drinky", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Umývárna", "Dobíjecí stan"],
-        "Zábavní zóna": ["Bungee-jumping", "Horská dráha", "Lavice", "Kladivo", "Nealko stánek", "Pivní stánek","Stánek s míchanými drinky", "Red Bull stánek", "Bankomat"]
+        "Zábavní zóna": ["Bungee-jumping", "Horská dráha", "Lavice", "Kladivo", "Řetizkáč", "Skákací hrad", "Nealko stánek", "Pivní stánek","Stánek s míchanými drinky", "Red Bull stánek", "Bankomat"]
     }
 
     # Funkce pro výběr objektu
@@ -1552,7 +1614,6 @@ def get_user_settings():
     canvas.bind("<B1-Motion>", on_drag)
     canvas.bind("<ButtonRelease-1>", on_release)
     root.bind("<Delete>", delete_selected)
-
     root.mainloop()
     
     return settings

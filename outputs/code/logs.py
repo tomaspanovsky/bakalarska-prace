@@ -34,13 +34,25 @@ def add_stalls_to_logs(stalls):
 
         for stall in zone_stalls:
             
-            stall_data = {"id": stall.id, "stall_name": stall.stall_name, "stall_cz_name": stall.stall_cz_name, "max_queue_length": 0, "max_wait_time": 0}
+            stall_data = {"id": stall.id, "stall_name": stall.stall_name, "stall_cz_name": stall.stall_cz_name, "max_queue_length": 0, "max_waiting_time": 0}
             stalls_in_zone.append(stall_data)
 
         stalls_stats[zone] = stalls_in_zone
 
-def log_stalls_stats(stall):
-    pass
+def log_stalls_stats(stall, location, waiting_time = None):
+
+    for stall_data in stalls_stats[location]:
+        if stall_data["id"] == stall.id and stall_data["stall_name"] == stall.stall_name:
+
+            if stall_data["max_queue_length"] < len(stall.resource.queue):
+                stall_data["max_queue_length"] = len(stall.resource.queue)
+
+                if waiting_time:
+
+                    if stall_data["max_waiting_time"] < waiting_time:
+                        stall_data["max_waiting_time"] = waiting_time
+                
+                break
 
 
 def save_logs(festival):
@@ -54,5 +66,5 @@ def save_logs(festival):
     with open("outputs/lineup.json", "w", encoding="utf-8") as f:
         json.dump(festival.get_lineup(), f, indent=4, ensure_ascii=False, cls=EnumEncoder)
 
-    with open("outputs/stalls_stats", "w", encoding="utf-8") as f:
+    with open("outputs/stalls_stats.json", "w", encoding="utf-8") as f:
         json.dump(stalls_stats, f, indent=4, ensure_ascii=False, cls=EnumEncoder)

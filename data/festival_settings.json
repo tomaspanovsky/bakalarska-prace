@@ -51,7 +51,7 @@
                 "low_cigars": "BUY_CIGARS"
             },
             "FUN_ZONE": {
-                "atraction_desire": "GO_TO_ATRACTION",
+                "attraction_desire": "GO_TO_ATTRACTION",
                 "smoking": "SMOKE"
             }
         },
@@ -294,8 +294,8 @@
                 },
                 {
                     "name": "toitoi",
-                    "x": 1120.0,
-                    "y": 516.0,
+                    "x": 1117.0,
+                    "y": 515.0,
                     "type": "toitoi",
                     "cz_name": "toitoiky",
                     "from": null
@@ -430,8 +430,8 @@
                 },
                 {
                     "name": "stage",
-                    "x": 1213.0,
-                    "y": 107.0,
+                    "x": 1214.0,
+                    "y": 105.0,
                     "type": "stage",
                     "cz_name": "podium",
                     "from": null
@@ -439,8 +439,8 @@
                 {
                     "name": "standing_at_stage",
                     "type": "standing_at_stage",
-                    "x": 1213.0,
-                    "y": 107.0,
+                    "x": 1214.0,
+                    "y": 105.0,
                     "cz_name": "Stání u podia",
                     "from": null
                 },
@@ -489,14 +489,14 @@
                 {
                     "name": "meadow_for_living",
                     "x": 494.0,
-                    "y": 741.0,
+                    "y": 738.0,
                     "type": "tent_area",
                     "cz_name": "louka na stanování",
                     "from": null
                 },
                 {
                     "name": "toitoi",
-                    "x": 221.0,
+                    "x": 217.0,
                     "y": 765.0,
                     "type": "toitoi",
                     "cz_name": "toitoiky",
@@ -603,8 +603,8 @@
                 },
                 {
                     "name": "toitoi",
-                    "x": 815.0,
-                    "y": 753.0,
+                    "x": 813.0,
+                    "y": 758.0,
                     "type": "toitoi",
                     "cz_name": "toitoiky",
                     "from": null
@@ -639,23 +639,23 @@
                     "name": "bungee_jumping",
                     "x": 484.0,
                     "y": 72.0,
-                    "type": "Others",
+                    "type": "attraction",
                     "cz_name": "bungee-jumping",
                     "from": null
                 },
                 {
-                    "name": "hammer_attraction",
+                    "name": "bench",
                     "x": 637.0,
                     "y": 71.0,
-                    "type": "Others",
+                    "type": "attraction",
                     "cz_name": "lavice",
                     "from": null
                 },
                 {
-                    "name": "roallercoaster",
+                    "name": "rollercoaster",
                     "x": 564.0,
                     "y": 118.0,
-                    "type": "Others",
+                    "type": "attraction",
                     "cz_name": "horská dráha",
                     "from": null
                 }
@@ -1066,8 +1066,8 @@
                         },
                         {
                             "object": "Toitoiky",
-                            "x": 1120.0,
-                            "y": 516.0,
+                            "x": 1117.0,
+                            "y": 515.0,
                             "canvas_ids": [
                                 65,
                                 66
@@ -1236,8 +1236,8 @@
                         },
                         {
                             "object": "Podium",
-                            "x": 1213.0,
-                            "y": 107.0,
+                            "x": 1214.0,
+                            "y": 105.0,
                             "x1": 1137,
                             "y1": 231,
                             "x2": 1357,
@@ -1365,7 +1365,7 @@
                         {
                             "object": "Louka na stanování",
                             "x": 494.0,
-                            "y": 741.0,
+                            "y": 738.0,
                             "canvas_ids": [
                                 115,
                                 116
@@ -1374,7 +1374,7 @@
                         },
                         {
                             "object": "Toitoiky",
-                            "x": 221.0,
+                            "x": 217.0,
                             "y": 765.0,
                             "canvas_ids": [
                                 117,
@@ -1536,8 +1536,8 @@
                         },
                         {
                             "object": "Toitoiky",
-                            "x": 815.0,
-                            "y": 753.0,
+                            "x": 813.0,
+                            "y": 758.0,
                             "canvas_ids": [
                                 145,
                                 146

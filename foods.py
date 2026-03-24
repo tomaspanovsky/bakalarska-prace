@@ -1,6 +1,8 @@
 import source
 import random
 import resources
+import times
+from outputs.code import logs
 from data.load_data import load_data
 
 def find_all_foods_at_festival(food_stalls_at_festival):
@@ -73,12 +75,16 @@ def choose_random_food_from_actual_zone(self, festival):
         if resources.can_afford(self, source.foods[food]):
             return food
         i += 1
+
+    message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} nemá dost peněz na jídlo {food}, půjde si tedy vybrat peníze do bankomatu."
+    print(message)
+    logs.log_visitor(self, message)
     return None
 
 def find_food_stall_with_shortest_queue_in_zone(self, festival):
     return resources.find_stall_with_shortest_queue_in_zone(self, festival, "foods")
 
-def choose_random_food_from_stall(self, stall):
+def choose_random_food_from_stall(self, stall, festival):
     foods = source.food_stalls[stall.stall_name]
 
     i = 1
@@ -87,6 +93,10 @@ def choose_random_food_from_stall(self, stall):
         if resources.can_afford(self, source.foods[food]):
             return food
         i += 1
+
+    message = f"ČAS {times.get_real_time(self.festival, festival.get_start_time())}: {self.name} {self.surname} nemá dost peněz na jídlo {food}, půjde si tedy vybrat peníze do bankomatu."
+    print(message)
+    logs.log_visitor(self, message)
     return None
 
         

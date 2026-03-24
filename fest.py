@@ -62,3 +62,14 @@ class Festival:
 
     def get_stalls(self):
         return self.stalls
+
+    def get_festival_length(self):
+        return self.num_days
+    
+    def get_attractions(self):
+        attraction_stalls = []
+        for stall in self.stalls["FUN_ZONE"]:
+            if stall.stall_type == "attraction":
+                attraction_stalls.append(stall)
+
+        return attraction_stalls

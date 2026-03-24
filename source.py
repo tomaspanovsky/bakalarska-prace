@@ -9,6 +9,7 @@ file_path_names = os.path.join(here, "data", "names.json")
 file_path_surnames = os.path.join(here, "data", "surnames.json")
 file_path_bands = os.path.join(here, "data", "bands.json")
 file_path_merch = os.path.join(here, "data", "merch.json")
+file_path_attraction = os.path.join(here, "data", "attractions.json")
 
 class Groups(enum.Enum):
     GROUP = "skupina"
@@ -52,18 +53,6 @@ cocktails = drinks_data["cocktails"]
 drink_stalls = drinks_data["stalls"]
 drinks = drinks_data["drinks"]
 
-SELECTIONS_OF_STALLS = {
-    Locations.ENTRANCE_ZONE : {
-        "stall_entrance_zone_pizza",
-        "stall_entrance_zone_burger",
-        "stall_entrance_zone_gyros",
-        "stall_entrance_zone_grill",
-        "stall_entrance_zone_fries",
-        "stall_entrance_zone_langos",
-        "stall_entrance_zone_sweet"
-        }
-    }
-
 class Weather(enum.Enum):
     RAINING = "déšť"
     HOT = "horko"
@@ -101,3 +90,6 @@ surname_map = surnames_data["surname_map"]
 
 with open(file_path_bands, "r", encoding="utf-8") as f:
     BANDS = json.load(f)
+
+with open(file_path_attraction, "r", encoding="utf-8") as f:
+    ATTRACTIONS = json.load(f)
