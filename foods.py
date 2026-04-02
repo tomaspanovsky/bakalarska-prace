@@ -32,7 +32,7 @@ def choose_food_with_great_satiety_in_actual_zone(self, festival):
             satiety = source.foods[food]["satiety"]
 
             if satiety > best_satiety:
-                if resources.can_afford(self, source.foods[food]):
+                if self.can_afford(source.foods[food]):
                     best_satiety = satiety
                     best_food = food
 
@@ -72,7 +72,7 @@ def choose_random_food_from_actual_zone(self, festival):
     while i <= 3:
         food = random.choice(available_foods)
 
-        if resources.can_afford(self, source.foods[food]):
+        if self.can_afford(source.foods[food]):
             return food
         i += 1
 
@@ -90,7 +90,7 @@ def choose_random_food_from_stall(self, stall, festival):
     i = 1
     while i <= 3:
         food = random.choice(foods)
-        if resources.can_afford(self, source.foods[food]):
+        if self.can_afford(source.foods[food]):
             return food
         i += 1
 

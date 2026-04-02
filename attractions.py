@@ -68,3 +68,4 @@ class Attraction:
 
     def get_ride_end(self):
         return self.ride_end
+    

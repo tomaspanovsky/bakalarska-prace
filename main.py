@@ -10,9 +10,11 @@ import drinks
 import random
 import source
 import times
+import simulation_controller
 from outputs.code import logs
 
-#promene, ktere budou vstupní parametry
+SIMULATION_MODE = "auto" #auto -> automatická (jak doteď) /step -> po krocích
+
 settings = get_user_settings()
 
 if not settings:
@@ -29,17 +31,16 @@ merch = settings["merch"]
 capacities = settings["capacities"]
 
 festival_env = simpy.Environment()
-capacities["entrance"] = 4
+
 stalls = resources.create_resources(festival_env, capacities, num_visitors, festival_times["simulation_start_time"])
 logs.add_stalls_to_logs(stalls)
-resources.identify_entrances(stalls["FESTIVAL_AREA"])
 
 food_stalls_names = resources.find_all_type_stall_at_festival(stalls, "foods")
 drink_stalls_names = resources.find_all_type_stall_at_festival(stalls, "drinks")
 available_foods = foods.find_all_foods_at_festival(food_stalls_names)
 available_soft_drinks, available_alcohol_drinks = drinks.find_all_drinks_at_festival(drink_stalls_names)
 
-people, groups_of_visitors, income = visitors.create_visitors(num_visitors, festival_env, available_foods, available_soft_drinks, available_alcohol_drinks, prices["on_site_price"], prices["pre_sale_price"])
+people, groups_of_visitors, income = visitors.create_visitors(num_visitors, festival_env, available_foods, available_soft_drinks, available_alcohol_drinks, prices["on_site_price"], prices["pre_sale_price"], prices["camping_area_price"])
 lineup, total_price_for_bands = bands.create_lineup(num_days, budget_for_bands, num_bands)
 people = bands.add_favorite_bands_to_visitor(people, lineup)
 festival = fest.Festival(festival_env, people, groups_of_visitors, num_days, lineup, income, stalls, prices, festival_times, random.choice(list(source.Weather)), merch)
@@ -55,12 +56,26 @@ bands.set_bands(festival_env, lineup, stage, signing_stall[0], festival)
 bands.print_lineup(lineup)
 visitors.print_visitors(people)
 
+simulation_state = simulation_controller.create_simulation_state(stalls)
+
 festival_env.process(simulation.spawn_groups(festival_env, groups_of_visitors, festival))
 
-logs.log_message("START SIMULACE")
+message = f"ČAS {times.get_real_time(festival_env, festival.get_start_time())}: START SIMULACE"
+print(message)
+logs.log_message(message)
+message = f"ČAS {times.get_real_time(festival_env, festival.get_start_time())}: 1. DEN"
+print(message)
 logs.log_message("1. DEN:")
 
-festival_env.run(until=(num_days * 1440))
+if SIMULATION_MODE == "auto":
+    print("Simulace jede v automatickém režimu")
+    festival_env.run(until=num_days * 1440)
+
+else:
+
+    print("Simulace jede v krokovacím režimu")
+    festival_env.simulation_controller.step_simulation()
 
 logs.log_message("SIMULACE UKONČENA")
 logs.save_logs(festival)
+

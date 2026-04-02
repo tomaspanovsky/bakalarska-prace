@@ -17,8 +17,20 @@ class Stall:
         self.id = id
         self.x = x
         self.y = y
-        self.from_zone = None
         self.attraction = None
+        self.positions = None
+
+    def get_name(self):
+        return self.stall_name
+        
+    def get_cz_name(self):
+        return self.stall_cz_name
+    
+    def get_zone(self):
+        return self.zone
+    
+    def get_id(self):
+        return self.id
 
 def create_resources(env, capacities, num_visitors, simulation_start_time):
     stalls = {"ENTRANCE_ZONE" : [], "TENT_AREA" : [], "FESTIVAL_AREA" : [], "CHILL_ZONE" : [], "FUN_ZONE" : []}
@@ -29,7 +41,7 @@ def create_resources(env, capacities, num_visitors, simulation_start_time):
         objected_stall = []
         i = 1
        
-        stalls_in_locations[location].sort(key=get_name)
+        stalls_in_locations[location].sort(key=get_stall_name)
         previous_stall = None
 
         for stall in stalls_in_locations[location]:
@@ -41,12 +53,6 @@ def create_resources(env, capacities, num_visitors, simulation_start_time):
 
             if stall["name"] == "toitoi":
                 resource = create_toitois(env, stall, capacities, location)
-
-            elif stall["name"] == "meadow_for_living":
-                resource = locations.create_positions(capacities["meadow_for_living"])
-
-            elif stall["name"] == "charging_stall":
-                resource = locations.create_positions(capacities["charging_stall_mobile"])
 
             elif stall["name"] == "stage":
                 resource = simpy.Resource(env, capacity=1)
@@ -67,7 +73,12 @@ def create_resources(env, capacities, num_visitors, simulation_start_time):
                 resource.append(["back", simpy.Resource(env, capacity=cap_sectors[2])])
 
             elif stall["name"] == "signing_stall":
-                resource = [[],[],[],[]]
+                resource = [[],[],[],[]] 
+                #0 -> Aktuální pozice pro kapelu co má autogramiádu, 
+                #1 -> Návštěvníci, kteří jsou právě před kapelou a dostávají podpis,
+                #2 -> Návštěvníci ve frontě na aktuální kapelu
+                #3 -> Kapela, jejíž autogramiáda následuje po aktuální kapele
+
                 resource[0] = simpy.Resource(env, capacity=1)
                 resource[1] = simpy.Resource(env, capacity=5)
                 resource[2] = simpy.Resource(env, capacity=(capacities[stall["name"]] - 5))
@@ -75,17 +86,29 @@ def create_resources(env, capacities, num_visitors, simulation_start_time):
 
             else:
                 resource = simpy.Resource(env, capacity=capacities[stall["name"]])
+
+            if stall["name"] == "entrance":
+                id = stall["id"]
+            else:
+                id = i
             
             new_stall = Stall(stall["type"],
                             stall["name"],
                             stall["cz_name"],
                             location,
                             resource,
-                            i,
+                            id,
                             stall["x"],
                             stall["y"])
             
-            
+            if stall["name"] == "meadow_for_living":
+                    positions = locations.create_positions(capacities["meadow_for_living"])
+                    new_stall.positions = positions
+
+            if stall["name"] == "charging_stall":
+                    positions = locations.create_positions(capacities["charging_stall_mobile"])
+                    new_stall.positions = positions
+
             if stall["type"] == "attraction":
                 attraction_data = source.ATTRACTIONS["attractions"][stall["name"]]
                 new_stall.attraction = attractions.Attraction(env, resource, stall["cz_name"], attraction_data, 0.5, 10, simulation_start_time)
@@ -133,38 +156,8 @@ def create_toitois(env, stall, capacities, location):
     stalls.append(urinals)
     stalls.append(toitois)
     return stalls
-
-def identify_entrances(stalls):
-    zones = load_data()
-    entrances = []
-
-    location_map = {
-        "Vstupní zóna": "ENTRANCE_ZONE",
-        "Festivalový areál": "FESTIVAL_AREA",
-        "Stanové městečko": "TENT_AREA",
-        "Chill zóna": "CHILL_ZONE",
-        "Zábavní zóna": "FUN_ZONE",
-        "Spawn zóna": "SPAWN_ZONE"
-    }
-
-    for stall in stalls:
-        if stall.stall_name == "entrance":
-            entrances.append(stall)
-    
-    for zone_name, zone_data in zones.items():
-
-        for instance in zone_data["instances"]:
-            lines = instance.get("lines", [])
-
-            for line in lines:
-                other_zone = line.get("other_zone")
-
-                if other_zone == "Festivalový areál":
-                    entrances[0].from_zone = location_map[zone_name]
-                    del entrances[0]
             
-
-def get_name(stall):
+def get_stall_name(stall):
     return stall["name"]
 
 def is_big_queue_at_stall(visitor, stall):
@@ -244,8 +237,3 @@ def find_all_type_stall_at_festival(all_stalls, type):
     
     return all_food_stalls_at_festival
 
-def can_afford(self, what):
-    if isinstance(what, (int, float)):
-        return self.state["money"] > what
-    else:
-        return self.state["money"] > what["price"]

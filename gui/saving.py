@@ -25,6 +25,10 @@ def save(zones_data):
             action = {}
             stalls = []
             traces = []
+
+            result["ACTIONS_BY_LOCATIONS"][location_key] = {}
+            result["STALLS_BY_LOCATIONS"][location_key] = []
+            result["ACTIONS_MOVING"][location_key] = []
             
             print("aktuální instance:", instance)
 
@@ -35,14 +39,14 @@ def save(zones_data):
             # seznam objektů v dané zóně
             for obj in instance.get("objects", []):
                 obj_name = obj["object"].lower()
-                stall = {"name": None, "x": None, "y": None, "type": None, "cz_name": None, "from": None}
+                stall = {"name": None, "x": None, "y": None, "type": None, "cz_name": None}
                 stall_extra = None
 
                 if obj["extra"]:
                     obj_extra = obj["extra"]
 
                     if obj_extra[0]["object"] == "Stání u podia":
-                        stall_extra = {"name": "standing_at_stage", "type": "standing_at_stage",  "x": None, "y": None, "cz_name": None, "from": None}
+                        stall_extra = {"name": "standing_at_stage", "type": "standing_at_stage",  "x": None, "y": None, "cz_name": None}
                         action["band_playing"] = "GO_TO_CONCERT"
 
                 if "podium" in obj_name:
@@ -82,6 +86,7 @@ def save(zones_data):
                 elif "vstup" in obj_name:
                     stall["name"] = "entrance"
                     stall["type"] = "entrances"
+                    stall["id"] = obj["id"]
 
                 elif "umývárna" in obj_name:
                     stall["name"] = "handwashing_station"
@@ -113,6 +118,7 @@ def save(zones_data):
                     stall["name"] = "charging_stall"
                     stall["type"] = "charging_stall"
                     action["phone_dead"] = "CHARGE_PHONE"
+                    action["phone_ready"] = "TAKE_PHONE"
 
                 elif "pokladna" in obj_name:
                     stall["name"] = "ticket_booth"
@@ -211,18 +217,34 @@ def save(zones_data):
 
             for line in instance.get("lines", []):
 
-                if line != []:
+                if line:
                     other = line["other_zone"]
 
-                    if isinstance(other, dict):
-                        destination = other["type"]
-                        destination = location_map.get(destination, destination)
-                        destination = "GO_TO_" + destination
-                        traces.append(destination)
+                    if "type" in other:
+                        destination_type = other["type"]
 
-                        result["ACTIONS_MOVING"][location_key] = traces
+                    else:
+                        destination_type = None
+                        for zt, zi in zones_data.items():
+                            for inst in zi["instances"]:
+                                if other in inst.get("objects", []):
+                                    destination_type = inst["type"]
+                                    break
+                            if destination_type:
+                                break
 
-                        line["other_zone"] = other["type"]
+                    if destination_type is None:
+                        continue
+
+                    mapped = location_map.get(destination_type, destination_type)
+                    
+                    if "entry" in line["other_zone"] and line["other_zone"]["entry"] and line["other_zone"]["type"] == "Festivalový areál":
+                        destination = "GO_TO_" + mapped + "_ENTRY_" + str(line["other_zone"]["entry"]["id"])
+                    else:
+                        destination = "GO_TO_" + mapped
+                    traces.append(destination)
+
+                    result["ACTIONS_MOVING"][location_key] = traces
                         
 
     file_path = filedialog.asksaveasfilename(
@@ -230,6 +252,31 @@ def save(zones_data):
     filetypes=[("JSON files", "*.json")],
     title="Uložit soubor jako"
     )
+
+    def serialize_zones(zones):
+        serialized = {}
+        for zone_name, zone_data in zones.items():
+            serialized[zone_name] = {
+                "multiple": zone_data["multiple"],
+                "instances": []
+            }
+            for inst in zone_data["instances"]:
+                serialized_inst = inst.copy()
+                # místo kompletní reference na other_zone dáme jen id nebo type
+                if "lines" in inst:
+                    lines = []
+                    for line in inst["lines"]:
+                        if "entry" in line["other_zone"] and line["other_zone"]["entry"]:
+                            lines.append({"id": line["id"], "other_zone": {"zone": line["other_zone"]["type"]}, "entry": line["other_zone"]["entry"]})                      
+                        else:
+                            lines.append({"id": line["id"], "other_zone": {"zone": line["other_zone"]["type"]}})
+
+                        serialized_inst["lines"] = lines
+                    
+                serialized[zone_name]["instances"].append(serialized_inst)
+        return serialized
+    
+    zones_data = serialize_zones(zones_data)
 
     data = [result, zones_data]
     

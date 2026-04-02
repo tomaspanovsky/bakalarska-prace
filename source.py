@@ -10,15 +10,12 @@ file_path_surnames = os.path.join(here, "data", "surnames.json")
 file_path_bands = os.path.join(here, "data", "bands.json")
 file_path_merch = os.path.join(here, "data", "merch.json")
 file_path_attraction = os.path.join(here, "data", "attractions.json")
+file_path_needs_actions = os.path.join(here, "data", "needs_actions.json")
 
 class Groups(enum.Enum):
     GROUP = "skupina"
     FAMILY = "rodina"
     INDIVIDUAL = "jednotlivec"
-
-class Groups_modes(enum.Enum):
-    IN_GROUP = "skupinově"
-    INDIVIDUALLY = "individuálně"
 
 class Locations(enum.Enum):
     SPAWN_ZONE= "spawn zóna"
@@ -94,3 +91,6 @@ with open(file_path_bands, "r", encoding="utf-8") as f:
 
 with open(file_path_attraction, "r", encoding="utf-8") as f:
     ATTRACTIONS = json.load(f)
+
+with open(file_path_needs_actions, "r", encoding="utf-8") as f:
+    NEEDS_ACTIONS = json.load(f)

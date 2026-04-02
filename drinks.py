@@ -48,30 +48,6 @@ def is_drink_in_stall(stall, drink):
 def find_drink_stall_with_shortest_queue_in_zone(self, festival, alco_nonalco, drink_stalls_in_zone):
     return resources.find_stall_with_shortest_queue_in_zone(self, festival, "drinks", alco_nonalco=alco_nonalco, stalls_to_reduce=drink_stalls_in_zone)
 
-def choose_random_drink_from_stall(self, stall, drink_type):
-    drinks = source.drink_stalls[stall.stall_name]
-
-    if drink_type == "soft_drinks":
-        drink_type = source.soft_drinks
-    elif drink_type == "alcohol":
-        drink_type = source.alcohol
-    elif drink_type == "beers":
-        drink_type = source.beers
-    elif drink_type == "hard_alcohol":
-        drink_type = source.hard_alcohol
-    elif drink_type == "cocktails":
-        drink_type = source.cocktails
-
-    drink_list = list(set(drinks) & set(drink_type))
-    
-    i = 1
-    while i <= 3:
-        drink = random.choice(drink_list)
-        if resources.can_afford(self, source.drinks[drink]):
-            return drinks
-        i += 1
-    return None
-
 def is_soft_drinks_in_stall(stall):
     drinks = source.drink_stalls[stall.stall_name]
     drink_type = source.soft_drinks
@@ -105,7 +81,7 @@ def choose_random_drink_from_actual_zone(self, festival, drink_type, stalls):
     for i in range(3):
         drink = random.choice(drinks)
 
-        if resources.can_afford(self, source.drinks[drink]):
+        if self.can_afford(source.drinks[drink]):
             return drink
 
     return None

@@ -14,17 +14,10 @@ class Festival:
         self.weather = weather
         self.actual_day = 1
         self.merch = merch
-        self.charging_phones = []
         self.pause_between_shows = None
 
-    def add_phone(self, phone):
-        self.charging_phones.append(phone)
-    
     def get_price(self, price_of_what):
         return self.prices[price_of_what]
-    
-    def get_charging_phones(self):
-        return self.charging_phones
 
     def get_income(self):
         return self.income

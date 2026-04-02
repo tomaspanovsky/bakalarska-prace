@@ -14,16 +14,83 @@
 
 \maketitle
 
+\clearpage
+\section*{Bibliografické údaje}
+
+\textbf{Autor:} Tomáš Panovský\\
+\textbf{Název práce:} Diskrétní simulace v SimPy\\
+\textbf{Typ práce:} bakalářská práce\\
+\textbf{Pracoviště:} Katedra informatiky, Přírodovědecká fakulta, Univerzita Palackého v Olomouci\\
+\textbf{Rok obhajoby:} 2026\\
+\textbf{Studijní program:} Informační technologie, prezenční forma\\
+\textbf{Vedoucí práce:} Mgr. Jan Laštovička, Ph.D.\\
+\textbf{Počet stran:} Vo hvězdách\\
+\textbf{Přílohy:} elektronická data v úložišti katedry informatiky\\
+\textbf{Jazyk práce:} český
+
+\vspace{1cm}
+
+\section*{Bibliographic info}
+
+\textbf{Author:} Tomáš Panovský\\
+\textbf{Title:} Discrete-event simulation in the SimPy library\\
+\textbf{Thesis type:} bachelor thesis\\
+\textbf{Department:} Department of Computer Science, Faculty of Science, Palacký University Olomouc\\
+\textbf{Year of defense:} 2026\\
+\textbf{Study program:} Information Technologies, full-time form\\
+\textbf{Supervisor:} Mgr. Jan Laštovička, Ph.D.\\
+\textbf{Page count:} XX\\
+\textbf{Supplements:} electronic data in the storage of the Department of Computer Science\\
+\textbf{Thesis language:} Czech
+
+\clearpage
+\clearpage
+\section*{Anotace}
+
+Každý, kdo alespoň občas navštěvuje hudební festivaly, se jistě setkal s nedostatečnou organizací a dlouhými frontami. Cílem této práce je vytvořit jednoduchý nástroj, který formou diskrétní simulace pomůže organizátorům festivalů při rozhodování o vhodném počtu zdrojů, jako jsou vstupy, stánky či další obslužná místa. Simulace je realizována v prostředí knihovny SimPy a umožňuje zkoumat vznik front, vytížení jednotlivých zdrojů a dopady různých organizačních rozhodnutí. Součástí práce je také jednoduchý grafický editor pro návrh rozložení festivalového areálu, na jehož základě se generuje konfigurace simulace.
+
+\vspace{1cm}
+
+\section*{Synopsis}
+
+Anyone who occasionally attends music festivals has likely encountered insufficient organization and long queues. The aim of this thesis is to develop a simple simulation tool that assists festival organizers in determining appropriate capacities of resources such as entrances, stands, and other service points. The simulation is implemented using the SimPy library and enables the analysis of queue formation, resource utilization, and the effects of various organizational decisions. The thesis also includes a simple graphical editor for designing the layout of the festival area, from which the configuration of the simulation is generated.
+
+\vspace{1cm}
+
+\textbf{Klíčová slova:} simulace, SimPy, vizualizace, organizace, fronty, festival\\
+\textbf{Keywords:} simulation, SimPy, visualization, organization, queues, festival
+
+\clearpage
+
+{\Large
+Děkuji vedoucímu práce Mgr. Janu Laštovičkovi, Ph.D. za ochotu, velmi cenné rady,\\
+trpělivost a vedení mé bakalářské práce.
+}
+
+\vspace{2cm}
+
+Odevzdáním tohoto textu jeho autor/ka místopřísežně prohlašuje, že celou práci
+včetně příloh vypracoval/a samostatně a za použití pouze zdrojů citovaných v textu
+práce a uvedených v seznamu literatury.
+
+\clearpage
+
 \tableofcontents
 
 \section{Úvod}
-V této bakalářské práci se zabývám diskrétní simulací za použití knihovny SimPy v Pythonu. 
-Knihovna Simpy umožňuje modelovat procesy, jenž probíhají souběžně, a mohou být zastaveny, nebo pozastaveny na určitou dobu. Praktická část bakalářské práce obsahuje aplikaci simulující průběh hudebního festivalu.
-Cílem simulace je zjistit, jak se návštěvníci pohybují a kde vznikají 
-fronty, což může pomoci při organizaci reálného festivalu.
+Organizace velkých hudebních festivalů a kulturních akcí představuje pro organizátory komplexní úkol, při němž je nutné efektivně koordinovat pohyb tisíců návštěvníků, zvolit vhodný počet vstupů, obslužných míst a dalších zdrojů. Nedostatečné plánování může vést k dlouhým frontám, přetížení některých částí areálu a celkovému zhoršení zážitku účastníků. Vzhledem k rostoucímu počtu návštěvníků a stále složitějšímu provozu festivalových areálů je proto žádoucí využívat nástroje, které umožní předem odhadnout chování návštěvníků a identifikovat potenciální slabá místa festivalového areálu.
+
+Simulace představuje užitečný nástroj při zkoumání situací, které jsou obtížné nebo nákladné na testování v reálném provozu. Umožňuje bezpečně experimentovat s různými variantami uspořádání či kapacitního nastavení a pozorovat jejich dopady bez rizika kritických následků. Díky tomu lze lépe porozumět chování návštěvníků, odhalit potenciální problémy a podpořit informovanější rozhodování při plánování festivalu.
+
+ 
+\subsection{Motivace}
+Při návštěvách různých kulturních a hudebních akcí jsem se opakovaně setkával s dlouhými frontami a nedostatečně dimenzovanými obslužnými místy. Tyto zkušenosti ukázaly, jak náročné může být správné plánování kapacit a organizace provozu na podobných událostech. Problematika přetížených vstupů či pokladen se navíc pravidelně objevuje i v médiích, zejména v souvislosti s akcemi, u nichž došlo k výraznému nárůstu návštěvnosti oproti předchozím ročníkům. V takových situacích může nedostatečný počet vstupů nebo pokladen vést k dlouhým čekacím dobám a zhoršení celkového zážitku návštěvníků. Tyto skutečnosti mě přivedly k úvaze, zda by bylo možné podobné situace předem modelovat a tím organizátorům usnadnit rozhodování o vhodném počtu zdrojů. Motivací této práce je proto vytvořit jednoduchý simulační nástroj, který umožní předvídat vznik front a lépe porozumět dopadům různých organizačních rozhodnutí.
+
+\subsection{Struktura práce}
+První část práce se věnuje teoretickým základům diskrétní simulace, následuje popis knihovny SimPy a jejích klíčových prvků využitých při implementaci. Další kapitoly se zaměřují na návrh modelu festivalu, implementaci simulačního jádra a tvorbu grafického editoru. Závěrečná část obsahuje experimenty, vyhodnocení výsledků a diskusi nad možnostmi dalšího rozšíření.
 
 \section{Systém} str17
-Reálnou skutečnost, kterou chceme analyzovat, označujeme jako systém. Analyzovat znamená sledovat, jak se různé části systému chovají v čase, a vyvozovat závěry o efektivitě, kapacitě nebo chování systému.
+Reálnou skutečnost, kterou chceme analyzovat, označujeme jako {\bf systém}. Analyzovat znamená sledovat, jak se různé části systému chovají v čase, a vyvozovat závěry o efektivitě, kapacitě nebo chování systému.
 
 Na systémy můžeme nahlížet jako diskrétní nebo spojité, přičemž záleží na úhlu pohledu a vlastnostech, které v systému převažují. {\bf Diskrétní systém je takový, u kterého se stavové proměnné mění pouze v diskrétních časových okamžicích.} Příkladem diskrétního systému je hudební festival, kde se stavové proměnné, například počet návštěvníků ve frontě u stánku s pivem, mění pouze tehdy, když návštěvník přijde na řadu, nebo dostane pivo a odejde. Oproti tomu spojitý systém je takový systém, u kterého se stavové proměnné mění plynule v čase, nikoli pouze v diskrétních okamžicích.
 

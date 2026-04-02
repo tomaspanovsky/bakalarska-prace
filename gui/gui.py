@@ -1,4 +1,5 @@
 import tkinter as tk
+import customtkinter as ctk
 from PIL import Image, ImageTk
 from . import saving
 from . import loading 
@@ -6,7 +7,6 @@ import os
 import copy
 import source
 
-# Stav aplikace
 current_zone = None         
 current_object = None
 drawing = False
@@ -36,7 +36,7 @@ zones_data_default = copy.deepcopy(zones_data)
 
 def get_user_settings():
     settings = {}
-
+    
     def start():
         merch = get_merch(bands_entries)
         capacities = get_capacities()
@@ -56,16 +56,30 @@ def get_user_settings():
         settings['merch'] = merch
         settings['capacities'] = capacities
         
-        root.destroy()
+        editor_buttons_frame.pack_forget()
+        frame_left.pack_forget()
+        frame_right.pack_forget()
+        simulation_buttons_frame.pack(pady=5)
+        left_simulation_container.pack(side="left", fill="y")
+
+        #root.destroy()
 
     def exit_app():
         root.quit()
         root.destroy()
 
+    default_loaded = False
+
     def open_editor():
+        nonlocal default_loaded
+
         main_frame.pack_forget()
         editor_frame.pack(fill="both", expand=True)
 
+        if not default_loaded:
+            load_default()
+            default_loaded = True
+        
     def open_stalls_settings():
         main_frame.pack_forget()
         settings_frame.pack_forget()
@@ -114,17 +128,57 @@ def get_user_settings():
         elif editor_frame.winfo_ismapped():
             editor_frame.pack_forget()
             main_frame.pack(fill="both", expand=True)
+    
+    def stop_simulation():
+        simulation_buttons_frame.pack_forget()
+        left_simulation_container.pack_forget()
+        editor_buttons_frame.pack(pady=20)
+        frame_left.pack(side="left", fill="y", padx=0, pady=0)
+        frame_right.pack(side="left", fill="y", padx=0, pady=0)
 
-
-
-
+    def simulation_step():
+        pass
     # ---------- HLAVNÍ OKNO ----------
-
+    
     root = tk.Tk()
     root.title("Nastavení festivalu")
     root.attributes("-fullscreen", True)
     root.configure(bg='black')
 
+
+#------------------------------------------------------------------STYLY----------------------------------------------------------------------------------------------------
+  
+  
+    label_style = {"bg": "black", "fg": "white", "font": ("Arial", 20)}
+    entry_style = {"font": ("Arial", 18), "bg": "#222", "fg": "white", "insertbackground": "white", "width": 10}
+    entry_style2 = {"font": ("Arial", 18), "bg": "#222", "fg": "white", "insertbackground": "white", "width": 5}
+
+    def blue_button(parent, text, command):
+        return ctk.CTkButton(parent, text=text, command=command, corner_radius=20, fg_color="blue", hover_color="#2f4dfa", text_color="white", width=150, height=65, font=("Arial", 25))
+
+    def blue_button_small(parent, text, command):
+        return ctk.CTkButton(parent, text=text, command=command, corner_radius=20, fg_color="blue", hover_color="#2f4dfa", text_color="white", width=90, height=50, font=("Arial", 25))
+        
+    def red_button(parent, text, command):
+        return ctk.CTkButton(parent, text=text, command=command, corner_radius=20, fg_color="red", hover_color="#fc4437", text_color="white", width=150, height=65, font=("Arial", 25))
+    
+    def red_button_small(parent, text, command):
+        return ctk.CTkButton(parent, text=text, command=command, corner_radius=20, fg_color="red", hover_color="#fc4437", text_color="white", width=90, height=50, font=("Arial", 25))
+    
+    def green_button(parent, text, command):
+        return ctk.CTkButton(parent, text=text, command=command, corner_radius=20, fg_color="green", hover_color="#4ef35c", text_color="white", width=150, height=65, font=("Arial", 25))
+    
+    def green_button_small(parent, text, command):
+        return ctk.CTkButton(parent, text=text, command=command, corner_radius=20, fg_color="green", hover_color="#4ef35c", text_color="white", width=90, height=50, font=("Arial", 25))
+
+    def object_button(parent, text, obj, img):       
+        return ctk.CTkButton(parent, text=text, image=img, compound="left", anchor="w", corner_radius=10, fg_color="white", hover_color="#c3c3c5",  text_color="black", border_width=2, border_color="black", width=170, height=28, font=("Arial", 12.5, "bold"), command=lambda o=obj: select_object(o))
+    
+    def zone_button(parent, zone_name):
+        return ctk.CTkButton(parent, text=zone_name, corner_radius=10, fg_color="white", hover_color="#c3c3c5",  text_color="black", border_width=2, border_color="black", width=170, height=50, font=("Arial", 15, "bold"), command=lambda z=zone_name: select_zone(z))
+    
+    def mode_button(parent, text):
+        return ctk.CTkButton(parent, text=text, corner_radius=10, fg_color="white", hover_color="#c3c3c5",  text_color="black", border_width=2, border_color="black",  width=55, height=55, font=("Arial", 14, "bold"), command=lambda m=mode_name: select_mode(m))
 
     # ---------- OBRAZOVKA 1: Úvodní menu ----------
 
@@ -133,21 +187,6 @@ def get_user_settings():
 
     title_label = tk.Label(main_frame, text="Simulace hudebního festivalu", font=("Arial", 36, "bold"), bg="black", fg="yellow")
     title_label.pack(pady=30)
-
-
-    here = os.path.dirname(os.path.dirname(__file__))
-    file_path = os.path.join(here, "data", "simpy-logo.webp")
-
-    image = Image.open(file_path)
-    image = image.resize((300, 150))
-    photo = ImageTk.PhotoImage(image)
-    image_label = tk.Label(main_frame, image=photo, bg="black")
-    image_label.image = photo
-    image_label.pack(pady=20)
-
-    label_style = {"bg": "black", "fg": "white", "font": ("Arial", 20)}
-    entry_style = {"font": ("Arial", 18), "bg": "#222", "fg": "white", "insertbackground": "white", "width": 10}
-    entry_style2 = {"font": ("Arial", 18), "bg": "#222", "fg": "white", "insertbackground": "white", "width": 5}
 
     frame = tk.Frame(main_frame, bg='black')
     frame.pack(pady=30)
@@ -180,14 +219,15 @@ def get_user_settings():
     bottom_frame = tk.Frame(main_frame, bg='black')
     bottom_frame.pack(side="bottom", pady=30)
 
-    editor_button = tk.Button(bottom_frame, text="Dále", command=open_editor, font=("Arial", 20), bg="blue", fg="white", padx=40, pady=15)
+    editor_button = blue_button(bottom_frame, "Dále", open_editor)
     editor_button.pack(side="left", padx=10)
-
-    settings_button = tk.Button(bottom_frame, text="Nastavení", command=open_settings, font=("Arial", 20), bg="blue", fg="white", padx=40, pady=15)
+ 
+    settings_button = blue_button(bottom_frame, "Nastavení", open_settings)
     settings_button.pack(side="left", padx=10)
 
-    exit_button = tk.Button(bottom_frame, text="Zavřít", command=exit_app, font=("Arial", 20), bg="red", fg="white", padx=40, pady=15)
+    exit_button = red_button(bottom_frame, "Zavřít", exit_app)
     exit_button.pack(side="left", padx=10)
+
 
     # ---------- OBRAZOVKA2: Settings
 
@@ -196,22 +236,22 @@ def get_user_settings():
 
     tk.Label(settings_frame, text="Nastavení", font=("Arial", 32,"bold"), bg="black", fg="yellow").pack(padx=20, pady=20)
 
-    stall_settings_button = tk.Button(settings_frame, text="Kapacity objektů", command=open_stalls_settings, font=("Arial", 15), bg="blue", fg="white", padx=40, pady=15)
+    stall_settings_button = blue_button(settings_frame, "Kapacity objektů", open_stalls_settings)
     stall_settings_button.pack() 
 
-    prices_settings_button = tk.Button(settings_frame, text="Festivalové ceny", command=open_prices_settings, font=("Arial", 15), bg="blue", fg="white", padx=40, pady=15)
+    prices_settings_button = blue_button(settings_frame, "Festivalové ceny", open_prices_settings)
     prices_settings_button.pack() 
 
-    merch_settings_button = tk.Button(settings_frame, text="Ceny merche", command=open_merch_settings, font=("Arial", 15), bg="blue", fg="white", padx=40, pady=15)
+    merch_settings_button = blue_button(settings_frame, "Ceny merche", open_merch_settings)
     merch_settings_button.pack() 
 
-    times_settings_button = tk.Button(settings_frame, text="Časy", command=open_times_settings, font=("Arial", 15), bg="blue", fg="white", padx=40, pady=15)
+    times_settings_button = blue_button(settings_frame, "Časy", open_times_settings)
     times_settings_button.pack() 
 
     settings_bottom_frame = tk.Frame(settings_frame, bg='black')
     settings_bottom_frame.pack(side="bottom", pady=30, fill="x")
 
-    back_button = tk.Button(settings_bottom_frame, text="Zpět", command=go_back, font=("Arial", 20), bg="blue", fg="white", padx=40, pady=15)
+    back_button = blue_button(settings_bottom_frame, "Zpět", go_back)
     back_button.pack()
 
     # ---------- OBRAZOVKA3: Stall capacities settings
@@ -390,7 +430,7 @@ def get_user_settings():
 
     bottom_settings_stalls_frame = tk.Frame(stall_settings_frame, bg="black") 
     bottom_settings_stalls_frame.grid(row=20, column=0, columnspan=6, pady=40) 
-    back_button = tk.Button(bottom_settings_stalls_frame, text="Zpět", command=go_back, font=("Arial", 20), bg="blue", fg="white", width=10) 
+    back_button = blue_button(bottom_settings_stalls_frame,"Zpět", go_back) 
     back_button.pack()
 
     def get_capacities():
@@ -526,7 +566,7 @@ def get_user_settings():
 
     bottom_settings_prices_frame = tk.Frame(prices_settings_frame, bg="black") 
     bottom_settings_prices_frame.grid(row=16, column=0, columnspan=6, pady=40) 
-    back_button = tk.Button(bottom_settings_prices_frame, text="Zpět", command=go_back, font=("Arial", 20), bg="blue", fg="white", width=10) 
+    back_button = blue_button(bottom_settings_prices_frame, "Zpět", go_back) 
     back_button.pack()
 
     def get_prices():
@@ -620,7 +660,7 @@ def get_user_settings():
         bottom_merch_frame = tk.Frame(merch_frame, bg="black")
         bottom_merch_frame.grid(row=50, column=0, columnspan=6, pady=40)
 
-        back_button = tk.Button(bottom_merch_frame, text="Zpět", command=go_back, font=("Arial", 20), bg="blue", fg="white", width=10)
+        back_button = blue_button(bottom_merch_frame, "Zpět", go_back)
         back_button.pack()
 
     def get_merch(bands_entries):
@@ -702,28 +742,39 @@ def get_user_settings():
 
     bottom_settings_times_frame = tk.Frame(times_settings_frame, bg="black") 
     bottom_settings_times_frame.grid(row=7, column=0, columnspan=6, pady=40) 
-    back_button = tk.Button(bottom_settings_times_frame, text="Zpět", command=go_back, font=("Arial", 20), bg="blue", fg="white", width=10) 
+
+    back_button = blue_button(bottom_settings_times_frame, "Zpět", go_back) 
     back_button.pack()
 
 
-    # ---------- OBRAZOVKA7: Editor ----------
+#-------------------------------------------------------------------------OBRAZOVKA7: Editor-----------------------------------------------------------
 
     editor_frame = tk.Frame(root, bg="black")
 
-    tk.Label(editor_frame, text="Editor festivalového areálu", font=("Arial", 30, "bold"), bg="black", fg="yellow").pack(pady=20)
-   
+    title = ctk.CTkLabel(editor_frame, text="Editor festivalového areálu",font=("Arial", 40, "bold"),text_color="#ffffff")
+    title.pack(pady=20)
+
+    # Hlavní obsahový rám
     content_frame = tk.Frame(editor_frame, bg="black")
-    content_frame.pack(fill="both", padx=50, pady=20)
+    content_frame.pack(fill="both", padx=50, pady=10)
 
-    # Levý sloupec
-    frame_left = tk.Frame(content_frame, width=200, height=800, bg="white")
-    frame_left.pack(side="left", fill="y", padx=(0,20), pady=5)
+    # Levý panel – Zóny
+    frame_left = tk.Frame(content_frame, width=200, height=860, bg="white", bd=2, relief="ridge")
+    frame_left.pack(side="left", fill="y", padx=0, pady=0)
     frame_left.pack_propagate(False)
-    tk.Label(frame_left, text="Zóny", font=("Arial", 25, "bold"), bg="white", fg="black").pack(pady=10)
 
-    # Canvas uprostřed
-    canvas = tk.Canvas(content_frame, bg="lightgray", width=1200, height=800)
-    canvas.pack(side="left", fill="both", expand=True)
+    tk.Label(frame_left, text="Zóny", font=("Arial", 15, "bold"), bg="white", fg="black").pack(pady=5)
+
+    # Pravý panel – Objekty 
+    frame_right = tk.Frame(content_frame, width=200, height=860, bg="white", bd=2, relief="ridge")
+    frame_right.pack(side="left", fill="y", padx=0, pady=0)
+    frame_right.pack_propagate(False)
+
+    tk.Label(frame_right, text="Objekty", font=("Arial", 15, "bold"), bg="white", fg="black").pack(pady=5)
+
+    canvas = tk.Canvas(content_frame, bg="lightgray", width=1200, height=860, highlightthickness=0)
+
+    canvas.pack(side="right", fill="both", expand=True)
     canvas.pack_propagate(False)
 
     def save():
@@ -736,47 +787,58 @@ def get_user_settings():
     
     def load():
         delete()
-        data = loading.load()
+        data = loading.load(auto=False)
         draw_load(data)
 
+    def load_default():
+        data = loading.load(auto=True)
+        draw_load(data)
+
+
     def delete():
-        global zones_data
+        
+        global zones_data, selected_zone_instance, selected_object, selected_line
+        global connect_start_zone, is_dragging_object, is_dragging_zone
 
         canvas.delete("all")
         zones_data = copy.deepcopy(zones_data_default)
+
+        selected_zone_instance = None
+        selected_object = None
+        selected_line = None
+        connect_start_zone = None
+        is_dragging_object = False
+        is_dragging_zone = False
+
         print("Uživatel smazal canvas")
 
-    # Pravý sloupec
-    frame_right = tk.Frame(content_frame, width=200, height=800, bg="white")
-    frame_right.pack(side="left", fill="y", padx=(20,0), pady=5)
-    frame_right.pack_propagate(False)
-    tk.Label(frame_right, text="Objekty", font=("Arial", 25, "bold"), bg="white", fg="black").pack(pady=10)
+    #EDITOR BUTTONS
+    editor_buttons_frame = tk.Frame(editor_frame, bg="black")
+    editor_buttons_frame.pack(pady=20)
 
-    buttons_frame = tk.Frame(editor_frame, bg="black")
-    buttons_frame.pack(pady=20)
-
-    back_button = tk.Button(buttons_frame, text="Zpět", command=go_back, font=("Arial", 20), bg="blue", fg="white", padx=20, pady=10, width=10, height=1)
+    back_button = blue_button(editor_buttons_frame, "Zpět", go_back)
     back_button.pack(side="left", padx=10)
 
-    save_button = tk.Button(buttons_frame, text="Uložit", command=save, font=("Arial", 20), bg="blue", fg="white", padx=20, pady=10, width=10, height=1)
+    save_button = blue_button(editor_buttons_frame, "Uložit", save)
     save_button.pack(side="left", padx=10)
 
-    save_button = tk.Button(buttons_frame, text="Načíst", command=load, font=("Arial", 20), bg="blue", fg="white", padx=20, pady=10, width=10, height=1)
+    save_button = blue_button(editor_buttons_frame, "Načíst", load)
     save_button.pack(side="left", padx=10)
 
-    delete_button = tk.Button(buttons_frame, text="Smazat", command=delete, font=("Arial", 20), bg="blue", fg="white", padx=20, pady=10, width=10, height=1)
+    delete_button = red_button(editor_buttons_frame, "Smazat", delete)
     delete_button.pack(side="left", padx=10)
 
-    print_button = tk.Button(buttons_frame, text="Print Zones data", command=print_zones_data, font=("Arial", 20), bg="blue", fg="white", padx=20, pady=10, width=10, height=1)
+    print_button = blue_button(editor_buttons_frame, "Print Zones data", print_zones_data)
     print_button.pack(side="left", padx=10)
 
-    start_button = tk.Button(buttons_frame, text="Start", command=start, font=("Arial", 20), bg="green", fg="white", padx=20, pady=10, width=10, height=1)
+    start_button = green_button(editor_buttons_frame, "Start", start)
     start_button.pack(side="left", padx=10)
+
 
     objects_for_zone = {
         "Spawn bod": [],
         "Vstupní zóna": ["Pokladna", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek","Stánek s míchanými drinky", "Toitoiky", "Umývárna", "Stoly", "Bankomat", "Výkup kelímků"],
-        "Festivalový areál": ["Podium", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek","Stánek s míchanými drinky", "Toitoiky","Umývárna", "Stoly", "Bankomat", "Merch stan", "Stan na autogramiády", "Dobíjecí stan", "Výkup kelímků"],
+        "Festivalový areál": ["Vstup", "Podium", "Pizza stánek", "Burger stánek", "Gyros stánek", "Grill stánek", "Bel hranolky stánek", "Langoš stánek", "Sladký stánek", "Nealko stánek", "Pivní stánek", "Red Bull stánek","Stánek s míchanými drinky", "Toitoiky","Umývárna", "Stoly", "Bankomat", "Merch stan", "Stan na autogramiády", "Dobíjecí stan", "Výkup kelímků"],
         "Stanové městečko": ["Nealko stánek", "Pivní stánek", "Red Bull stánek","Stánek s míchanými drinky", "Toitoiky", "Sprchy", "Umývárna", "Dobíjecí stan", "Louka na stanování"],
         "Chill zóna": ["Stánek s vodníma dýmkama", "Cigaretový stánek", "Chill stánek", "Nealko stánek","Stánek s míchanými drinky", "Pivní stánek", "Red Bull stánek", "Toitoiky", "Umývárna", "Dobíjecí stan"],
         "Zábavní zóna": ["Bungee-jumping", "Horská dráha", "Lavice", "Kladivo", "Řetizkáč", "Skákací hrad", "Nealko stánek", "Pivní stánek","Stánek s míchanými drinky", "Red Bull stánek", "Bankomat"]
@@ -784,14 +846,13 @@ def get_user_settings():
 
     # Funkce pro výběr objektu
     def select_object(obj_name):
-
         global current_object, object_buttons
 
         if current_object == obj_name:
             current_object = None
 
             for btn in object_buttons.values():
-                btn.config(bg="SystemButtonFace", fg="black")
+                btn.configure(fg_color="white", text_color="black")
 
             print(f"Objekt {obj_name} odvybrán")
             return
@@ -800,11 +861,11 @@ def get_user_settings():
         print(f"Vybrán objekt: {current_object}")
 
         for name, btn in object_buttons.items():
-            btn.config(bg="SystemButtonFace", fg="black")
+            btn.configure(fg_color="white", text_color="black")
 
         if obj_name in object_buttons:
-            object_buttons[obj_name].config(bg="lightblue", fg="black")
-
+            object_buttons[obj_name].configure(fg_color="yellow", text_color="black")
+                                    
     # Funkce pro výběr zóny (typ)
     def select_zone(zone_name):
 
@@ -814,25 +875,197 @@ def get_user_settings():
 
         current_object = None
         for name, btn in zone_buttons.items():
-            btn.config(bg="SystemButtonFace", fg="black")
+            btn.configure(fg_color="white", text_color="black")
 
-        zone_buttons[zone_name].config(bg="yellow", fg="black")
+        zone_buttons[zone_name].configure(fg_color="yellow", text_color="black")
 
         # Vyčistí pravý panel a naplní objekty pro tento typ zóny
         for widget in frame_right.winfo_children():
             widget.destroy()
 
-        tk.Label(frame_right, text="Objekty", font=("Arial", 25, "bold"), bg="white", fg="black").pack(pady=10)
+        tk.Label(frame_right, text="Objekty", font=("Arial", 15, "bold"), bg="white", fg="black").pack(pady=5)
+
+        pizza = ctk.CTkImage(light_image=Image.open("data/emojis/pizza.png"), size=(23, 23))
+        ticket_booth = ctk.CTkImage(light_image=Image.open("data/emojis/dollar.png"), size=(23, 23))
+        beer = ctk.CTkImage(light_image=Image.open("data/emojis/beer.png"), size=(23, 23))
+        hamburger = ctk.CTkImage(light_image=Image.open("data/emojis/hamburger.png"), size=(23, 23))
+        grill = ctk.CTkImage(light_image=Image.open("data/emojis/cut_of_meat.png"), size=(23, 23))
+        gyros = ctk.CTkImage(light_image=Image.open("data/emojis/burrito.png"), size=(23, 23))
+        langos = ctk.CTkImage(light_image=Image.open("data/emojis/flatbread.png"), size=(23, 23))
+        fries = ctk.CTkImage(light_image=Image.open("data/emojis/fries.png"), size=(23, 23))
+        sweet = ctk.CTkImage(light_image=Image.open("data/emojis/doughnut.png"), size=(23, 23))
+        atm = ctk.CTkImage(light_image=Image.open("data/emojis/atm.png"), size=(23, 23))
+        battery = ctk.CTkImage(light_image=Image.open("data/emojis/battery.png"), size=(23, 23))
+        tables = ctk.CTkImage(light_image=Image.open("data/emojis/chair.png"), size=(23, 23))
+        soft_drinks = ctk.CTkImage(light_image=Image.open("data/emojis/cup_with_straw.png"), size=(23, 23))
+        wc = ctk.CTkImage(light_image=Image.open("data/emojis/restroom.png"), size=(23, 23))
+        shower = ctk.CTkImage(light_image=Image.open("data/emojis/shower.png"), size=(23, 23))
+        cigars = ctk.CTkImage(light_image=Image.open("data/emojis/smoking.png"), size=(23, 23))
+        washing = ctk.CTkImage(light_image=Image.open("data/emojis/soap.png"), size=(23, 23))
+        cocktails = ctk.CTkImage(light_image=Image.open("data/emojis/tropical_drink.png"), size=(23, 23))
+        water_pipe = ctk.CTkImage(light_image=Image.open("data/emojis/bubbles.png"), size=(23, 23))
+        stage = ctk.CTkImage(light_image=Image.open("data/emojis/guitar.png"), size=(23, 23))
+        signing = ctk.CTkImage(light_image=Image.open("data/emojis/writing_hand.png"), size=(23, 23))
+        merch = ctk.CTkImage(light_image=Image.open("data/emojis/shirt.png"), size=(23, 23))
+        shot = ctk.CTkImage(light_image=Image.open("data/emojis/shot.png"), size=(23, 23))
+        chill = ctk.CTkImage(light_image=Image.open("data/emojis/beach.png"), size=(23, 23))
+        rollercoaster = ctk.CTkImage(light_image=Image.open("data/emojis/roller_coaster.png"), size=(23, 23))
+        jumping_castle = ctk.CTkImage(light_image=Image.open("data/emojis/jumping_castle.png"), size=(23, 23))
+        hammer = ctk.CTkImage(light_image=Image.open("data/emojis/hammer.png"), size=(23, 23))
+        carousel = ctk.CTkImage(light_image=Image.open("data/emojis/carousel.png"), size=(23, 23))
+        bungeejumping = ctk.CTkImage(light_image=Image.open("data/emojis/bungeejumping.png"), size=(23, 23))
+        bench = ctk.CTkImage(light_image=Image.open("data/emojis/bench.png"), size=(23, 23))
+        cup_return = ctk.CTkImage(light_image=Image.open("data/emojis/back.png"), size=(23, 23))
+        tent = ctk.CTkImage(light_image=Image.open("data/emojis/tent.png"), size=(22, 22))
+        door = ctk.CTkImage(light_image=Image.open("data/emojis/door.png"), size=(22, 22))
 
         object_buttons.clear()
         for obj in objects_for_zone.get(zone_name, []):
-            btn = tk.Button(frame_right, text=obj, font=("Arial", 8), height=1, width=25, command=lambda o=obj: select_object(o))
-            btn.pack(pady=5)
+
+            match obj:
+
+                case "Louka na stanování":
+                    img = tent
+                    text = "Louka na stanování"
+
+                case "Chill stánek":
+                    img = chill
+                    text = "Chill stánek"
+
+                case "Skákací hrad":
+                    img = jumping_castle
+                    text = "Skákací hrad"
+
+                case "Horská dráha":
+                    img = rollercoaster
+                    text = "Horská dráha"
+
+                case "Kladivo":
+                    img = hammer
+                    text = "Kladivo"
+                case "Řetizkáč":
+                    img = carousel
+                    text = "Řetizkáč"
+
+                case "Bungee-jumping":
+                    img = bungeejumping
+                    text = "Bungee Jumping"
+
+                case "Lavice":
+                    img = bench
+                    text = "Lavice"
+
+                case "Výkup kelímků":
+                    img = cup_return
+                    text = "Výkup kelímků"
+
+                case "Pizza stánek":
+                    img = pizza
+                    text = "Pizza"
+
+                case "Pokladna":
+                    img = ticket_booth
+                    text = "Pokladna"
+
+                case "Burger stánek":
+                    img = hamburger
+                    text = "Burgery"
+
+                case "Gyros stánek":
+                    img = gyros
+                    text = "Gyros"
+                
+                case "Grill stánek":
+                    img = grill
+                    text = "Grill"
+                
+                case "Bel hranolky stánek":
+                    img = fries
+                    text = "Belgické hranolky"
+
+                case "Langoš stánek":
+                    img = langos
+                    text = "Langoše"
+
+                case "Pivní stánek":
+                    img = beer
+                    text = "Pivo"
+
+                case "Sladký stánek":
+                    img = sweet
+                    text = "Sladké"
+                
+                case "Bankomat":
+                    img = atm    
+                    text = "Bankomat"
+
+                case "Dobíjecí stan":
+                    img = battery
+                    text = "Nabíjení telefonů"
+
+                case "Stoly":
+                    img = tables
+                    text = "Stoly"
+
+                case "Nealko stánek":
+                    img = soft_drinks
+                    text = "Nealko"
+
+                case "Toitoiky":
+                    img = wc
+                    text = "Toitoiky"
+
+                case "Umývárna":
+                    img = washing
+                    text = "Umývárna"
+
+                case "Sprchy":
+                    img = shower
+                    text = "Sprchy"
+
+                case "Cigaretový stánek":
+                    img = cigars
+                    text = "Cigarety"
+                
+                case "Stánek s míchanými drinky":
+                    img = cocktails
+                    text = "Míchané drinky"
+
+                case "Stánek s vodníma dýmkama":
+                    img = water_pipe
+                    text = "Vodní dýmka"
+
+                case "Podium":
+                    img = stage
+                    text = "Pódium"
+
+                case "Stan na autogramiády":
+                    img = signing
+                    text = "Autogramiády"
+
+                case "Merch stan":
+                    img = merch
+                    text = "Merch"
+                case "Red Bull stánek":
+                    img = shot
+                    text = "RedBull"
+
+                case "Vstup":
+                    img = door
+                    text = "Vstup"
+
+                case _:
+                    img = None
+                    text = obj
+
+        
+            btn = object_button(frame_right, text, obj, img)
+            btn.pack(pady=3)
             object_buttons[obj] = btn
 
     # Vytvoření tlačítek pro zóny
     for zone_name in zones_data.keys():
-        btn = tk.Button(frame_left, text=zone_name, font=("Arial", 13), width=15, command=lambda z=zone_name: select_zone(z))
+        btn = zone_button(frame_left, zone_name)
         btn.pack(pady=5)
         zone_buttons[zone_name] = btn
 
@@ -843,15 +1076,19 @@ def get_user_settings():
 
     # Funkce pro výběr režimu
     current_mode = None
+
     def select_mode(mode_name):
         global current_mode
         current_mode = mode_name
+
         print(f"Režim vybrán: {current_mode}")
+
         # Reset barvy všech tlačítek
         for btn in mode_buttons.values():
-            btn.config(bg="white", fg="black")
+            btn.configure(fg_color="white", text_color="black")
+
         # Zvýraznit vybraný
-        mode_buttons[mode_name].config(bg="lightblue", fg="black")
+        mode_buttons[mode_name].configure(fg_color="yellow", text_color="black")
 
     # Tlačítka pro režimy
     mode_buttons = {}
@@ -869,7 +1106,7 @@ def get_user_settings():
         lbl.pack()
 
         # tlačítko
-        btn = tk.Button(btn_frame, text=symbol, font=("Arial", 14, "bold"), width=3, height=2, command=lambda m=mode_name: select_mode(m))
+        btn = mode_button(btn_frame, symbol)
         btn.pack()
         mode_buttons[mode_name] = btn
     
@@ -903,28 +1140,140 @@ def get_user_settings():
 
         return None
 
+#-------------------------------------------------------------------------------EDITOR - SIMULATION MODE---------------------------------------------------------------------------------------------------
+
+    left_simulation_container = left_simulation_container = tk.Frame(content_frame, bg="black")
+    left_simulation_container.pack_forget()
+
+    frame_up_simulation = tk.Frame(left_simulation_container, width=400, height=430, bg="white", bd=2, relief="ridge")
+    frame_up_simulation.pack_propagate(False)
+    frame_up_simulation.pack(fill="x")
+
+    tk.Label(frame_up_simulation, text="Detaily o stánku: ", font=("Arial", 15, "bold"), bg="white", fg="black").pack(pady=5)
+    
+    
+    frame_down_simulation = tk.Frame(left_simulation_container, width=400, height=430, bg="white", bd=2, relief="ridge")
+    frame_down_simulation.pack_propagate(False)
+    frame_down_simulation.pack(fill="x")
+
+    tk.Label(frame_down_simulation, text="Aktuální výpisy:", font=("Arial", 15, "bold"), bg="white", fg="black").pack(pady=5)
+
+    #SIMULATION BUTTONS
+
+    simulation_buttons_frame = tk.Frame(editor_frame, bg="black")
+    simulation_buttons_frame.pack_forget()
+
+    # COUNTER ČÁST
+    value = 1
+
+    def increase():
+        nonlocal value
+        value += 1
+        jump_label.configure(text=str(value))
+
+    def decrease():
+        nonlocal value
+
+        if value > 1:
+            value -= 1
+            jump_label.configure(text=str(value))
+
+    simulation_counter_frame = tk.Frame(simulation_buttons_frame, bg="black")
+    simulation_counter_frame.pack(side="left")
+
+    jump_label_text = ctk.CTkLabel(simulation_counter_frame, text="Posunout simulaci o čas",font=("Arial", 20, "bold"), width=50)
+    jump_label_text.pack(side="top", pady=8)
+
+    minus_button = blue_button_small(simulation_counter_frame, "-", decrease)
+    minus_button.pack(side="left")
+
+    jump_label = ctk.CTkLabel(simulation_counter_frame, text=str(value), font=("Arial", 20, "bold"), width=50)
+    jump_label.pack(side="left")
+
+    plus_button = blue_button_small(simulation_counter_frame, "+", increase)
+    plus_button.pack(side="left")
+
+    back_button = green_button_small(simulation_counter_frame, "▶", "next_step")
+    back_button.pack(side="left", padx=10)
+
+
+    # DO DALŠÍ UDÁLOSTI
+
+    simulation_next_event_buttons_frame = tk.Frame(simulation_buttons_frame, bg="black")
+    simulation_next_event_buttons_frame.pack(side="left", padx=30)
+
+    next_event_label = ctk.CTkLabel(simulation_next_event_buttons_frame, text="Posunout simulaci do další události", font=("Arial", 20, "bold"), width=50)
+    next_event_label.pack(side="top", pady=8)
+
+    back_button = green_button_small(simulation_next_event_buttons_frame, "▶", "next_step")
+    back_button.pack(anchor="center")
+
+    stop_simulation_frame = tk.Frame(simulation_buttons_frame, bg="black")
+    stop_simulation_frame.pack(side="left", padx=30)
+
+    empty_label = ctk.CTkLabel(stop_simulation_frame, text=" ", font=("Arial", 20, "bold"))
+    empty_label.pack(side="top", pady=8)
+
+    stop_simulation_button = red_button_small(stop_simulation_frame, "Ukončit", stop_simulation)
+    stop_simulation_button.pack(side="left", padx=30)
+
+    #stop_simulation_button = red_button(simulation_buttons_frame, "Ukončit", stop_simulation)
+    #stop_simulation_button.pack(side="left", padx=30)
+
+#--------------------------------------------------------------------------------KÓDY EDITORU-------------------------------------------------------------
+    
+    
+    entrance_id = 0
+
     # Funkce pro vkládání objektů
     def place_object(event):
         global current_object, current_zone, zones_data, current_mode
+        nonlocal entrance_id
 
         if current_mode != "add":
             print("Zony a objekty lze přidávat pouze v režimu +")
             return
 
-    
+
         if current_zone is None or current_object is None:
             print("chyba: není vybrána zóna nebo objekt")
             return
-
+        
+        
         x, y = event.x, event.y
 
         instance = find_zone_instance_for_point(current_zone, x, y)
 
-        if instance is None:
+        if current_object == "Vstup":
+            # najdeme festivalový areál
+            fest_zone = None
+            for inst in zones_data["Festivalový areál"]["instances"]:
+                fest_zone = inst
+                break
+
+            if fest_zone is None:
+                print("Chyba: festivalový areál neexistuje.")
+                return
+
+            # vstup musí být na hraně festivalového areálu
+            if not is_on_edge(fest_zone, x, y):
+                print("Vstup musí být umístěn na hranu festivalového areálu.")
+                return
+
+            # vstup se ukládá do festivalové zóny
+            instance = fest_zone
+
+        elif instance is None:
             print("chyba: objekt musí být uvnitř existující zóny")
             return
-
+        
         obj_data = create_object(instance, current_object, x, y)
+
+        if current_object == "Vstup":
+            entrance_id += 1
+            obj_data["id"] = entrance_id
+            
+
         instance.setdefault("objects", []).append(obj_data)
 
     def create_object(instance, current_object, x, y, x1=None, y1=None, x2=None, y2=None):
@@ -1031,9 +1380,9 @@ def get_user_settings():
 
                         x1, y1, x2, y2 = coords
                         # jednoduchá tolerance kliknutí
-                        if abs(event.x - (x1 + x2) / 2) < 10 and abs(event.y - (y1 + y2) / 2) < 10:
+                        if is_near_line(event.x, event.y, x1, y1, x2, y2, tol=5):
                             clicked_line = line
-                            break
+
                     if clicked_line:
                         break
                 if clicked_line:
@@ -1062,9 +1411,6 @@ def get_user_settings():
 
             if clicked_obj:
 
-                if clicked_obj["object"] == "vstup":
-                    return
-
                 print("[CLICK] Objekt nalezen:", clicked_obj.get("object", "?"))
 
                 last_x, last_y = event.x, event.y
@@ -1087,8 +1433,8 @@ def get_user_settings():
 
                 print(f"[SELECT]Označený objekt: {clicked_obj['object']}")
 
-                if clicked_obj["object"] != "vstup":
-                    is_dragging_object = True
+                
+                is_dragging_object = True
 
                 print("[SELECT] Dragging aktivován")
 
@@ -1111,7 +1457,7 @@ def get_user_settings():
                 if clicked_zone: break
 
             if clicked_zone:
-            
+
                 if selected_object:
                     canvas.itemconfig(selected_object["canvas_ids"][1], outline="black", width=1)
                     selected_object = None
@@ -1131,7 +1477,7 @@ def get_user_settings():
 
                     if selected_zone_instance["type"] == "Festivalový areál":
                         for obj in selected_zone_instance.get("objects", []):
-                            if obj.get("object") == "vstup":
+                            if obj.get("object") == "Vstup":
                                 return
                               
                     selected_zone_instance["resize_info"] = resize_info
@@ -1140,75 +1486,210 @@ def get_user_settings():
                     return
 
             # pokud se nenašel ani objekt ani zóna tak se odznačí vše
-            if not clicked_obj and not clicked_zone:
+            if not clicked_obj and not clicked_zone and not clicked_line:
                 if selected_object:
                     canvas.itemconfig(selected_object["canvas_ids"][1], outline="black", width=1)
                     selected_object = None
                 if selected_zone_instance:
                     canvas.itemconfig(selected_zone_instance["rect_id"], outline="blue", width=3)
                     selected_zone_instance = None
+                if selected_line:
+                    canvas.itemconfig(selected_line["id"], width=2)  # reset tloušťky
+                    selected_line = None
                 print("Výběr zrušen")
 
         elif current_mode == "connect":
-            clicked_zone = None
+            
+            handle_connect_click(event)
 
-            # najde zónu pod kliknutím
+    def handle_connect_click(event):
+        """Obslouží connect mód."""
+        global connect_start_zone
 
-            for zone_type, zone_info in zones_data.items():
-                for inst in zone_info["instances"]:
-                    left, top, right, bottom = inst["left"], inst["top"], inst["right"], inst["bottom"]
-                    if left <= event.x <= right and top <= event.y <= bottom:
-                        clicked_zone = inst
-                        break
-                if clicked_zone: break
+        clicked_obj, obj_zone = find_clicked_object(event)
 
+        # zjistíme, jestli jsme klikli na zónu
+        clicked_zone = None
+        for zone_type, zone_info in zones_data.items():
+            for inst in zone_info["instances"]:
+                if inst["left"] <= event.x <= inst["right"] and inst["top"] <= event.y <= inst["bottom"]:
+                    clicked_zone = inst
+                    break
             if clicked_zone:
+                break
 
-                if connect_start_zone is None:
-
-                    # první zóna kliknuta
-                    connect_start_zone = clicked_zone
-                    canvas.itemconfig(clicked_zone["rect_id"], outline="green", width=4)
-                    print(f"Connect start: {clicked_zone['type']}")
-
-                else:
-                    # druhá zóna kliknuta → nakreslíme čáru
-                    z1 = connect_start_zone
-                    z2 = clicked_zone
-
-                    # nejbližší hrany (x, y) z1 → z2
-                    x1, y1 = closest_point_on_zone(z1, z2)
-                    x2, y2 = closest_point_on_zone(z2, z1)
-
-                    for line in z1["lines"]:
-                        if line["other_zone"] == z2:
-                            return 
-
-                    line_id = canvas.create_line(x1, y1, x2, y2, fill="black", width=2)
-                                        
-                    # uloží čáru do obou zón
-                    z1["lines"].append({"id": line_id, "other_zone": z2})
-                    z2["lines"].append({"id": line_id, "other_zone": z1})
-
-                    # reset
-                    canvas.itemconfig(connect_start_zone["rect_id"], outline="blue", width=3)
-                    connect_start_zone = None
-                    print(f"Connect vytvořen mezi {z1['type']} a {z2['type']}")
-
-                    if z1["type"] == "Festivalový areál":  #opravit bug s více vstupama na jednom místě
-                        objects = z1["objects"]
-                        objects.append(create_object(z1, "vstup", x1, y1))
-                    
-                    if z2["type"] == "Festivalový areál":
-                        objects = z2["objects"]
-                        objects.append(create_object(z2, "vstup", x2, y2))
+        # nic nekliknuto → reset
+        if not clicked_zone and not clicked_obj:
+            if connect_start_zone and "rect_id" in connect_start_zone:
+                canvas.itemconfig(connect_start_zone["rect_id"], outline="blue", width=3)
+            connect_start_zone = None
             return
 
-        else:
-            print("Objekty a zony lze přidat pouze v režimu +")
+        # pokud ještě není start
+        if connect_start_zone is None:
+            if clicked_obj and clicked_obj.get("object") == "Vstup":
+                if "id" not in clicked_obj:
+                    clicked_obj["id"] = canvas.create_oval(0,0,0,0)
+                connect_start_zone = clicked_obj
+                print("CONNECT START = vstup", clicked_obj.get("id"))
+            elif clicked_zone:
+                connect_start_zone = clicked_zone
+                canvas.itemconfig(clicked_zone["rect_id"], outline="green", width=4)
+                print("CONNECT START = zone", clicked_zone["type"])
             return
 
+        # máme první klik → teď spojujeme
+        first = connect_start_zone
+        second_zone = clicked_zone
+        second_obj = clicked_obj
+
+        # -------- start = vstup --------
+        if isinstance(first, dict) and first.get("object") == "Vstup":
+            if second_zone:  # klik na zónu
+                connect_entry_to_zone(first, second_zone)
+            else:
+                print("Špatný klik, vstup → něco nekliknutého")
+
+        # -------- start = zóna --------
+        elif isinstance(first, dict) and "type" in first:
+            if second_obj and second_obj.get("object") == "Vstup":  # klik na vstup
+                connect_zone_to_entry(first, second_obj)
+            elif second_zone:  # klik na jinou zónu
+                connect_zone_to_zone(first, second_zone)
+            else:
+                print("Špatný klik, zóna → něco nekliknutého")
+
+        # nakonec reset + odznačení start zóny
+        if isinstance(first, dict) and "rect_id" in first:
+            canvas.itemconfig(first["rect_id"], outline="blue", width=3)
+
+        # nakonec reset
+        connect_start_zone = None
+        print("CONNECT DONE")
+
+
+    def connect_entry_to_zone(vstup_obj, target_zone):
+        """Vstup → zóna."""
+        vstup_zone = None
+        for zt, zi in zones_data.items():
+            for inst in zi["instances"]:
+                if vstup_obj in inst.get("objects", []):
+                    vstup_zone = inst
+                    break
+            if vstup_zone:
+                break
+        if not target_zone or not vstup_zone:
+            print("Špatný klik, vstup → zóna selhalo")
+            return
+
+        x1, y1 = vstup_obj["x"], vstup_obj["y"]
+        x2, y2 = center_of_closest_edge(target_zone, x1, y1)
+
+        line_id = canvas.create_line(x1, y1, x2, y2, fill="black", width=2)
+        vstup_obj["locked"] = True
+
+        # uložíme do lines
+        vstup_zone.setdefault("lines", []).append({
+            "id": line_id,
+            "other_zone": {"type": target_zone["type"], "entry": {"id": vstup_obj["id"], "x": x1, "y": y1}}
+        })
+        target_zone.setdefault("lines", []).append({
+            "id": line_id,
+            "other_zone": {"type": vstup_zone["type"], "entry": {"id": vstup_obj["id"], "x": x1, "y": y1}}
+        })
+
+
+    def connect_zone_to_entry(start_zone, vstup_obj):
+        """Zóna → vstup."""
+        vstup_zone = None
+        for zt, zi in zones_data.items():
+            for inst in zi["instances"]:
+                if vstup_obj in inst.get("objects", []):
+                    vstup_zone = inst
+                    break
+            if vstup_zone:
+                break
+        if not vstup_zone:
+            print("Špatný klik, zóna → vstup selhalo")
+            return
+
+        x2, y2 = vstup_obj["x"], vstup_obj["y"]
+        x1, y1 = center_of_closest_edge(start_zone, x2, y2)
+
+        line_id = canvas.create_line(x1, y1, x2, y2, fill="black", width=2)
+        vstup_obj["locked"] = True
+
+        start_zone.setdefault("lines", []).append({
+            "id": line_id,
+            "other_zone": {"type": vstup_zone["type"], "entry": {"id": vstup_obj["id"], "x": x2, "y": y2}}
+        })
+        vstup_zone.setdefault("lines", []).append({
+            "id": line_id,
+            "other_zone": {"type": start_zone["type"], "entry": {"id": vstup_obj["id"], "x": x2, "y": y2}}
+        })
+
+
+    def connect_zone_to_zone(z1, z2):
+        """Zóna → zóna."""
+        for line in z1.get("lines", []):
+            if line["other_zone"]["type"] == z2["type"]:
+                return
+
+        x1, y1 = closest_point_on_zone(z1, z2)
+        x2, y2 = closest_point_on_zone(z2, z1)
+        line_id = canvas.create_line(x1, y1, x2, y2, fill="black", width=2)
+
+        z1.setdefault("lines", []).append({"id": line_id, "other_zone": z2})
+        z2.setdefault("lines", []).append({"id": line_id, "other_zone": z1})
+        canvas.itemconfig(z1["rect_id"], outline="blue", width=3)
+
+
+
+    def center_of_closest_edge(zone, x, y):
+        left, top, right, bottom = zone["left"], zone["top"], zone["right"], zone["bottom"]
+
+        centers = [
+            ((left + right) / 2, top),          # horní hrana
+            ((left + right) / 2, bottom),       # dolní hrana
+            (left, (top + bottom) / 2),         # levá hrana
+            (right, (top + bottom) / 2),        # pravá hrana
+        ]
+
+        best = min(centers, key=lambda p: (p[0] - x)**2 + (p[1] - y)**2)
+        return best
+
+    def is_on_edge(zone, x, y, tolerance=5):
+        left, top, right, bottom = zone["left"], zone["top"], zone["right"], zone["bottom"]
+
+        if abs(y - top) <= tolerance and left <= x <= right:
+            return True
+
+        if abs(y - bottom) <= tolerance and left <= x <= right:
+            return True
+
+        if abs(x - left) <= tolerance and top <= y <= bottom:
+            return True
         
+        if abs(x - right) <= tolerance and top <= y <= bottom:
+            return True
+
+        return False
+    
+    def is_near_line(x, y, x1, y1, x2, y2, tol=5):
+        """Vrátí True, pokud je bod (x, y) blízko úsečky (x1, y1, x2, y2) do tolerance tol."""
+        # pokud je čára vertikální/ horizontální zvlášť
+        if x1 == x2 and y1 == y2:
+            return abs(x - x1) <= tol and abs(y - y1) <= tol
+        
+        # vzdálenost bodu od čáry (úsečky) podle vektorové projekce
+        # parametr t pro projekci bodu na čáru
+        dx, dy = x2 - x1, y2 - y1
+        t = ((x - x1) * dx + (y - y1) * dy) / (dx*dx + dy*dy)
+        t = max(0, min(1, t))  # omezení na úsečku
+        nearest_x = x1 + t * dx
+        nearest_y = y1 + t * dy
+        dist = ((x - nearest_x)**2 + (y - nearest_y)**2)**0.5
+        return dist <= tol
 
     def on_drag(event):
         """Aktualizace při tažení myší – kreslení zóny nebo přesun objektu."""
@@ -1226,10 +1707,11 @@ def get_user_settings():
 
         # pokud je vybraný objekt, posunem ho
         if selected_object and current_mode == "edit" and is_dragging_object:
-            
-             # zjistím zónu, ve které je objekt
-            parent_zone = None
+            if selected_object.get("locked"):
+                return
 
+            # najdeme zónu, do které objekt patří
+            parent_zone = None
             for zone_type, zone_info in zones_data.items():
                 for inst in zone_info["instances"]:
                     if selected_object in inst.get("objects", []):
@@ -1238,16 +1720,46 @@ def get_user_settings():
                 if parent_zone:
                     break
 
+            # --- SPECIÁLNÍ LOGIKA PRO VSTUP ---
+            if selected_object["object"] == "Vstup":
+
+                # vypočítáme nové souřadnice středu po posunu
+                new_x = selected_object["x"] + dx
+                new_y = selected_object["y"] + dy
+
+                # vstup smí být jen na festivalovém areálu
+                if parent_zone["type"] != "Festivalový areál":
+                    print("Vstup lze přesouvat pouze na festivalovém areálu.")
+                    return
+
+                # musí zůstat na hraně
+                if not is_on_edge(parent_zone, new_x, new_y):
+                    print("Vstup lze přesouvat pouze po hraně festivalového areálu.")
+                    return
+
+                # pokud prošel kontrolou → posuneme ho
+                for cid in selected_object.get("canvas_ids", []):
+                    canvas.move(cid, dx, dy)
+
+                for extra in selected_object.get("extra", []):
+                    for cid in extra.get("canvas_ids", []):
+                        canvas.move(cid, dx, dy)
+
+                selected_object["x"] += dx
+                selected_object["y"] += dy
+
+                last_x, last_y = event.x, event.y
+                return
+            # --- KONEC SPECIÁLNÍ LOGIKY PRO VSTUP ---
+
+            # --- BĚŽNÉ OBJEKTY ---
             if parent_zone:
-                # souřadnice zóny
                 zone_left = parent_zone["left"]
                 zone_top = parent_zone["top"]
                 zone_right = parent_zone["right"]
                 zone_bottom = parent_zone["bottom"]
 
-                # bbox objektu
-                obj_bbox = canvas.bbox(selected_object["canvas_ids"][1])  # [x1, y1, x2, y2]
-                obj_left, obj_top, obj_right, obj_bottom = obj_bbox
+                obj_left, obj_top, obj_right, obj_bottom = canvas.bbox(selected_object["canvas_ids"][1])
 
                 # omezení dx, dy, aby objekt nevyskočil z hranic zóny
                 if obj_left + dx < zone_left:
@@ -1259,31 +1771,20 @@ def get_user_settings():
                 if obj_bottom + dy > zone_bottom:
                     dy = zone_bottom - obj_bottom
 
-
-            print("[DRAG] Tahám objekt:", selected_object.get("object"))
-            print("    dx =", dx, "dy =", dy)
-
+            # posun běžného objektu
             for cid in selected_object.get("canvas_ids", []):
                 canvas.move(cid, dx, dy)
 
-            # posun i případných extra prvků 
             for extra in selected_object.get("extra", []):
                 for cid in extra.get("canvas_ids", []):
                     canvas.move(cid, dx, dy)
 
-            # aktualizace uložených souřadnic (střed)
-            if "x" in selected_object and "y" in selected_object:
-                selected_object["x"] += dx
-                selected_object["y"] += dy
-            else:
-                geom = canvas.coords(selected_object["canvas_ids"][1])
-                selected_object["x"] = (geom[0] + geom[2]) / 2
-                selected_object["y"] = (geom[1] + geom[3]) / 2
+            selected_object["x"] += dx
+            selected_object["y"] += dy
 
             last_x, last_y = event.x, event.y
-           
             return
-        
+
         # pokud budeme měnit velikost zony
         if selected_zone_instance and current_mode == "edit" and is_dragging_zone:
             
@@ -1307,6 +1808,16 @@ def get_user_settings():
                     selected_zone_instance["top"] += dy
                 if resize_info["bottom"]:
                     selected_zone_instance["bottom"] += dy
+
+                l = selected_zone_instance["left"]
+                t = selected_zone_instance["top"]
+                r = selected_zone_instance["right"]
+                b = selected_zone_instance["bottom"]
+
+                selected_zone_instance["left"] = min(l, r)
+                selected_zone_instance["right"] = max(l, r)
+                selected_zone_instance["top"] = min(t, b)
+                selected_zone_instance["bottom"] = max(t, b)
 
                 other_zones = []
                 for zone_type, zone_info in zones_data.items():
@@ -1407,6 +1918,13 @@ def get_user_settings():
 
 
     def draw_zone(zone_instance):
+        zone_instance["resize_info"] = {
+            "left": False,
+            "right": False,
+            "top": False,
+            "bottom": False
+        }
+
         left = zone_instance["left"]
         top = zone_instance["top"]
         right = zone_instance["right"]
@@ -1419,25 +1937,19 @@ def get_user_settings():
         zone_instance["rect_id"] = rect_id
         zone_instance["label_id"] = label_id
         zone_instance["canvas_ids"] = [rect_id, label_id]
-    
+
+        return {
+        "rect_id": rect_id,
+        "label_id": label_id,
+        "canvas_ids": [rect_id, label_id]
+        }
 
 
     def delete_selected(event=None):
         global selected_zone_instance, selected_object, selected_line
 
-        def delete_entry_from_festival(festival_zone):
-            """Smaže objekt vstup v zóně festivalového areálu."""
-            for obj in festival_zone.get("objects", []):
-                if obj.get("object") == "vstup":
-                    for cid in obj.get("canvas_ids", []):
-                        canvas.delete(cid)
-                    festival_zone["objects"].remove(obj)
-                    print("Vstup smazán z festivalového areálu")
-                    break
-
         if selected_object:
-            if selected_object["object"] == "vstup":
-                return 
+            
             # smažeme z canvasu
             extra = selected_object.get("extra", [])
             for e in extra:
@@ -1452,48 +1964,59 @@ def get_user_settings():
                         inst["objects"].remove(selected_object)
             selected_object = None
             print("Objekt smazán")
-            return
 
         if selected_line:
-            canvas.delete(selected_line["id"])
-
-            for zone_type, zone_info in zones_data.items():
-                for zone in zone_info["instances"]:
-                    if selected_line in zone.get("lines", []):
-                        zone["lines"].remove(selected_line)
-
-                        # pokud je druhá zóna festivalový areál, smaže vstup
-                        other_zone = selected_line.get("other_zone")
-                        if other_zone and other_zone.get("type") == "Festivalový areál":
-                            delete_entry_from_festival(other_zone)
-
-            selected_line = None
-            print("Propojení smazáno")
-            return
+            delete_line(selected_line["id"])
 
         if selected_zone_instance:
-            # smažeme všechny canvas objekty spojené se zónou
-            for cid in selected_zone_instance.get("canvas_ids", []):
-                canvas.delete(cid)
-            for obj in selected_zone_instance.get("objects", []):
-                for cid in obj.get("canvas_ids", []):
-                    canvas.delete(cid)
-            for line in selected_zone_instance.get("lines", []):
-                canvas.delete(line["id"])
-                other_zone = line["other_zone"]
-                if other_zone and "lines" in other_zone:
-                    other_zone["lines"] = [l for l in other_zone["lines"] if l["id"] != line["id"]]
-                    # pokud druhá zóna festivalový areál smažeme vstup
-                    if other_zone.get("type") == "Festivalový areál":
-                        delete_entry_from_festival(other_zone)
-
-            # odstranění z dat
-            zone_type = selected_zone_instance["type"]
-            zones_data[zone_type]["instances"].remove(selected_zone_instance)
+            delete_zone(selected_zone_instance)
             selected_zone_instance = None
-            print("Zóna smazána")
+            return
 
     RESIZE_TOLERANCE = 20 
+
+    def delete_zone(zone):
+        # 1) Smazat grafiku z canvasu
+        canvas.delete(zone["rect_id"])
+        canvas.delete(zone["label_id"])
+
+        # 2) Smazat všechny objekty v zóně
+        for obj in zone.get("objects", []):
+            for cid in obj.get("canvas_ids", []):
+                canvas.delete(cid)
+            for extra in obj.get("extra", []):
+                for cid in extra.get("canvas_ids", []):
+                    canvas.delete(cid)
+
+        # 3) Smazat všechny linky této zóny
+        for line in zone.get("lines", []):
+            canvas.delete(line["id"])
+
+        # 4) Odstranit zónu z dat
+        for zone_type, zone_info in zones_data.items():
+            if zone in zone_info["instances"]:
+                zone_info["instances"].remove(zone)
+                break
+
+    def delete_line(line_id):
+        global zones_data
+
+        # 1) Smazat z canvasu
+        canvas.delete(line_id)
+
+        # 2) Smazat ze všech zón
+        for zone_type, zone_info in zones_data.items():
+            for zone in zone_info["instances"]:
+                zone["lines"] = [ln for ln in zone.get("lines", []) if ln["id"] != line_id]
+
+                # 3) Smazat z objektů (hlavně Vstup)
+                for obj in zone.get("objects", []):
+                    if obj.get("object") == "Vstup":
+                        obj["lines"] = [ln for ln in obj.get("lines", []) if ln["id"] != line_id]
+
+                        # odemknout vstup, pokud už nemá žádné linky
+                        if len(obj["lines"]) == 0:
+                            obj["locked"] = False
 
     def get_resize_direction(zone, x, y):
         """Vrátí (dx, dy) který říká, které hrany/rohy se mají měnit"""
@@ -1539,15 +2062,32 @@ def get_user_settings():
         # najdeme nejbližší bod
         closest = min(edges, key=lambda p: (p[0] - cx2)**2 + (p[1] - cy2)**2)
         return closest
-    
 
     def update_zone_lines(zone):
         for line in zone.get("lines", []):
             other = line["other_zone"]
 
-            # zóna = zone
-            x1, y1 = closest_point_on_zone(zone, other)
-            x2, y2 = closest_point_on_zone(other, zone)
+            # rozlišení spojení přes vstup
+            if "entry" in other:
+                # pevný bod je vstup
+                x2, y2 = other["entry"]["x"], other["entry"]["y"]
+                # zóna – střed hrany nejblíže vstupu
+                x1, y1 = center_of_closest_edge(zone, x2, y2)
+            else:
+                # normální zóna ↔ zóna
+                other_zone = None
+                for zt, zi in zones_data.items():
+                    for inst in zi["instances"]:
+                        if inst["type"] == other["type"]:
+                            other_zone = inst
+                            break
+                    if other_zone:
+                        break
+                if not other_zone:
+                    continue
+                x1, y1 = closest_point_on_zone(zone, other_zone)
+                x2, y2 = closest_point_on_zone(other_zone, zone)
+
             canvas.coords(line["id"], x1, y1, x2, y2)
     
     def zone_overlaps(zone, other_zones):
@@ -1561,54 +2101,89 @@ def get_user_settings():
                 return True
         return False
 
-    def relink_zone_lines():
-        global zones_data
-
+    
+    def find_clicked_object(event):
         for zone_type, zone_info in zones_data.items():
-            for zone in zone_info["instances"]:
-                for line in zone.get("lines", []):
-                    other_name = line.get("other_zone")
+            for inst in zone_info["instances"]:
+                for obj in inst.get("objects", []):
+                    x1, y1, x2, y2 = canvas.coords(obj["canvas_ids"][1])
+                    if x1 <= event.x <= x2 and y1 <= event.y <= y2:
+                        return obj, inst
+        return None, None
 
-                    if isinstance(other_name, dict):
-                        continue
-
-                    target = find_zone_instance_by_type(other_name)
-                    line["other_zone"] = target
-
-    def find_zone_instance_by_type(zone_type):
-        for zt, zi in zones_data.items():
-            if zt == zone_type:
-                return zi["instances"][0] if zi["instances"] else None
-        return None
 
     def draw_load(data):
         global zones_data
         zones_data = data
-        
-        for zone_type, zone_info in data.items():
-            for zone_instance in zone_info["instances"]:
-                draw_zone(zone_instance) 
 
-                objects = zone_instance.get("objects")
-                for obj in objects:
+        # 1) vykreslit zóny
+        for zone_type, zone_info in zones_data.items():
+            for zone_instance in zone_info["instances"]:
+                draw_zone(zone_instance)
+
+                # 2) vykreslit objekty ve zónách
+                for obj in zone_instance.get("objects", []):
                     new_obj = create_object(zone_instance, obj["object"], obj["x"], obj["y"])
                     obj["canvas_ids"] = new_obj["canvas_ids"]
                     obj["extra"] = new_obj.get("extra", [])
+                    if obj["object"] == "Vstup":
+                        obj["locked"] = True
 
         print("Všechny zóny a objekty vykresleny.")
 
-        relink_zone_lines()
+        all_lines = []
 
         for zone_type, zone_info in zones_data.items():
-            for zone in zone_info["instances"]:
-                for line in zone.get("lines", []):
-                    other = line["other_zone"]
-                    x1, y1 = closest_point_on_zone(zone, other)
-                    x2, y2 = closest_point_on_zone(other, zone)
+            for zona1 in zone_info["instances"]:
+                for line in zona1.get("lines", []):
 
-                    line_id = canvas.create_line(x1, y1, x2, y2, fill="black", width=2)
-                    line["id"] = line_id
+                    # najdeme cílovou zónu
+                    target_name = line["other_zone"]["zone"]
+                    zona2 = next(
+                        (inst for zt, zi in zones_data.items() for inst in zi["instances"]
+                        if inst.get("type") == target_name),
+                        None
+                    )
 
+                    # najdeme vstup (pokud existuje)
+                    vstup = None
+                    if "entry" in line:
+                        entry_id = line["entry"]["id"]
+                        vstup = next(
+                            (obj for obj in zona1["objects"]
+                            if obj.get("object") == "Vstup" and obj.get("id") == entry_id),
+                            None
+                        )
+
+                    # uložíme do seznamu
+                    all_lines.append({
+                        "zona1": zona1,
+                        "zona2": zona2,
+                        "vstup": vstup,
+                        "line": line
+                    })
+        
+        for zone_type, zone_info in zones_data.items():
+            for inst in zone_info["instances"]:
+                inst["lines"] = []
+        
+        for item in all_lines:
+            zona1 = item["zona1"]
+            zona2 = item["zona2"]
+            vstup = item["vstup"]
+
+            if not zona1 or not zona2:
+                continue
+
+            if vstup:
+                connect_entry_to_zone(vstup, zona2)
+
+            else:
+                connect_zone_to_zone(zona1, zona2)
+
+    print("Všechny linky vykresleny.")
+
+    print("Všechny čáry vykresleny.")
 
     canvas.bind("<Button-1>", on_click)
     canvas.bind("<B1-Motion>", on_drag)
@@ -1617,5 +2192,4 @@ def get_user_settings():
     root.mainloop()
     
     return settings
-            
                     

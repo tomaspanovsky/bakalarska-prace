@@ -5,7 +5,7 @@ import simulation
 import items
 from outputs.code import logs
 
-def create_visitors(num_visitors, environment, available_foods, available_soft_drinks, available_alcohol_drinks, on_site_ticket_price, pre_sale_ticket_price):
+def create_visitors(num_visitors, environment, available_foods, available_soft_drinks, available_alcohol_drinks, on_site_ticket_price, pre_sale_ticket_price, camping_area_price):
     # funkce na vytvoření návštěvníků:
     id = 0
     id_tent = 0
@@ -15,7 +15,10 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
     
     while num_visitors > 0:       
         group = random.choice(list(source.Groups))
-        
+
+        pre_sale_ticket = random.choice([True, False])
+        pre_sale_tent_area_ticket = random.choice([True, False])
+
         if group == source.Groups.FAMILY and num_visitors < 5: #ošetření rozdělení posledních pár návštěvníků
 
             if num_visitors == 1:
@@ -62,10 +65,12 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                     preference = {"alcohol_consumer" : False, "smoker" : False, "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_soft_drinks else None}
 
                 qualities = {"patience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
-                state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : random.choice([True, False]), "tent_area_ticket": False, "entry_bracelet" : False, "group_sync_timer": 120, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "sociability" : 100, "free_time" : 10}                
+                state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : pre_sale_ticket, "tent_area_ticket": pre_sale_tent_area_ticket, "entry_bracelet" : False, "clean_teeth": True, "last_teeth_clean_time": 0, "clean_hands": True, "low_money": False, "group_mode": True, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "free_time" : 10}                
                 fellows = [id_group_members, group] # první parametr je seznam id lidi ze stejné skupiny, druhý parametr je v jakém uskupení je na festivalu (jednotlivec/skupina/rodina) 
-                inventory = {"tent": None, "phone" : items.Phone(random.randint(50,100)), "plastic_cup": None, "autographs": [], "merch": []}
-
+                phone = items.Phone(environment, random.randint(50,100))
+                environment.process(phone.charging())
+                inventory = {"tent": None, "phone" : [phone, None], "plastic_cup": None, "autographs": [], "merch": []}
+                
                 if gender == source.Gender.MALE:
                     name = random.choice(list(source.names_male))
                     surname = random.choice(list(source.surnames_male))
@@ -82,8 +87,11 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                 if preference["alcohol_consumer"] == True:
                     preference["favourite_alcohol"] = random.choice(available_alcohol_drinks) if available_alcohol_drinks else None
 
-                if state["pre_sale_ticket"] == True:
+                if state["pre_sale_ticket"]:
                     income += pre_sale_ticket_price
+
+                if state["tent_area_ticket"]:
+                    income += camping_area_price
 
                 if num_members == 1:
                     id_tent += 1
@@ -110,14 +118,16 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                 num_visitors -= 1
                 
                 nav = simulation.Visitor(environment, id, name=name, surname=surname, gender=gender, age_category = age_category, age = age, qualities = qualities, state = state, preference = preference, accommodation = accommodation, fellows = fellows, inventory = inventory)
+                environment.process(nav.hygiene_routine())
+                environment.process(nav.cooldown_actions())
                 logs.add_visitor_to_logs(nav)
                 visitors.append(nav)                
                 group_members.append(nav)
 
             if len(group_members) == 1:
-                groups = simulation.Group(environment, group_members, source.Groups.INDIVIDUAL, source.Groups_modes.INDIVIDUALLY)
+                groups = simulation.Group(environment, group_members, source.Groups.INDIVIDUAL)
             else: 
-                groups = simulation.Group(environment, group_members, source.Groups.GROUP, source.Groups_modes.IN_GROUP)
+                groups = simulation.Group(environment, group_members, source.Groups.GROUP)
 
             visitors_groups.append(groups)
             group_members = []
@@ -166,9 +176,11 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                                 
                                 #nedočkavost
                     qualities = {"patience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
-                    state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : random.choice([True, False]), "tent_area_ticket": False, "entry_bracelet" : False, "group_sync_timer": 120,  "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "sociability" : 100, "free_time" : 10}
+                    state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : pre_sale_ticket, "tent_area_ticket": pre_sale_tent_area_ticket, "entry_bracelet" : False, "clean_teeth": True, "last_teeth_clean_time": 0, "clean_hands": True, "low_money": False, "group_mode": True, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "free_time" : 10}
                     preference = {"alcohol_consumer" : random.choice([True, False]), "smoker" : random.choice([True, False]), "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_soft_drinks else None}
-                    inventory = {"tent": None, "phone" : items.Phone(random.randint(50,100)), "plastic_cup": None, "autographs": [], "merch": []}
+                    phone = items.Phone(environment, random.randint(50,100))
+                    environment.process(phone.charging())
+                    inventory = {"tent": None, "phone" : [phone, None], "plastic_cup": None, "autographs": [], "merch": []}
                     age_category = source.Age_category.ADULT
                     age = random.randint(26, 64)
 
@@ -188,8 +200,11 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                     if preference["alcohol_consumer"] == True:
                         preference["favourite_alcohol"] = random.choice(available_alcohol_drinks) if available_alcohol_drinks else None
 
-                    if state["pre_sale_ticket"] == True:
+                    if state["pre_sale_ticket"]:
                         income += pre_sale_ticket_price
+
+                    if state["tent_area_ticket"]:
+                        income += camping_area_price
 
                     if (have_place_to_sleep >= num_members):
                         accommodation = {"owner": False, "tent_id" : id_tent, "built" : False} #První argument je zda návštěvník vlastní stan, druhý je id_tentu ve kterém bude bydlet, třetí jestli už je postavený.
@@ -205,6 +220,8 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                     num_visitors -= 1
 
                     nav = simulation.Visitor(environment, id, name=name, surname=surname, gender=gender, age_category = age_category, age = age, qualities = qualities, state = state, preference = preference, accommodation = accommodation, fellows = fellows, inventory = inventory)    
+                    environment.process(nav.hygiene_routine())
+                    environment.process(nav.cooldown_actions())
                     logs.add_visitor_to_logs(nav)
                     visitors.append(nav)
                     group_members.append(nav)
@@ -212,9 +229,11 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                 else:
                     gender = random.choice(list(source.Gender))
                     qualities = {"patience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
-                    state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : random.choice([True, False]), "tent_area_ticket": False, "entry_bracelet" : False, "group_sync_timer": 120, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "sociability" : 100, "free_time" : 10}
+                    state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : pre_sale_ticket, "tent_area_ticket": pre_sale_tent_area_ticket, "entry_bracelet" : False, "clean_teeth": True, "last_teeth_clean_time": 0, "clean_hands": True, "low_money": False, "group_mode": True, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "free_time" : 10}
                     preference = {"alcohol_consumer" : False, "smoker" : False, "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_soft_drinks else None}
-                    inventory = {"tent": None, "phone": items.Phone(random.randint(50,100)), "plastic_cup": None, "autographs": [], "merch": []}
+                    phone = items.Phone(environment, random.randint(50,100))
+                    environment.process(phone.charging())
+                    inventory = {"tent": None, "phone" : [phone, None], "plastic_cup": None, "autographs": [], "merch": []}
                     age_category = source.Age_category.CHILD
                     age = random.randint(6, 14)
 
@@ -226,18 +245,23 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                         name = random.choice(list(source.names_female))
                         surname = surname_female
 
-                    if state["pre_sale_ticket"] == True:
+                    if state["pre_sale_ticket"]:
                         income += pre_sale_ticket_price
+                    
+                    if state["tent_area_ticket"]:
+                        income += camping_area_price
 
                     accommodation = {"owner": False, "tent_id": id_tent, "built": False, "position": None} #První argument je zda návštěvník vlastní stan, druhý je id_tentu ve kterém bude bydlet, třetí jestli už je postavený.
                     num_visitors -= 1
 
                     nav = simulation.Visitor(environment, id, name=name, surname=surname, gender=gender, age_category = age_category, age = age, qualities = qualities, state = state, preference = preference, accommodation = accommodation, fellows = fellows, inventory = inventory)    
+                    environment.process(nav.hygiene_routine())
+                    environment.process(nav.cooldown_actions())
                     logs.add_visitor_to_logs(nav)
                     visitors.append(nav)
                     group_members.append(nav)
 
-            groups = simulation.Group(environment, group_members, source.Groups.FAMILY, source.Groups_modes.IN_GROUP)
+            groups = simulation.Group(environment, group_members, source.Groups.FAMILY)
             visitors_groups.append(groups)
             group_members = []
 
