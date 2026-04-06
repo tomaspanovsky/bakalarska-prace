@@ -1,11 +1,25 @@
 import tkinter as tk
 import customtkinter as ctk
 from PIL import Image, ImageTk
+import textwrap
+import copy
+import simpy
 from . import saving
 from . import loading 
-import os
-import copy
 import source
+import visitors
+import bands
+import resources
+import simulation
+import fest
+import foods
+import drinks
+import random
+import source
+import times
+import tkinter.font as tkfont
+import simulation_controller
+from outputs.code import logs
 
 current_zone = None         
 current_object = None
@@ -34,10 +48,14 @@ zones_data = {
 
 zones_data_default = copy.deepcopy(zones_data)
 
-def get_user_settings():
+def run_app():
     settings = {}
+    controller = None
+    default_loaded = False
+    value = 1
     
     def start():
+        nonlocal controller, value
         merch = get_merch(bands_entries)
         capacities = get_capacities()
         prices = get_prices()
@@ -62,13 +80,155 @@ def get_user_settings():
         simulation_buttons_frame.pack(pady=5)
         left_simulation_container.pack(side="left", fill="y")
 
-        #root.destroy()
+        num_visitors = settings["num_visitors"]
+        num_days = settings["num_days"]
+        budget_for_bands = settings["budget_for_bands"]
+        num_bands = settings["num_bands"]
+        prices = settings["prices"]
+        festival_times = {"simulation_start_time": times.format_time_string_to_mins(settings["simulation_start_time"]), "headliner_time" : settings["headliner_time"], "band_time" : settings["band_time"], "first_show_starts" : times.format_time_string_to_mins(settings["first_show_starts"]), "last_show_ends" : times.format_time_string_to_mins(settings["last_show_ends"]), "signing_time" : int(settings["signing_time"])}
+        merch = settings["merch"]
+        capacities = settings["capacities"]
+
+        festival_env = simpy.Environment()
+
+        stalls = resources.create_resources(festival_env, capacities, num_visitors, festival_times["simulation_start_time"])
+        logs.add_stalls_to_logs(stalls)
+
+        food_stalls_names = resources.find_all_type_stall_at_festival(stalls, "foods")
+        drink_stalls_names = resources.find_all_type_stall_at_festival(stalls, "drinks")
+        available_foods = foods.find_all_foods_at_festival(food_stalls_names)
+        available_soft_drinks, available_alcohol_drinks = drinks.find_all_drinks_at_festival(drink_stalls_names)
+
+        people, groups_of_visitors, income = visitors.create_visitors(num_visitors, festival_env, available_foods, available_soft_drinks, available_alcohol_drinks, prices["on_site_price"], prices["pre_sale_price"], prices["camping_area_price"])
+        lineup, total_price_for_bands = bands.create_lineup(num_days, budget_for_bands, num_bands)
+        people = bands.add_favorite_bands_to_visitor(people, lineup)
+        festival = fest.Festival(festival_env, people, groups_of_visitors, num_days, lineup, income, stalls, prices, festival_times, random.choice(list(source.Weather)), merch)
+        lineup = bands.create_schedule(lineup, festival)
+        merch = bands.create_merch(festival)
+        festival.set_merch(merch)
+
+        stage = resources.find_stalls_in_zone(festival_env, festival, "stage")
+        signing_stall = resources.find_stalls_in_zone(festival_env, festival, "signing_stall")
+        bands.set_bands(festival_env, lineup, stage, signing_stall[0], festival)
+
+
+        bands.print_lineup(lineup)
+        visitors.print_visitors(people)
+
+        controller = simulation_controller.SimulationController(festival_env, festival)
+
+        festival_env.process(simulation.spawn_groups(festival_env, groups_of_visitors, festival))
+
+        message = f"ČAS {times.get_real_time(festival_env, festival.get_start_time())}: START SIMULACE"
+        print(message)
+        logs.log_message(message)
+        message = f"ČAS {times.get_real_time(festival_env, festival.get_start_time())}: 1. DEN"
+        print(message)
+        logs.log_message("1. DEN:")
+
+        SIMULATION_MODE = "auto"
+        SIMULATION_MODE = "hardcore"
+
+        if SIMULATION_MODE == "auto":
+            print("Simulace jede v automatickém režimu")
+            root.destroy()
+            festival_env.run(until=num_days * 1440)
+
+        else:
+            print("Simulace jede v krokovacím režimu")   
+
+#        logs.log_message("SIMULACE UKONČENA")
+#        logs.save_logs(festival)
+
+
+    def move_forward_by_time():
+        nonlocal value
+
+        controller.move_forward_by_time(value)
+        new_logs = get_new_logs()
+        get_actual_state(controller)
+        update_object_colors(controller)
+        view_logs(new_logs)
+
+    def move_forward_to_next_event():
+        controller.move_forward_to_next_event()
 
     def exit_app():
+        print("Uživatel ukončil program")
         root.quit()
         root.destroy()
+    
+    def get_new_logs():
+        all_logs = logs.all_messages
+        new_logs = all_logs[controller.get_number_of_shown_logs():]
+        controller.increase_shown_logs(len(new_logs))
+        return new_logs
 
-    default_loaded = False
+    def view_logs(new_logs):
+        for log in new_logs:
+            add_log(log)
+
+    def add_log(log):
+        MAX_LOG_LINES = 100
+        WRAP_WIDTH = 55 
+
+        # prefix "ČAS 15:10: "
+        if ": " in log:
+            prefix, rest = log.split(": ", 1)
+            prefix = prefix + ": "
+        else:
+            prefix = ""
+            rest = log
+
+        # odsazení pro další řádky
+        indent = " " * (len(prefix) + 8)
+
+        # ruční zalomení textu
+        wrapped = textwrap.fill(
+            rest,
+            width=WRAP_WIDTH,
+            initial_indent=prefix,
+            subsequent_indent=indent,
+            break_long_words=False,
+            break_on_hyphens=False
+        )
+
+        # vložení do textboxu
+        log_box.insert("end", wrapped + "\n")
+        log_box.see("end")
+
+        # limit počtu řádků
+        lines = int(log_box.index('end-1c').split('.')[0])
+        if lines > MAX_LOG_LINES:
+            log_box.delete("1.0", f"{lines - MAX_LOG_LINES}.0")
+
+    def get_actual_state(controller):
+        festival = controller.get_festival()
+        stalls = festival.get_stalls()
+        simulation_state = controller.get_simulation_state()
+        visitors = festival.get_visitors()
+
+        simulation_state["time"] = controller.get_actual_time()
+        num_peoples_in_zones = {"ENTRANCE_ZONE": 0, "TENT_AREA": 0, "FESTIVAL_AREA": 0, "CHILL_ZONE": 0, "FUN_ZONE": 0, "SPAWN_ZONE": 0}
+
+        for visitor in visitors:
+            location = visitor.get_visitor_location()
+            
+            if location in [source.Locations.SIGNING_STALL, source.Locations.SIGNING_STALL]:
+                location = source.Locations.FESTIVAL_AREA
+
+            if location:
+                num_peoples_in_zones[location.name] += 1
+
+        for zone, zone_stalls in stalls.items():
+            simulation_state["zones"][zone]["num_people_in_zone"] = num_peoples_in_zones[zone]
+
+            for stall in zone_stalls:
+                
+                stall_data = simulation_state["zones"][zone]["stalls"][stall.get_name()]
+                stall_data["num_people_served"] = stall.get_num_using()
+                stall_data["capacity"] = stall.get_capacity()
+                stall_data["num_people_in_queue"] = stall.get_num_in_queue()
 
     def open_editor():
         nonlocal default_loaded
@@ -136,8 +296,8 @@ def get_user_settings():
         frame_left.pack(side="left", fill="y", padx=0, pady=0)
         frame_right.pack(side="left", fill="y", padx=0, pady=0)
 
-    def simulation_step():
-        pass
+    
+
     # ---------- HLAVNÍ OKNO ----------
     
     root = tk.Tk()
@@ -463,7 +623,7 @@ def get_user_settings():
         capacities["beer_stall"] = int(cap_beer_stall.get())
         capacities["redbull_stall"] = int(cap_redbull_stall.get())
         capacities["cocktail_stall"] = int(cap_cocktail_stall.get())
-        capacities["entry"] = int(num_entrance_gate.get())
+        capacities["entrance"] = int(num_entrance_gate.get())
         capacities["signing_stall"] = int(cap_signing_stall.get())
         capacities["meadow_for_living"] = int(cap_tents.get())
         capacities["atm"] = 1
@@ -1151,12 +1311,18 @@ def get_user_settings():
 
     tk.Label(frame_up_simulation, text="Detaily o stánku: ", font=("Arial", 15, "bold"), bg="white", fg="black").pack(pady=5)
     
+    log_box = ctk.CTkTextbox(frame_up_simulation, width=380, height=370, text_color="black", fg_color="#C0C0C0", font=("Arial", 14))
+    log_box.pack()
     
     frame_down_simulation = tk.Frame(left_simulation_container, width=400, height=430, bg="white", bd=2, relief="ridge")
     frame_down_simulation.pack_propagate(False)
     frame_down_simulation.pack(fill="x")
 
-    tk.Label(frame_down_simulation, text="Aktuální výpisy:", font=("Arial", 15, "bold"), bg="white", fg="black").pack(pady=5)
+    tk.Label(frame_down_simulation, text="Průběh festivalu:", font=("Arial", 15, "bold"), bg="white", fg="black").pack(pady=5)
+    
+    log_box = ctk.CTkTextbox(frame_down_simulation, width=380, height=370, text_color="black", fg_color="#C0C0C0", font=("Arial", 14))
+    log_box.pack()
+
 
     #SIMULATION BUTTONS
 
@@ -1164,7 +1330,6 @@ def get_user_settings():
     simulation_buttons_frame.pack_forget()
 
     # COUNTER ČÁST
-    value = 1
 
     def increase():
         nonlocal value
@@ -1193,7 +1358,7 @@ def get_user_settings():
     plus_button = blue_button_small(simulation_counter_frame, "+", increase)
     plus_button.pack(side="left")
 
-    back_button = green_button_small(simulation_counter_frame, "▶", "next_step")
+    back_button = green_button_small(simulation_counter_frame, "▶", move_forward_by_time)
     back_button.pack(side="left", padx=10)
 
 
@@ -1205,7 +1370,7 @@ def get_user_settings():
     next_event_label = ctk.CTkLabel(simulation_next_event_buttons_frame, text="Posunout simulaci do další události", font=("Arial", 20, "bold"), width=50)
     next_event_label.pack(side="top", pady=8)
 
-    back_button = green_button_small(simulation_next_event_buttons_frame, "▶", "next_step")
+    back_button = green_button_small(simulation_next_event_buttons_frame, "▶", move_forward_to_next_event)
     back_button.pack(anchor="center")
 
     stop_simulation_frame = tk.Frame(simulation_buttons_frame, bg="black")
@@ -1222,6 +1387,34 @@ def get_user_settings():
 
 #--------------------------------------------------------------------------------KÓDY EDITORU-------------------------------------------------------------
     
+    def update_object_colors(controller):
+        simulation_state = controller.get_simulation_state()
+
+        for zone_name, zone_info in simulation_state["zones"].items():
+            # najdeme instancí zón v editoru
+            for inst in zones_data[zone_name]["instances"]:
+                for obj in inst.get("objects", []):
+                    
+                    # zjistíme typ objektu
+                    obj_type = obj["object"]
+
+                    # zjistíme počet lidí u objektu
+                    # (příklad – uprav podle toho, jak to máš uložené)
+                    num = 0
+                    if "stalls" in zone_info and obj_type in zone_info["stalls"]:
+                        num = zone_info["stalls"][obj_type]["num_people_in_queue"]
+
+                    # vybereme barvu podle počtu lidí
+                    if num < 10:
+                        color = "#b6fcb6"   # zelená
+                    elif num < 30:
+                        color = "#ffe680"   # žlutá
+                    else:
+                        color = "#ff8080"   # červená
+
+                    # obarvíme objekt
+                    geom_id = obj["canvas_ids"][1]
+                    canvas.itemconfig(geom_id, fill=color)
     
     entrance_id = 0
 
@@ -1875,11 +2068,11 @@ def get_user_settings():
         top, bottom = min(y1, y2), max(y1, y2)
 
         zone_rect = canvas.create_rectangle(left, top, right, bottom, outline="blue", fill="white", width=3)
-        text_x = (left + right) / 2
-        text_y = top - 12
-        zone_label = canvas.create_text(text_x, text_y, text=current_zone or "", fill="black", font=("Arial", 12, "bold"), anchor="s")
-
-
+        zone_label_x = (left + right) / 2
+        zone_label_y = top - 12
+        zone_label = canvas.create_text(zone_label_x, zone_label_y, text=current_zone, fill="black", font=("Arial", 12, "bold"), anchor="s")
+        num_pople_label_x = left
+        num_people_label_y = top - 5
 
     def on_release(event):
         """Ukončení kreslení"""
@@ -2190,6 +2383,4 @@ def get_user_settings():
     canvas.bind("<ButtonRelease-1>", on_release)
     root.bind("<Delete>", delete_selected)
     root.mainloop()
-    
-    return settings
                     

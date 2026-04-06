@@ -31,7 +31,66 @@ class Stall:
     
     def get_id(self):
         return self.id
+    
+    def get_resource(self):
+        return self.resource
+    
+    def get_capacity(self):
+        if self.stall_name == "toitoi":
+            capacity = len(self.resource[0]) + len(self.resource[1])
 
+        elif self.stall_name == "standing_at_stage":
+            capacity = self.resource[0][1].capacity + self.resource[1][1].capacity + self.resource[2][1].capacity
+
+        elif self.stall_name == "signing_stall":
+            capacity =  self.resource[1].capacity + self.resource[2].capacity
+
+        else:
+            capacity = self.resource.capacity
+
+        return capacity
+    
+    def get_num_using(self):
+        if self.stall_name == "toitoi":
+            count = 0
+            for urinal in self.resource[0]:
+                count += urinal.resource.count
+
+            for toitoi in self.resource[1]:
+                count += toitoi.resource.count
+
+        elif self.stall_name == "standing_at_stage":
+            count = self.resource[0][1].count + self.resource[1][1].count + self.resource[2][1].count
+
+        elif self.stall_name == "signing_stall":
+            count =  self.resource[1].count + self.resource[2].count
+
+        else:
+            count = self.resource.count
+
+        return count
+    
+    def get_num_in_queue(self):
+        if self.stall_name == "toitoi":
+            num_in_queue = 0
+            
+            for urinal in self.resource[0]: 
+                num_in_queue += len(urinal.resource.queue)
+                
+            for toitoi in self.resource[1]:
+                num_in_queue += len(toitoi.resource.queue)
+
+        elif self.stall_name == "standing_at_stage":
+            num_in_queue = len(self.resource[0][1].queue) + len(self.resource[1][1].queue) + len(self.resource[2][1].queue)
+
+        elif self.stall_name == "signing_stall":
+            num_in_queue = len(self.resource[1].queue) + len(self.resource[2].queue)
+
+        else:
+            num_in_queue = len(self.resource.queue)
+
+        return num_in_queue
+    
 def create_resources(env, capacities, num_visitors, simulation_start_time):
     stalls = {"ENTRANCE_ZONE" : [], "TENT_AREA" : [], "FESTIVAL_AREA" : [], "CHILL_ZONE" : [], "FUN_ZONE" : []}
 

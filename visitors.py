@@ -65,7 +65,7 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                     preference = {"alcohol_consumer" : False, "smoker" : False, "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_soft_drinks else None}
 
                 qualities = {"patience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
-                state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : pre_sale_ticket, "tent_area_ticket": pre_sale_tent_area_ticket, "entry_bracelet" : False, "clean_teeth": True, "last_teeth_clean_time": 0, "clean_hands": True, "low_money": False, "group_mode": True, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "free_time" : 10}                
+                state = {"location" : None, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : pre_sale_ticket, "tent_area_ticket": pre_sale_tent_area_ticket, "entry_bracelet" : False, "clean_teeth": True, "last_teeth_clean_time": 0, "clean_hands": True, "low_money": False, "group_mode": True, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "free_time" : 10}                
                 fellows = [id_group_members, group] # první parametr je seznam id lidi ze stejné skupiny, druhý parametr je v jakém uskupení je na festivalu (jednotlivec/skupina/rodina) 
                 phone = items.Phone(environment, random.randint(50,100))
                 environment.process(phone.charging())
@@ -176,7 +176,7 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                                 
                                 #nedočkavost
                     qualities = {"patience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
-                    state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : pre_sale_ticket, "tent_area_ticket": pre_sale_tent_area_ticket, "entry_bracelet" : False, "clean_teeth": True, "last_teeth_clean_time": 0, "clean_hands": True, "low_money": False, "group_mode": True, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "free_time" : 10}
+                    state = {"location" : None, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : pre_sale_ticket, "tent_area_ticket": pre_sale_tent_area_ticket, "entry_bracelet" : False, "clean_teeth": True, "last_teeth_clean_time": 0, "clean_hands": True, "low_money": False, "group_mode": True, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "free_time" : 10}
                     preference = {"alcohol_consumer" : random.choice([True, False]), "smoker" : random.choice([True, False]), "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_soft_drinks else None}
                     phone = items.Phone(environment, random.randint(50,100))
                     environment.process(phone.charging())
@@ -229,7 +229,7 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                 else:
                     gender = random.choice(list(source.Gender))
                     qualities = {"patience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
-                    state = {"location" : source.Locations.SPAWN_ZONE, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : pre_sale_ticket, "tent_area_ticket": pre_sale_tent_area_ticket, "entry_bracelet" : False, "clean_teeth": True, "last_teeth_clean_time": 0, "clean_hands": True, "low_money": False, "group_mode": True, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "free_time" : 10}
+                    state = {"location" : None, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : pre_sale_ticket, "tent_area_ticket": pre_sale_tent_area_ticket, "entry_bracelet" : False, "clean_teeth": True, "last_teeth_clean_time": 0, "clean_hands": True, "low_money": False, "group_mode": True, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "free_time" : 10}
                     preference = {"alcohol_consumer" : False, "smoker" : False, "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_soft_drinks else None}
                     phone = items.Phone(environment, random.randint(50,100))
                     environment.process(phone.charging())

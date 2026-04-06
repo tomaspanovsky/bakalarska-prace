@@ -404,6 +404,11 @@ class Visitor:
         data = {"name": self.name, "surname": self.surname, "gender": self.gender, "age_category": self.age_category, "age": self.age, "qualities": self.qualities, "preference": self.preference, "fellows": self.fellows}
         return data
     
+    def get_visitor_location(self):
+        return self.state["location"]
+    
+    def set_visitor_location(self, location):
+        self.state["location"] = location
 
     def update_stats(self, festival):
 
@@ -941,9 +946,9 @@ class Visitor:
         start_waiting = self.env.now
 
         # čekání na stánek
-        with stall.resource.request() as req:
+        with stall.get_resource().request() as req:
             
-            will_wait = stall.resource.count >= stall.resource.capacity
+            will_wait = stall.get_resource().count >= stall.get_resource().capacity
 
             yield req
 
@@ -998,7 +1003,7 @@ class Visitor:
         
         yield self.env.timeout(random.uniform(0, 2))
 
-        if stall.resource.count >= stall.resource.capacity:
+        if stall.get_resource().count >= stall.get_resource().capacity:
             patience_index = self.qualities["patience"] * random.uniform(0.5, 1.5)
 
             if patience_index > 5:
@@ -1013,7 +1018,7 @@ class Visitor:
                 logs.log_visitor(self, message)
 
         start_waiting = self.env.now
-        with stall.resource.request() as req:
+        with stall.get_resource().request() as req:
 
             yield req
 
@@ -1213,10 +1218,10 @@ class Visitor:
         start_waiting = self.env.now
 
         # čekání na stánek
-        with stall.resource.request() as req:
+        with stall.get_resource().request() as req:
 
             yield req
-            will_wait = stall.resource.count >= stall.resource.capacity
+            will_wait = stall.get_resource().count >= stall.get_resource().capacity
             message = f"ČAS {times.get_real_time(self.env, festival.get_start_time())}: Návštěvník {self.name} {self.surname} přišel na řadu a je u stánku {stall.get_cz_name()} v zóně {self.state["location"].value}"
             print(message)
             logs.log_visitor(self, message)
@@ -1409,7 +1414,7 @@ class Visitor:
         print(message)
         logs.log_visitor(self, message)
 
-        with stall.resource.request() as req:
+        with stall.get_resource().request() as req:
             
             yield req
             waiting_time = self.env.now - start_waiting
@@ -1440,7 +1445,7 @@ class Visitor:
         print(message)
         logs.log_visitor(self, message)
 
-        with stall.resource.request() as req:
+        with stall.get_resource().request() as req:
             
             yield req
             waiting_time = self.env.now - start_waiting
@@ -1700,7 +1705,7 @@ class Visitor:
 
         yield self.env.timeout(random.uniform(1, 3))
 
-        with stall.resource.request() as req:
+        with stall.get_resource().request() as req:
             start_waiting = self.env.now
 
             yield req
@@ -1759,7 +1764,7 @@ class Visitor:
 
         yield self.env.timeout(random.uniform(1, 3))
 
-        with stall.resource.request() as req:
+        with stall.get_resource().request() as req:
             start_waiting = self.env.now
 
             yield req
@@ -1842,7 +1847,7 @@ class Visitor:
         print(message)
         logs.log_visitor(self, message)
 
-        with stall.resource.request() as req:
+        with stall.get_resource().request() as req:
             
             yield req
             waiting_time = self.env.now - start_waiting
@@ -2046,7 +2051,7 @@ class Visitor:
             resource[2] -> fronta (kapacita fronty) - 4 lidi co jsou už u kapely 
             resource[3] -> None, nebo instance kapely, která má zrovna autogramiádu"""
 
-        actual_band = stall.resource[3]
+        actual_band = stall.get_resource()[3]
         
         for item in self.inventory["autographs"]:
             if actual_band["band_name"] in item:
@@ -2059,7 +2064,7 @@ class Visitor:
 
         yield self.env.timeout(random.uniform(1,2))
 
-        with stall.resource[2].request() as req_queue:
+        with stall.get_resource()[2].request() as req_queue:
             start_wait = self.env.now
 
             yield req_queue
@@ -2077,7 +2082,7 @@ class Visitor:
                 print(message)
                 logs.log_visitor(self, message)
         
-            with stall.resource[1].request() as req_sig:
+            with stall.get_resource()[1].request() as req_sig:
                 
                 yield req_sig
 
@@ -2113,7 +2118,7 @@ class Visitor:
         print(message)
         logs.log_visitor(self, message)
 
-        with stall.resource.request() as req:
+        with stall.get_resource().request() as req:
 
             start_waiting = self.env.now
 
@@ -2147,7 +2152,7 @@ class Visitor:
         print(message)
         logs.log_visitor(self, message)
 
-        with stall.resource.request() as req:
+        with stall.get_resource().request() as req:
 
             result = yield req | self.env.timeout(0)
 
@@ -2174,7 +2179,7 @@ class Visitor:
         print(message)
         logs.log_visitor(self, message)
 
-        with stall.resource.request() as req:
+        with stall.get_resource().request() as req:
 
             result = yield req | self.env.timeout(0)
 
@@ -2220,7 +2225,7 @@ class Visitor:
 
         start_waiting = self.env.now
 
-        with merch_stall.resource.request() as req:
+        with merch_stall.get_resource().request() as req:
 
             yield req
 
@@ -2511,6 +2516,7 @@ def spawn_groups(env, groups_list, festival):
         logs.log_message(message)
 
         for member in group.members:
+            member.set_visitor_location(source.Locations.SPAWN_ZONE)
             message = f"ČAS {times.get_real_time(env, festival.get_start_time())}: Návštěvník {member.name} {member.surname} dorazil na festival."
             logs.log_visitor(member, message)
 

@@ -69,3 +69,6 @@ class Festival:
     
     def get_num_visitors(self):
         return len(self.visitors)
+    
+    def get_visitors(self):
+        return self.visitors
