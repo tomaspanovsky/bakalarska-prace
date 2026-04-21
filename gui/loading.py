@@ -1,5 +1,6 @@
 import json
 import os
+import source
 from tkinter import filedialog
 
 def load(auto=False):
@@ -35,7 +36,6 @@ def load(auto=False):
 
     print("Soubor načten z:", file_path)
 
-    # uložíme interní kopii
     current_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.dirname(current_dir)
     data_dir = os.path.join(project_root, "data")
@@ -48,37 +48,26 @@ def load(auto=False):
 
     return data[1]
 
-def deserialize_zones(serialized):
-    zones = {}
+def load_merch_settings():
+    path = source.file_path_merch
+    with open(path, "r", encoding="utf-8") as f:
+        merch_data = json.load(f)
+        return merch_data["bands_merch"], merch_data["festival_merch"]
 
-    for zone_name, zone_data in serialized.items():
-        zones[zone_name] = {
-            "multiple": zone_data["multiple"],
-            "instances": []
-        }
+def load_capacities_settings():
+    path = source.file_path_capacities
 
-        for inst in zone_data["instances"]:
-            original_inst = inst.copy()
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+    
+def load_fest_prices_settings():
+    path = source.file_path_fest_prices
 
-            # obnovíme původní strukturu lines
-            if "lines" in inst:
-                restored_lines = []
-                for line in inst["lines"]:
-                    restored_line = {
-                        "id": line["id"],
-                        "other_zone": {
-                            "type": line["other_zone"]["zone"]
-                        }
-                    }
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+    
+def load_time_settings():
+    path = source.file_path_time_settings
 
-                    # pokud tam byl entry flag, vrátíme ho zpět
-                    if "entry" in line:
-                        restored_line["other_zone"]["entry"] = line["entry"]
-
-                    restored_lines.append(restored_line)
-
-                original_inst["lines"] = restored_lines
-
-            zones[zone_name]["instances"].append(original_inst)
-
-    return zones
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)

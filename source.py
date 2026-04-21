@@ -8,7 +8,10 @@ file_path_drinks = os.path.join(here, "data", "drinks.json")
 file_path_names = os.path.join(here, "data", "names.json")
 file_path_surnames = os.path.join(here, "data", "surnames.json")
 file_path_bands = os.path.join(here, "data", "bands.json")
-file_path_merch = os.path.join(here, "data", "merch.json")
+file_path_merch = os.path.join(here, "data/gui_editable", "merch.json")
+file_path_capacities = os.path.join(here, "data/gui_editable", "capacities.json")
+file_path_fest_prices = os.path.join(here, "data/gui_editable", "fest_prices.json")
+file_path_time_settings = os.path.join(here, "data/gui_editable", "time_settings.json")
 file_path_attraction = os.path.join(here, "data", "attractions.json")
 file_path_needs_actions = os.path.join(here, "data", "needs_actions.json")
 
@@ -21,17 +24,11 @@ class Locations(enum.Enum):
     SPAWN_ZONE= "spawn zóna"
     TENT_AREA = "stanové městečko"
     ENTRANCE_ZONE = "vstupní zóna"
-    FESTIVAL_AREA = "festivalý areál"
+    FESTIVAL_AREA = "festivalový areál"
     CHILL_ZONE = "chill zóna"
     STAGE_STANDING = "stání u podia"
     FUN_ZONE = "zábavní zóna"
     SIGNING_STALL = "autogramiády stánek"
-
-with open(file_path_merch, "r", encoding="utf-8") as f:
-    merch_data = json.load(f)
-
-bands_merch = merch_data["bands_merch"]
-festival_merch = merch_data["festival_merch"]
 
 with open(file_path_foods, "r", encoding="utf-8") as f:
     foods_data = json.load(f)

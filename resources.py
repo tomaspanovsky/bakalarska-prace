@@ -8,7 +8,7 @@ import attractions
 from data.load_data import load_data
 
 class Stall:
-    def __init__(self, stall_type, stall_name, stall_cz_name, zone, resource, id, x, y):
+    def __init__(self, stall_type, stall_name, stall_cz_name, zone, resource, id, x, y, canvas_ids, canvas_ids_extra = None):
         self.stall_type = stall_type
         self.stall_name = stall_name
         self.stall_cz_name = stall_cz_name
@@ -17,6 +17,8 @@ class Stall:
         self.id = id
         self.x = x
         self.y = y
+        self.canvas_ids = canvas_ids
+        self.canvas_ids_extra = canvas_ids_extra
         self.attraction = None
         self.positions = None
 
@@ -35,12 +37,15 @@ class Stall:
     def get_resource(self):
         return self.resource
     
+    def get_canvas_ids(self):
+        return self.canvas_ids
+    
     def get_capacity(self):
         if self.stall_name == "toitoi":
             capacity = len(self.resource[0]) + len(self.resource[1])
 
         elif self.stall_name == "standing_at_stage":
-            capacity = self.resource[0][1].capacity + self.resource[1][1].capacity + self.resource[2][1].capacity
+            capacity = self.resource["first_lines"].capacity + self.resource["middle"].capacity + self.resource["back"].capacity
 
         elif self.stall_name == "signing_stall":
             capacity =  self.resource[1].capacity + self.resource[2].capacity
@@ -50,7 +55,8 @@ class Stall:
 
         return capacity
     
-    def get_num_using(self):
+    def get_num_using(self, standing_position = None):
+
         if self.stall_name == "toitoi":
             count = 0
             for urinal in self.resource[0]:
@@ -60,15 +66,35 @@ class Stall:
                 count += toitoi.resource.count
 
         elif self.stall_name == "standing_at_stage":
-            count = self.resource[0][1].count + self.resource[1][1].count + self.resource[2][1].count
+
+            if standing_position:
+                return self.resource[standing_position].count
+
+            count = self.resource["first_lines"].count + self.resource["middle"].count + self.resource["back"].count
 
         elif self.stall_name == "signing_stall":
             count =  self.resource[1].count + self.resource[2].count
+
+        elif self.stall_name == "meadow_for_living":
+            count = 0
+
+            for tent in self.positions[1:]:
+                if tent:
+                    count += tent[0].count
 
         else:
             count = self.resource.count
 
         return count
+    
+    def get_num_tents(meadow_for_living):
+        num_tents = 0
+
+        for tent in meadow_for_living.positions[1:]:
+            if tent:
+                num_tents += 1
+
+        return num_tents
     
     def get_num_in_queue(self):
         if self.stall_name == "toitoi":
@@ -81,7 +107,7 @@ class Stall:
                 num_in_queue += len(toitoi.resource.queue)
 
         elif self.stall_name == "standing_at_stage":
-            num_in_queue = len(self.resource[0][1].queue) + len(self.resource[1][1].queue) + len(self.resource[2][1].queue)
+            num_in_queue = len(self.resource["first_lines"].queue) + len(self.resource["middle"].queue) + len(self.resource["back"].queue)
 
         elif self.stall_name == "signing_stall":
             num_in_queue = len(self.resource[1].queue) + len(self.resource[2].queue)
@@ -98,17 +124,11 @@ def create_resources(env, capacities, num_visitors, simulation_start_time):
 
     for location in stalls_in_locations:
         objected_stall = []
-        i = 1
        
         stalls_in_locations[location].sort(key=get_stall_name)
-        previous_stall = None
+
 
         for stall in stalls_in_locations[location]:
-
-            if previous_stall and previous_stall != stall["name"]:
-                i = 1
-
-            previous_stall = stall["name"]
 
             if stall["name"] == "toitoi":
                 resource = create_toitois(env, stall, capacities, location)
@@ -117,7 +137,6 @@ def create_resources(env, capacities, num_visitors, simulation_start_time):
                 resource = simpy.Resource(env, capacity=1)
                 
             elif stall["name"] == "standing_at_stage":
-                resource = []
                 
                 if num_visitors < 100:
                     cap_sectors = [33,33,34]
@@ -127,9 +146,7 @@ def create_resources(env, capacities, num_visitors, simulation_start_time):
                     if (cap_sectors[0] + cap_sectors[1] + cap_sectors[2]) != num_visitors:
                         cap_sectors[2] += num_visitors - ((num_visitors // 3) * 3) 
 
-                resource.append(["first_lines", simpy.Resource(env, capacity=cap_sectors[0])])
-                resource.append(["middle", simpy.Resource(env, capacity=cap_sectors[1])])
-                resource.append(["back", simpy.Resource(env, capacity=cap_sectors[2])])
+                resource = {"first_lines": simpy.Resource(env, capacity=cap_sectors[0]), "middle": simpy.Resource(env, capacity=cap_sectors[1]), "back": simpy.Resource(env, capacity=cap_sectors[2])}
 
             elif stall["name"] == "signing_stall":
                 resource = [[],[],[],[]] 
@@ -146,19 +163,17 @@ def create_resources(env, capacities, num_visitors, simulation_start_time):
             else:
                 resource = simpy.Resource(env, capacity=capacities[stall["name"]])
 
-            if stall["name"] == "entrance":
-                id = stall["id"]
-            else:
-                id = i
+
             
             new_stall = Stall(stall["type"],
                             stall["name"],
                             stall["cz_name"],
                             location,
                             resource,
-                            id,
+                            stall["id"],
                             stall["x"],
-                            stall["y"])
+                            stall["y"],
+                            stall["canvas_ids"])
             
             if stall["name"] == "meadow_for_living":
                     positions = locations.create_positions(capacities["meadow_for_living"])
@@ -172,7 +187,6 @@ def create_resources(env, capacities, num_visitors, simulation_start_time):
                 attraction_data = source.ATTRACTIONS["attractions"][stall["name"]]
                 new_stall.attraction = attractions.Attraction(env, resource, stall["cz_name"], attraction_data, 0.5, 10, simulation_start_time)
                 
-            i += 1
 
             objected_stall.append(new_stall)
 
@@ -199,7 +213,8 @@ def create_toitois(env, stall, capacities, location):
                             simpy.Resource(env, capacity=1),
                             i,
                             stall["x"],
-                            stall["y"]))
+                            stall["y"],
+                            canvas_ids=stall["canvas_ids"]))
         else:
             name = "toitoi"
             cz_name = "toitoi"
@@ -210,7 +225,8 @@ def create_toitois(env, stall, capacities, location):
                             simpy.Resource(env, capacity=1),
                             i,
                             stall["x"],
-                            stall["y"]))
+                            stall["y"],
+                            canvas_ids=stall["canvas_ids"]))
             
     stalls.append(urinals)
     stalls.append(toitois)
@@ -240,10 +256,10 @@ def find_stall_with_shortest_queue_in_zone(self, festival, type, name=None, stal
     else:
         stall_with_least_people = stalls[0]
 
-        least_num_people = len(stall_with_least_people.resource.queue) + stall_with_least_people.resource.count
+        least_num_people = stall_with_least_people.get_num_in_queue() + stall_with_least_people.get_num_using()
 
         for stall in stalls[1:]:
-            stall_num_people = len(stall.resource.queue) + stall.resource.count
+            stall_num_people = stall.get_num_in_queue() + stall.get_num_using()
 
             if stall_num_people < least_num_people:
                 stall_with_least_people = stall

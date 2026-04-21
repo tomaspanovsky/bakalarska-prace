@@ -10,11 +10,15 @@ def format_time_string_to_mins(string):
     total_minutes = hours * 60 + minutes
     return total_minutes
 
-def get_real_time(env, start_time, future = None):
+def get_real_time(env, start_time, future = None, now_time = None):
+    if not now_time:
+        now_time = int(env.now)
+    else:
+        now_time = int(now_time)
 
     if future:
         total_minutes = future + start_time
     else:
-        total_minutes = int(env.now) + start_time
+        total_minutes = now_time + start_time
         
     return format_time_minutes_to_hours(total_minutes)

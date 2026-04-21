@@ -11,11 +11,9 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
     id_tent = 0
     visitors = []
     visitors_groups = []
-    income = 0
     
     while num_visitors > 0:       
         group = random.choice(list(source.Groups))
-
         pre_sale_ticket = random.choice([True, False])
         pre_sale_tent_area_ticket = random.choice([True, False])
 
@@ -64,12 +62,12 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                 else:
                     preference = {"alcohol_consumer" : False, "smoker" : False, "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_soft_drinks else None}
 
-                qualities = {"patience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
+                qualities = {"patience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10)}
                 state = {"location" : None, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : pre_sale_ticket, "tent_area_ticket": pre_sale_tent_area_ticket, "entry_bracelet" : False, "clean_teeth": True, "last_teeth_clean_time": 0, "clean_hands": True, "low_money": False, "group_mode": True, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "free_time" : 10}                
                 fellows = [id_group_members, group] # první parametr je seznam id lidi ze stejné skupiny, druhý parametr je v jakém uskupení je na festivalu (jednotlivec/skupina/rodina) 
                 phone = items.Phone(environment, random.randint(50,100))
                 environment.process(phone.charging())
-                inventory = {"tent": None, "phone" : [phone, None], "plastic_cup": None, "autographs": [], "merch": []}
+                inventory = {"tent": None, "phone" : [phone, None], "plastic_cup": None, "autographs": [], "merch": [], "food": None, "drink":None}
                 
                 if gender == source.Gender.MALE:
                     name = random.choice(list(source.names_male))
@@ -86,12 +84,6 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                 
                 if preference["alcohol_consumer"] == True:
                     preference["favourite_alcohol"] = random.choice(available_alcohol_drinks) if available_alcohol_drinks else None
-
-                if state["pre_sale_ticket"]:
-                    income += pre_sale_ticket_price
-
-                if state["tent_area_ticket"]:
-                    income += camping_area_price
 
                 if num_members == 1:
                     id_tent += 1
@@ -175,12 +167,12 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                         father = True
                                 
                                 #nedočkavost
-                    qualities = {"patience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
+                    qualities = {"patience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10)}
                     state = {"location" : None, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : pre_sale_ticket, "tent_area_ticket": pre_sale_tent_area_ticket, "entry_bracelet" : False, "clean_teeth": True, "last_teeth_clean_time": 0, "clean_hands": True, "low_money": False, "group_mode": True, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "free_time" : 10}
                     preference = {"alcohol_consumer" : random.choice([True, False]), "smoker" : random.choice([True, False]), "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_soft_drinks else None}
                     phone = items.Phone(environment, random.randint(50,100))
                     environment.process(phone.charging())
-                    inventory = {"tent": None, "phone" : [phone, None], "plastic_cup": None, "autographs": [], "merch": []}
+                    inventory = {"tent": None, "phone" : [phone, None], "plastic_cup": None, "autographs": [], "merch": [], "food": None, "drink": None}
                     age_category = source.Age_category.ADULT
                     age = random.randint(26, 64)
 
@@ -199,12 +191,6 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                 
                     if preference["alcohol_consumer"] == True:
                         preference["favourite_alcohol"] = random.choice(available_alcohol_drinks) if available_alcohol_drinks else None
-
-                    if state["pre_sale_ticket"]:
-                        income += pre_sale_ticket_price
-
-                    if state["tent_area_ticket"]:
-                        income += camping_area_price
 
                     if (have_place_to_sleep >= num_members):
                         accommodation = {"owner": False, "tent_id" : id_tent, "built" : False} #První argument je zda návštěvník vlastní stan, druhý je id_tentu ve kterém bude bydlet, třetí jestli už je postavený.
@@ -228,12 +214,10 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
 
                 else:
                     gender = random.choice(list(source.Gender))
-                    qualities = {"patience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10), "weather_tolerance" : random.randint(1, 10)}
+                    qualities = {"patience": random.randint(1,10), "tendency_to_spend" : random.randint(1,10), "hunger_frequency" : random.randint(1,10), "alcohol_tolerance" : random.randint(1,10)}
                     state = {"location" : None, "money" : random.randint(on_site_ticket_price, 10000), "pre_sale_ticket" : pre_sale_ticket, "tent_area_ticket": pre_sale_tent_area_ticket, "entry_bracelet" : False, "clean_teeth": True, "last_teeth_clean_time": 0, "clean_hands": True, "low_money": False, "group_mode": True, "energy": 100, "mood": 100, "hunger" : 100, "thirst": 100, "drunkenness": 0, "wc": 100, "hygiene": 100, "free_time" : 10}
-                    preference = {"alcohol_consumer" : False, "smoker" : False, "favourite_food" : random.choice(available_foods) if available_foods else None, "favourite_soft_drink" : random.choice(available_soft_drinks) if available_soft_drinks else None}
-                    phone = items.Phone(environment, random.randint(50,100))
-                    environment.process(phone.charging())
-                    inventory = {"tent": None, "phone" : [phone, None], "plastic_cup": None, "autographs": [], "merch": []}
+                    preference = {"alcohol_consumer" : False, "smoker" : False}
+                    inventory = {"tent": None, "autographs": [], "food": None, "drink": None}
                     age_category = source.Age_category.CHILD
                     age = random.randint(6, 14)
 
@@ -244,12 +228,6 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
                     else:
                         name = random.choice(list(source.names_female))
                         surname = surname_female
-
-                    if state["pre_sale_ticket"]:
-                        income += pre_sale_ticket_price
-                    
-                    if state["tent_area_ticket"]:
-                        income += camping_area_price
 
                     accommodation = {"owner": False, "tent_id": id_tent, "built": False, "position": None} #První argument je zda návštěvník vlastní stan, druhý je id_tentu ve kterém bude bydlet, třetí jestli už je postavený.
                     num_visitors -= 1
@@ -265,20 +243,22 @@ def create_visitors(num_visitors, environment, available_foods, available_soft_d
             visitors_groups.append(groups)
             group_members = []
 
-    return visitors, visitors_groups, income
+    return visitors, visitors_groups
 
 def print_visitors(visitors):
     for n in visitors:
         print(f"ID: {n.id}, Name: {n.name} {n.surname}, Age: {n.age} ({n.age_category.name}), Gender: {n.gender.name}")
         print("Qualities:")
-        for k, v in n.qualities.items():
-            print(f"  {k}: {v}")
+        if n.qualities:
+            for k, v in n.qualities.items():
+                print(f"  {k}: {v}")
         print("State:")
         for k, v in n.state.items():
             print(f"  {k}: {v}")
         print("Preferences:")
-        for k, v in n.preference.items():
-            print(f"  {k}: {v}")
+        if n.preference:
+            for k, v in n.preference.items():
+                print(f"  {k}: {v}")
         print("Accommodation:")
         for k, v in n.accommodation.items():
             print(f"  {k}: {v}")

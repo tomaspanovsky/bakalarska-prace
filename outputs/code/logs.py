@@ -1,9 +1,11 @@
 import json
 from enum import Enum
+import times
 
 visitors_logs = {}
 all_messages = []
 stalls_stats = {}
+stalls_states = []
 
 class EnumEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -54,6 +56,13 @@ def log_stalls_stats(stall, location, waiting_time = None):
                 
                 break
 
+def save_actual_state(controller):
+    state = controller.get_simulation_state()
+    simulation_start_time = controller.get_festival().get_start_time()
+    simulation_time = state["time"]
+    state["time"] = times.get_real_time(controller.get_env(), simulation_start_time, now_time=simulation_time)
+    stalls_states.append(state)
+    
 
 def save_logs(festival):
 
@@ -66,5 +75,8 @@ def save_logs(festival):
     with open("outputs/lineup.json", "w", encoding="utf-8") as f:
         json.dump(festival.get_lineup(), f, indent=4, ensure_ascii=False, cls=EnumEncoder)
 
-    with open("outputs/stalls_stats.json", "w", encoding="utf-8") as f:
+    with open("outputs/stalls_max_stats.json", "w", encoding="utf-8") as f:
         json.dump(stalls_stats, f, indent=4, ensure_ascii=False, cls=EnumEncoder)
+
+    with open("outputs/simulation_states.json", "w", encoding="utf-8") as f:
+        json.dump(stalls_states, f, indent=4, ensure_ascii=False, cls=EnumEncoder)

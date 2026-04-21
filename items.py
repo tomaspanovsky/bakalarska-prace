@@ -6,6 +6,9 @@ class Phone:
         self.battery = battery
         self.is_charging = False
 
+    def get_state_of_battery(self):
+        return self.battery 
+
     def charging(self):
         while True:
             yield self.festival.timeout(1)

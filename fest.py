@@ -1,13 +1,12 @@
 from outputs.code import logs
 
 class Festival:
-    def __init__(self, env, visitors, groups, num_days, line_up, income, stalls, prices, times, weather, merch):
+    def __init__(self, env, visitors, groups, num_days, line_up, stalls, prices, times, weather, merch):
         self.env = env
         self.visitors = visitors
         self.groups = groups
         self.num_days = num_days
         self.line_up = line_up
-        self.income = income
         self.stalls = stalls
         self.prices = prices
         self.times = times
@@ -15,15 +14,12 @@ class Festival:
         self.actual_day = 1
         self.merch = merch
         self.pause_between_shows = None
+        self.now_playing_band = None
+        self.now_signing_band = None
+        self.num_people_in_zones = {"SPAWN_ZONE": 0, "ENTRANCE_ZONE": 0, "FESTIVAL_AREA": 0, "CHILL_ZONE": 0, "TENT_AREA": 0, "FUN_ZONE": 0}
 
     def get_price(self, price_of_what):
         return self.prices[price_of_what]
-
-    def get_income(self):
-        return self.income
-    
-    def add_income(self, income):
-        self.income += income
 
     def get_start_time(self):
         return self.times["simulation_start_time"]
@@ -34,6 +30,9 @@ class Festival:
     def set_pause_between_shows(self, pause):
         self.pause_between_shows = pause
 
+    def get_num_days(self):
+        return self.num_days
+
     def get_pause(self):
         return self.pause_between_shows
     
@@ -42,7 +41,21 @@ class Festival:
     
     def get_actual_day(self):
         return self.actual_day
+
+    def get_num_people_in_zones(self):
+        return self.num_people_in_zones
     
+    def increase_num_people_in_zone(self, zone):
+        self.num_people_in_zones[zone] += 1
+
+    def decrease_num_people_in_zone(self, zone):
+
+        if zone == "SIGNING_STALL" or zone == "STAGE_STANDING":
+            zone = "FESTIVAL_AREA"
+            
+        if self.num_people_in_zones[zone] > 0:
+            self.num_people_in_zones[zone] -= 1
+
     def next_day(self):
         self.actual_day += 1
         logs.log_message(f"{self.actual_day}. DEN:")
@@ -72,3 +85,21 @@ class Festival:
     
     def get_visitors(self):
         return self.visitors
+    
+    def set_playing_band(self, band):
+        self.now_playing_band = band
+
+    def get_playing_band(self):
+        return self.now_playing_band
+    
+    def cancel_playing_band(self):
+        self.now_playing_band = None
+
+    def set_signing_band(self, band):
+        self.now_signing_band = band
+
+    def get_signing_band(self):
+        return self.now_signing_band
+    
+    def cancel_signing_band(self):
+        self.now_signing_band = None

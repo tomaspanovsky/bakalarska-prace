@@ -47,27 +47,25 @@ def choose_bands(budget, num, remaining_money = 0, bands = source.BANDS.copy()):
 
     remaining_money = budget - total_price
 
-    return chosen, total_price, remaining_money, bands
+    return chosen, remaining_money, bands
 
 def create_lineup(num_days, budget_for_bands, num_of_bands):
     #funkce, která vytvoří program na všechny dny festivalu
 
     budget_for_day = budget_for_bands / num_days
     num_of_bands 
-    total_price_for_bands = 0
     lineup = []
 
     for i in range(num_days):
 
         if i == 0:
-            bands, price, remaining_money, reduced_bands = choose_bands(budget_for_day, num_of_bands)
+            bands, remaining_money, reduced_bands = choose_bands(budget_for_day, num_of_bands)
         else:
-            bands, price, remaining_money, reduced_bands = choose_bands(budget_for_day, num_of_bands, remaining_money, reduced_bands)
+            bands, remaining_money, reduced_bands = choose_bands(budget_for_day, num_of_bands, remaining_money, reduced_bands)
         
-        total_price_for_bands += price
         lineup.append(bands)
 
-    return lineup, total_price_for_bands  
+    return lineup
 
 def print_lineup(lineup):
     #vypis kapel
@@ -88,6 +86,10 @@ def add_favorite_bands_to_visitor(visitors, bands):
     bands = merge_bands(bands)
 
     for visitor in visitors:
+
+        if visitor.get_age_category() == source.Age_category.CHILD:
+            continue
+        
         bands_to_choose = bands.copy()
         favourite_bands = []
         num_favourite = random.randint(1, math.floor(len(bands) * 0.75))
@@ -125,7 +127,7 @@ def merge_bands(lineup):
 def create_schedule(line_up, festival):
     headliner_time = festival.get_time("headliner_time")
     band_time = festival.get_time("band_time")
-    signing_time = int(festival.get_time("signing_time"))
+    signing_time = festival.get_time("signing_time")
     first_show_starts = festival.get_time("first_show_starts")
     last_show_ends = festival.get_time("last_show_ends")
     start_time = festival.get_start_time()
@@ -229,7 +231,7 @@ def band_play(env, band, stage, festival, i):
     with stage.resource.request() as req:
         
             yield req
-            
+            festival.set_playing_band(band)
             message = f"ČAS {times.get_real_time(env, start_time)}: Kapela {band['band_name']} právě začala hrát a bude hrát do {times.get_real_time(env, start_time, end_show)}."            
             print(message)
             logs.log_message(message)
@@ -247,6 +249,8 @@ def band_play(env, band, stage, festival, i):
                 print(message)
                 logs.log_message(message)
 
+            festival.cancel_playing_band()
+
 def band_go_to_signing_session(env, band, signing_stall, festival, signing_order):
     start_signign = band["start_signing_session"]
     end_signing = band["end_signing_session"]
@@ -261,6 +265,8 @@ def band_go_to_signing_session(env, band, signing_stall, festival, signing_order
     with signing_stall.resource[0].request() as req:
 
         yield req
+    
+        festival.set_signing_band(band)
 
         message = f"ČAS {times.get_real_time(env, start_time)}: Právě začala autogramiáda kapely {band['band_name']} a bude trvat do {times.get_real_time(env, start_time, end_signing)}."
         print(message)
@@ -269,6 +275,8 @@ def band_go_to_signing_session(env, band, signing_stall, festival, signing_order
         yield env.timeout(signign_time)
 
         message = f"ČAS {times.get_real_time(env, start_time)}: Skončila autogramiáda kapely {band['band_name']}. "
+        festival.cancel_signing_band()
+
         print(message)
         logs.log_message
 

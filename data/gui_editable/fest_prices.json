@@ -1,0 +1,16 @@
+{
+    "on_site_price": 1500,
+    "pre_sale_price": 1300,
+    "camping_area_price": 200,
+    "plastic_cup_price": 50,
+    "charging_phone_price": 80,
+    "shower_price": 50,
+    "cigars_price": 140,
+    "water_pipe_price": 200,
+    "bungee_jumping": 200,
+    "rollercoaster": 200,
+    "bench": 200,
+    "hammer": 200,
+    "carousel": 200,
+    "jumping_castle": 200
+}

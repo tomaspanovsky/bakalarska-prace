@@ -1,0 +1,118 @@
+{
+    "bands_merch": {
+        "Tričko:": {
+            "price": 500,
+            "quantity": 300
+        },
+        "Mikina s kapucí:": {
+            "price": 1200,
+            "quantity": 120
+        },
+        "Mikina bez kapuce:": {
+            "price": 1000,
+            "quantity": 120
+        },
+        "CD:": {
+            "price": 250,
+            "quantity": 150
+        },
+        "Plakát:": {
+            "price": 150,
+            "quantity": 200
+        },
+        "Kšiltovka:": {
+            "price": 450,
+            "quantity": 150
+        },
+        "Čepice:": {
+            "price": 300,
+            "quantity": 120
+        },
+        "Vinyl:": {
+            "price": 700,
+            "quantity": 80
+        },
+        "Taška:": {
+            "price": 200,
+            "quantity": 150
+        },
+        "Klíčenka:": {
+            "price": 120,
+            "quantity": 200
+        },
+        "Nášivka:": {
+            "price": 100,
+            "quantity": 250
+        },
+        "Odznak:": {
+            "price": 80,
+            "quantity": 300
+        },
+        "Podepsaný setlist:": {
+            "price": 500,
+            "quantity": 30
+        },
+        "Trsátko:": {
+            "price": 60,
+            "quantity": 300
+        }
+    },
+    "festival_merch": {
+        "Festivalové tričko:": {
+            "price": 550,
+            "quantity": 500
+        },
+        "Festivalová mikina:": {
+            "price": 1300,
+            "quantity": 200
+        },
+        "Festivalová mikina s kapucí:": {
+            "price": 1500,
+            "quantity": 200
+        },
+        "Sada všech kelímků:": {
+            "price": 250,
+            "quantity": 400
+        },
+        "Festivalový gumový náramek:": {
+            "price": 100,
+            "quantity": 600
+        },
+        "Festivalová plátěná taška:": {
+            "price": 250,
+            "quantity": 300
+        },
+        "Festivalová vlajka:": {
+            "price": 400,
+            "quantity": 120
+        },
+        "Festivalový plakát:": {
+            "price": 200,
+            "quantity": 250
+        },
+        "Festivalový program:": {
+            "price": 150,
+            "quantity": 500
+        },
+        "Festivalová čepice:": {
+            "price": 350,
+            "quantity": 200
+        },
+        "Festivalová kšiltovka:": {
+            "price": 450,
+            "quantity": 200
+        },
+        "Festivalová bunda:": {
+            "price": 1400,
+            "quantity": 80
+        },
+        "Festivalová láhev na vodu:": {
+            "price": 300,
+            "quantity": 250
+        },
+        "Festivalový přívěsek:": {
+            "price": 150,
+            "quantity": 300
+        }
+    }
+}
